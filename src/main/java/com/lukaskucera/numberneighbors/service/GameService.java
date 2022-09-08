@@ -6,7 +6,7 @@ public interface GameService {
 
   Game getGameById(Long id);
 
-  Game newGameWithPlayer(String name);
+  Game newGame();
 
-  Game updateGameWithPlayer(Long id, String name);
+  void deleteGameById(Long id);
 }

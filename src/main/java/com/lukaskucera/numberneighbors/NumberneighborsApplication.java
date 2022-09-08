@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NumberneighborsApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(NumberneighborsApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(NumberneighborsApplication.class, args);
+  }
 }

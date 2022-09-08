@@ -31,7 +31,7 @@ public class PlayerController {
   @PostMapping(value = "/players")
   public ResponseEntity<Player> newPlayer(
       @RequestParam(name = "game") Long gameId, @RequestBody NewPlayerRequest newPlayerRequest) {
-    return ResponseEntity.ok(playerService.newPlayer(gameId, newPlayerRequest.getName()));
+    return ResponseEntity.ok(playerService.newPlayer(gameId, newPlayerRequest.name()));
   }
 
   @GetMapping(value = "/players/{id}")

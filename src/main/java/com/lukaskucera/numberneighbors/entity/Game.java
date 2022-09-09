@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "games")
 public class Game extends BaseEntity {
 
-  @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JsonManagedReference
   private final Set<Player> players;
 

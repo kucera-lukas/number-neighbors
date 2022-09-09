@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameServiceImpl implements GameService {
+  public static final int GAME_PLAYER_LIMIT = 2;
+
   private final GameRepository gameRepository;
 
   private final PlayerRepository playerRepository;

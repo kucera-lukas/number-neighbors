@@ -1,5 +1,7 @@
 package com.lukaskucera.numberneighbors.service;
 
+import static com.lukaskucera.numberneighbors.service.GameServiceImpl.GAME_PLAYER_LIMIT;
+
 import com.lukaskucera.numberneighbors.entity.Game;
 import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
@@ -9,6 +11,7 @@ import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Set;
+import javax.transaction.Transactional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -38,17 +41,18 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
+  @Transactional
   public Player newPlayer(Long gameId, String name) {
     final Game game =
         gameRepository.findById(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
     final Set<Player> players = game.getPlayers();
 
-    if (!players.isEmpty() && players.stream().anyMatch(p -> p.getName().equals(name))) {
-      throw new PlayerNameAlreadyExistsException(gameId, name);
+    if (players.size() >= GAME_PLAYER_LIMIT) {
+      throw new GamePopulatedException(gameId);
     }
 
-    if (players.size() >= 2) {
-      throw new GamePopulatedException(gameId);
+    if (!players.isEmpty() && players.stream().anyMatch(p -> p.getName().equals(name))) {
+      throw new PlayerNameAlreadyExistsException(gameId, name);
     }
 
     final Player player = new Player(name, game);

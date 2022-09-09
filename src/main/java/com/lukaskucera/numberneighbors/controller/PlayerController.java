@@ -4,6 +4,7 @@ import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +31,8 @@ public class PlayerController {
 
   @PostMapping(value = "/players")
   public ResponseEntity<Player> newPlayer(
-      @RequestParam(name = "game") Long gameId, @RequestBody NewPlayerRequest newPlayerRequest) {
+      @RequestParam(name = "game") Long gameId,
+      @RequestBody @NotNull NewPlayerRequest newPlayerRequest) {
     return ResponseEntity.ok(playerService.newPlayer(gameId, newPlayerRequest.name()));
   }
 

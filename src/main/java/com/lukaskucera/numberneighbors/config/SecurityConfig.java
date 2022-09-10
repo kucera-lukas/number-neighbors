@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -51,6 +50,12 @@ public class SecurityConfig {
         .and()
         .csrf()
         .disable()
+        .httpBasic()
+        .disable()
+        .formLogin()
+        .disable()
+        .logout()
+        .disable()
         .authorizeHttpRequests(
             authorize ->
                 authorize
@@ -59,7 +64,6 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .hasRole("player"))
-        .httpBasic(Customizer.withDefaults())
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -95,7 +99,9 @@ public class SecurityConfig {
         List.of(
             new JwtTimestampValidator(),
             new JwtIssuerValidator(JwtConfig.ISSUER),
-            audienceValidator());
+            audienceValidator(),
+            new JwtClaimValidator<>("playerId", Long.class::isInstance),
+            new JwtClaimValidator<>("gameId", Long.class::isInstance));
     return new DelegatingOAuth2TokenValidator<>(validators);
   }
 

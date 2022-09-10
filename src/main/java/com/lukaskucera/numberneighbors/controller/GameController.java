@@ -10,6 +10,7 @@ import com.lukaskucera.numberneighbors.service.JwtService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,13 +42,16 @@ public class GameController {
   }
 
   @GetMapping(value = "/games/{id}")
-  public ResponseEntity<Game> game(@PathVariable Long id) {
+  public ResponseEntity<Game> game(
+      @PathVariable Long id, @NotNull JwtAuthenticationToken jwtToken) {
+    gameService.checkGameAccess(id, jwtToken);
     return ResponseEntity.ok(gameService.getGameById(id));
   }
 
   @DeleteMapping(value = "/games/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteGame(@PathVariable Long id) {
+  public void deleteGame(@PathVariable Long id, @NotNull JwtAuthenticationToken jwtToken) {
+    gameService.checkGameAccess(id, jwtToken);
     gameService.deleteGameById(id);
   }
 }

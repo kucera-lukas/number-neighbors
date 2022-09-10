@@ -12,7 +12,6 @@ import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Set;
 import javax.transaction.Transactional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -87,14 +86,14 @@ public class PlayerServiceImpl implements PlayerService {
   @Override
   public void checkPlayerAccess(
     Long playerId,
-    @NotNull JwtAuthenticationToken jwtToken
+    JwtAuthenticationToken jwtToken
   ) {
-    @NotNull
     final Long claimedPlayerId = (Long) jwtToken
       .getToken()
       .getClaims()
       .get("playerId");
-    if (!claimedPlayerId.equals(playerId)) {
+
+    if (claimedPlayerId == null || !claimedPlayerId.equals(playerId)) {
       throw new AccessDeniedException("Access denied to player " + playerId);
     }
   }

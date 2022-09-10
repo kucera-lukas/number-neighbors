@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 @Configuration
+@SuppressWarnings("NullAway.Init")
 public class JwtConfig {
 
   public static final String ISSUER = "https://numberneighbors.lukaskucera.com";
@@ -35,16 +36,14 @@ public class JwtConfig {
   public static final String AUTHORITY_PREFIX = "ROLE_";
 
   @Value("${jwt.public.key}")
-  RSAPublicKey publicKey;
+  private RSAPublicKey publicKey;
 
   @Value("${jwt.private.key}")
-  RSAPrivateKey privateKey;
+  private RSAPrivateKey privateKey;
 
   @Bean
   JwtEncoder jwtEncoder() {
-    JWK jwk = new RSAKey.Builder(this.publicKey)
-      .privateKey(this.privateKey)
-      .build();
+    JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
     JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
     return new NimbusJwtEncoder(jwks);
   }
@@ -52,7 +51,7 @@ public class JwtConfig {
   @Bean
   JwtDecoder jwtDecoder() {
     final NimbusJwtDecoder decoder = NimbusJwtDecoder
-      .withPublicKey(this.publicKey)
+      .withPublicKey(publicKey)
       .build();
     decoder.setJwtValidator(tokenValidator());
     return decoder;

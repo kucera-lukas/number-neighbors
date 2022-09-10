@@ -21,6 +21,7 @@ import javax.persistence.UniqueConstraint;
     @UniqueConstraint(columnNames = { "game_id", "type" }),
   }
 )
+@SuppressWarnings("NullAway.Init")
 public class Player extends BaseEntity {
 
   @Column(name = "name", nullable = false)

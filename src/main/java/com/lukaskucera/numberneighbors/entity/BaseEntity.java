@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @MappedSuperclass
+@SuppressWarnings("NullAway.Init")
 public class BaseEntity implements Serializable {
 
   @Id
@@ -29,15 +30,35 @@ public class BaseEntity implements Serializable {
   @Column(nullable = false)
   private Date modified;
 
+  public BaseEntity() {}
+
+  public BaseEntity(Long id, Date created, Date modified) {
+    setId(id);
+    setCreated(created);
+    setModified(modified);
+  }
+
   public Long getId() {
     return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public Date getCreated() {
     return created;
   }
 
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+
   public Date getModified() {
     return modified;
+  }
+
+  public void setModified(Date modified) {
+    this.modified = modified;
   }
 }

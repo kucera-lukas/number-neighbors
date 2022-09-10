@@ -39,11 +39,6 @@ public class Game extends BaseEntity {
     player.setGame(this);
   }
 
-  public void removePlayer(Player player) {
-    players.remove(player);
-    player.setGame(null);
-  }
-
   @JsonIgnore
   public Player getHost() {
     return getPlayerByType(

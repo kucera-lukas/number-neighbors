@@ -2,6 +2,8 @@ package com.lukaskucera.numberneighbors.controller;
 
 import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
+import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
+import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PlayerController {
   private final PlayerServiceImpl playerService;
+  private final JwtService jwtService;
 
-  public PlayerController(PlayerServiceImpl playerService) {
+  public PlayerController(PlayerServiceImpl playerService, JwtService jwtService) {
     this.playerService = playerService;
+    this.jwtService = jwtService;
   }
 
   @GetMapping(value = "/players")
@@ -30,10 +34,13 @@ public class PlayerController {
   }
 
   @PostMapping(value = "/players")
-  public ResponseEntity<Player> newPlayer(
+  public ResponseEntity<NewPlayerResponse> newPlayer(
       @RequestParam(name = "game") Long gameId,
       @RequestBody @NotNull NewPlayerRequest newPlayerRequest) {
-    return ResponseEntity.ok(playerService.newPlayer(gameId, newPlayerRequest.name()));
+    final Player player = playerService.newPlayer(gameId, newPlayerRequest.name());
+    final String token = jwtService.generatePlayerToken(player.getName(), player.getId(), gameId);
+
+    return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
 
   @GetMapping(value = "/players/{id}")

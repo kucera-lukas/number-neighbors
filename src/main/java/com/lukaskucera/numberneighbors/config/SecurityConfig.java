@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -29,26 +29,27 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
   @Value("${secret-key}")
-  public String secretKey;
+  String secretKey;
+
+  //  @Value("${jwt.public.key}")
+  //  RSAPublicKey publicKey;
+  //
+  //  @Value("${jwt.private.key}")
+  //  RSAPrivateKey privateKey;
 
   @Bean
-  @Order(Ordered.HIGHEST_PRECEDENCE)
   public SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
     http.cors()
         .and()
         .csrf()
-        .disable()
-        .httpBasic()
-        .disable()
-        .formLogin()
-        .disable()
-        .logout()
         .disable()
         .authorizeHttpRequests(
             authorize ->
@@ -58,7 +59,15 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .hasRole("player"))
-        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        .httpBasic(Customizer.withDefaults())
+        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(
+            exceptions ->
+                exceptions
+                    .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                    .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
     return http.build();
   }
 

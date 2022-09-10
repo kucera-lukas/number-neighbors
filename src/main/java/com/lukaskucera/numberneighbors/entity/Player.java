@@ -1,6 +1,7 @@
 package com.lukaskucera.numberneighbors.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lukaskucera.numberneighbors.enums.PlayerType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,5 +63,15 @@ public class Player extends BaseEntity {
 
   public void setGame(Game game) {
     this.game = game;
+  }
+
+  @JsonIgnore
+  public Boolean isHost() {
+    return type == PlayerType.HOST;
+  }
+
+  @JsonIgnore
+  public Boolean isGuest() {
+    return type == PlayerType.GUEST;
   }
 }

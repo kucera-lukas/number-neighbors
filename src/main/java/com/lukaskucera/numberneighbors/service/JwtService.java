@@ -5,6 +5,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -21,22 +22,26 @@ public class JwtService {
     this.jwtEncoder = jwtEncoder;
   }
 
-  public String generate() {
+  public String generatePlayerToken(String name, Long playerId, Long gameId) {
+    return generate(name, Map.of("playerId", playerId, "gameId", gameId, "authorities", "player"));
+  }
+
+  private String generate(String subject, Map<String, Object> claims) {
     Instant instant = new Date().toInstant();
 
-    JwtClaimsSet claimsSet =
+    JwtClaimsSet.Builder claimsSetBuilder =
         JwtClaimsSet.builder()
-            .subject("playername")
+            .subject(subject)
             .issuer(JwtConfig.ISSUER)
             .audience(Collections.singletonList(JwtConfig.AUDIENCE))
             .notBefore(instant)
-            .issuedAt(instant)
-            .claim("playerId", 1)
-            .claim("gameId", 1)
-            .claim("authorities", "player")
-            .build();
+            .issuedAt(instant);
+
+    claims.forEach(claimsSetBuilder::claim);
 
     JwsHeader jwsHeader = JwsHeader.with(JWS_ALGORITHM::getName).type(TYPE_HEADER).build();
-    return jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claimsSet)).getTokenValue();
+    return jwtEncoder
+        .encode(JwtEncoderParameters.from(jwsHeader, claimsSetBuilder.build()))
+        .getTokenValue();
   }
 }

@@ -1,14 +1,15 @@
 package com.lukaskucera.numberneighbors.controller;
 
 import com.lukaskucera.numberneighbors.entity.Game;
+import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.request.NewGameRequest;
+import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +29,15 @@ public class GameController {
     this.jwtService = jwtService;
   }
 
-  @GetMapping("/token")
-  public ResponseEntity<Token> getToken(@NotNull JwtAuthenticationToken jwtToken) {
-    return ResponseEntity.ok(new Token(jwtToken.getToken(), jwtToken.getAuthorities()));
-  }
-
-  @PostMapping("/token")
-  public ResponseEntity<String> newToken() {
-    return ResponseEntity.ok(jwtService.generate());
-  }
-
   @PostMapping(value = "/games")
-  public ResponseEntity<Game> newGame(@RequestBody @NotNull NewGameRequest newGameRequest) {
-    return ResponseEntity.ok(gameService.newGame(newGameRequest.hostName()));
+  public ResponseEntity<NewGameResponse> newGame(
+      @RequestBody @NotNull NewGameRequest newGameRequest) {
+    final Game game = gameService.newGame(newGameRequest.hostName());
+    final Player hostPlayer = game.getHost();
+    final String token =
+        jwtService.generatePlayerToken(hostPlayer.getName(), hostPlayer.getId(), game.getId());
+
+    return ResponseEntity.ok(new NewGameResponse(game, token));
   }
 
   @GetMapping(value = "/games/{id}")

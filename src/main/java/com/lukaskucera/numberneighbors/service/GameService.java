@@ -6,7 +6,7 @@ public interface GameService {
 
   Game getGameById(Long id);
 
-  Game newGame();
+  Game newGame(String hostName);
 
   void deleteGameById(Long id);
 }

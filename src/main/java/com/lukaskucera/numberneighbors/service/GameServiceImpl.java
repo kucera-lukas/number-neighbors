@@ -1,6 +1,7 @@
 package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.entity.Game;
+import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
@@ -26,8 +27,10 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public Game newGame() {
+  public Game newGame(String hostName) {
     final Game game = new Game();
+
+    game.addPlayer(new Player(hostName, game));
 
     gameRepository.save(game);
 

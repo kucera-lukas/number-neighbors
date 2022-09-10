@@ -36,7 +36,7 @@ public class Player extends BaseEntity {
 
   public Player(String name, Game game) {
     setName(name);
-    setType(game.getPlayers().isEmpty() ? PlayerType.FIRST : PlayerType.SECOND);
+    setType(game.getPlayers().isEmpty() ? PlayerType.HOST : PlayerType.GUEST);
     setGame(game);
   }
 

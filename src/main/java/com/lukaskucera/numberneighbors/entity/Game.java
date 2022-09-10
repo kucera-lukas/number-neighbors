@@ -1,8 +1,13 @@
 package com.lukaskucera.numberneighbors.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
+import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,5 +38,20 @@ public class Game extends BaseEntity {
   public void removePlayer(Player player) {
     players.remove(player);
     player.setGame(null);
+  }
+
+  @JsonIgnore
+  public Player getHost() {
+    return getPlayerByType(Player::isHost, () -> new HostPlayerMissingException(getId()));
+  }
+
+  private <X extends Throwable> Player getPlayerByType(
+      Predicate<? super Player> playerFilter, Supplier<? extends X> exceptionSupplier) throws X {
+    return players.stream().filter(playerFilter).findFirst().orElseThrow(exceptionSupplier);
+  }
+
+  @JsonIgnore
+  public Player getGuest() {
+    return getPlayerByType(Player::isGuest, () -> new GuestPlayerMissingException(getId()));
   }
 }

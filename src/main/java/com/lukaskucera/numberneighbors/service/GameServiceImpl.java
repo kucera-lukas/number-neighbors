@@ -1,10 +1,14 @@
 package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.entity.Game;
+import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,8 +30,10 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public Game newGame() {
+  public Game newGame(String hostName) {
     final Game game = new Game();
+
+    game.addPlayer(new Player(hostName, game));
 
     gameRepository.save(game);
 
@@ -40,6 +46,14 @@ public class GameServiceImpl implements GameService {
       gameRepository.deleteById(id);
     } catch (EmptyResultDataAccessException e) {
       throw new GameNotFoundException(id);
+    }
+  }
+
+  @Override
+  public void checkGameAccess(Long gameId, @NotNull JwtAuthenticationToken jwtToken) {
+    final @NotNull Long claimedGameId = (Long) jwtToken.getToken().getClaims().get("gameId");
+    if (!claimedGameId.equals(gameId)) {
+      throw new AccessDeniedException("Access denied to game " + gameId);
     }
   }
 }

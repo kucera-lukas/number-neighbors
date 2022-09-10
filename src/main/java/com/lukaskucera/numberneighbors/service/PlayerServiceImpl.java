@@ -12,7 +12,10 @@ import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Set;
 import javax.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,6 +72,14 @@ public class PlayerServiceImpl implements PlayerService {
       playerRepository.deleteById(id);
     } catch (EmptyResultDataAccessException e) {
       throw new PlayerNotFoundException(id);
+    }
+  }
+
+  @Override
+  public void checkPlayerAccess(Long playerId, @NotNull JwtAuthenticationToken jwtToken) {
+    final @NotNull Long claimedPlayerId = (Long) jwtToken.getToken().getClaims().get("playerId");
+    if (!claimedPlayerId.equals(playerId)) {
+      throw new AccessDeniedException("Access denied to player " + playerId);
     }
   }
 }

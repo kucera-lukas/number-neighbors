@@ -15,12 +15,14 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(
-    name = "players",
-    uniqueConstraints = {
-      @UniqueConstraint(columnNames = {"game_id", "name"}),
-      @UniqueConstraint(columnNames = {"game_id", "type"})
-    })
+  name = "players",
+  uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "game_id", "name" }),
+    @UniqueConstraint(columnNames = { "game_id", "type" }),
+  }
+)
 public class Player extends BaseEntity {
+
   @Column(name = "name", nullable = false)
   private String name;
 

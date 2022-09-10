@@ -6,8 +6,8 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 /** A DTO for the {@link com.lukaskucera.numberneighbors.entity.Game} entity */
-public record GameDto(Long id, Date created, Date modified) implements Serializable {
-
+public record GameDto(Long id, Date created, Date modified)
+  implements Serializable {
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -17,9 +17,11 @@ public record GameDto(Long id, Date created, Date modified) implements Serializa
       return false;
     }
     GameDto entity = (GameDto) o;
-    return Objects.equals(this.id, entity.id)
-        && Objects.equals(this.created, entity.created)
-        && Objects.equals(this.modified, entity.modified);
+    return (
+      Objects.equals(this.id, entity.id) &&
+      Objects.equals(this.created, entity.created) &&
+      Objects.equals(this.modified, entity.modified)
+    );
   }
 
   @Override
@@ -29,16 +31,18 @@ public record GameDto(Long id, Date created, Date modified) implements Serializa
 
   @Override
   public @NotNull String toString() {
-    return getClass().getSimpleName()
-        + "("
-        + "id = "
-        + id
-        + ", "
-        + "created = "
-        + created
-        + ", "
-        + "modified = "
-        + modified
-        + ")";
+    return (
+      getClass().getSimpleName() +
+      "(" +
+      "id = " +
+      id +
+      ", " +
+      "created = " +
+      created +
+      ", " +
+      "modified = " +
+      modified +
+      ")"
+    );
   }
 }

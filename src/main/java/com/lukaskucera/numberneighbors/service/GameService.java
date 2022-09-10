@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface GameService {
-
   Game getGameById(Long id);
 
   Game newGame(String hostName);

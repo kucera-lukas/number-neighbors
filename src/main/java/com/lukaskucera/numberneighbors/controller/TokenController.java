@@ -9,8 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TokenController {
+
   @GetMapping("/token")
-  public ResponseEntity<TokenResponse> token(@NotNull JwtAuthenticationToken jwtToken) {
-    return ResponseEntity.ok(new TokenResponse(jwtToken.getToken(), jwtToken.getAuthorities()));
+  public ResponseEntity<TokenResponse> token(
+    @NotNull JwtAuthenticationToken jwtToken
+  ) {
+    return ResponseEntity.ok(
+      new TokenResponse(jwtToken.getToken(), jwtToken.getAuthorities())
+    );
   }
 }

@@ -16,13 +16,16 @@ class PlayerAdvice extends ResponseEntityExceptionHandler {
   @ResponseBody
   @ExceptionHandler(PlayerNameAlreadyExistsException.class)
   ResponseEntity<String> handlePlayerNameAlreadyExists(
-      @NotNull PlayerNameAlreadyExistsException ex) {
+    @NotNull PlayerNameAlreadyExistsException ex
+  ) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }
 
   @ResponseBody
   @ExceptionHandler(PlayerNotFoundException.class)
-  ResponseEntity<String> handlePlayerNotFound(@NotNull PlayerNotFoundException ex) {
+  ResponseEntity<String> handlePlayerNotFound(
+    @NotNull PlayerNotFoundException ex
+  ) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }

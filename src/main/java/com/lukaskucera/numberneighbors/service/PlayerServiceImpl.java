@@ -25,36 +25,45 @@ public class PlayerServiceImpl implements PlayerService {
 
   private final PlayerRepository playerRepository;
 
-  public PlayerServiceImpl(GameRepository gameRepository, PlayerRepository playerRepository) {
+  public PlayerServiceImpl(
+    GameRepository gameRepository,
+    PlayerRepository playerRepository
+  ) {
     this.gameRepository = gameRepository;
     this.playerRepository = playerRepository;
   }
 
   @Override
   public Player getPlayerById(Long id) {
-    return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
+    return playerRepository
+      .findById(id)
+      .orElseThrow(() -> new PlayerNotFoundException(id));
   }
 
   @Override
   public Set<Player> getPlayersByGameId(Long gameId) {
     return gameRepository
-        .findById(gameId)
-        .orElseThrow(() -> new GameNotFoundException(gameId))
-        .getPlayers();
+      .findById(gameId)
+      .orElseThrow(() -> new GameNotFoundException(gameId))
+      .getPlayers();
   }
 
   @Override
   @Transactional
   public Player newPlayer(Long gameId, String name) {
-    final Game game =
-        gameRepository.findById(gameId).orElseThrow(() -> new GameNotFoundException(gameId));
+    final Game game = gameRepository
+      .findById(gameId)
+      .orElseThrow(() -> new GameNotFoundException(gameId));
     final Set<Player> players = game.getPlayers();
 
     if (players.size() >= GAME_PLAYER_LIMIT) {
       throw new GamePopulatedException(gameId);
     }
 
-    if (!players.isEmpty() && players.stream().anyMatch(p -> p.getName().equals(name))) {
+    if (
+      !players.isEmpty() &&
+      players.stream().anyMatch(p -> p.getName().equals(name))
+    ) {
       throw new PlayerNameAlreadyExistsException(gameId, name);
     }
 
@@ -76,8 +85,15 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
-  public void checkPlayerAccess(Long playerId, @NotNull JwtAuthenticationToken jwtToken) {
-    final @NotNull Long claimedPlayerId = (Long) jwtToken.getToken().getClaims().get("playerId");
+  public void checkPlayerAccess(
+    Long playerId,
+    @NotNull JwtAuthenticationToken jwtToken
+  ) {
+    @NotNull
+    final Long claimedPlayerId = (Long) jwtToken
+      .getToken()
+      .getClaims()
+      .get("playerId");
     if (!claimedPlayerId.equals(playerId)) {
       throw new AccessDeniedException("Access denied to player " + playerId);
     }

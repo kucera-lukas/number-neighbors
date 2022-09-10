@@ -23,19 +23,25 @@ class GameAdvice extends ResponseEntityExceptionHandler {
 
   @ResponseBody
   @ExceptionHandler(GamePopulatedException.class)
-  ResponseEntity<String> handleGamePopulated(@NotNull GamePopulatedException ex) {
+  ResponseEntity<String> handleGamePopulated(
+    @NotNull GamePopulatedException ex
+  ) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
   }
 
   @ResponseBody
   @ExceptionHandler(HostPlayerMissingException.class)
-  ResponseEntity<String> handleHostPlayerMissing(@NotNull HostPlayerMissingException ex) {
+  ResponseEntity<String> handleHostPlayerMissing(
+    @NotNull HostPlayerMissingException ex
+  ) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 
   @ResponseBody
   @ExceptionHandler(GuestPlayerMissingException.class)
-  ResponseEntity<String> handleGuestPlayerMissing(@NotNull GuestPlayerMissingException ex) {
+  ResponseEntity<String> handleGuestPlayerMissing(
+    @NotNull GuestPlayerMissingException ex
+  ) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }

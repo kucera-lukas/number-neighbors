@@ -10,7 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class NumberNeighborsApplicationTests {
 
-  @Autowired private GameController controller;
+  @Autowired
+  private GameController controller;
 
   @Test
   void contextLoads() {

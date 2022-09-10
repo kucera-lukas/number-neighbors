@@ -13,20 +13,26 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameServiceImpl implements GameService {
+
   public static final int GAME_PLAYER_LIMIT = 2;
 
   private final GameRepository gameRepository;
 
   private final PlayerRepository playerRepository;
 
-  public GameServiceImpl(GameRepository gameRepository, PlayerRepository playerRepository) {
+  public GameServiceImpl(
+    GameRepository gameRepository,
+    PlayerRepository playerRepository
+  ) {
     this.gameRepository = gameRepository;
     this.playerRepository = playerRepository;
   }
 
   @Override
   public Game getGameById(Long id) {
-    return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
+    return gameRepository
+      .findById(id)
+      .orElseThrow(() -> new GameNotFoundException(id));
   }
 
   @Override
@@ -50,8 +56,15 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public void checkGameAccess(Long gameId, @NotNull JwtAuthenticationToken jwtToken) {
-    final @NotNull Long claimedGameId = (Long) jwtToken.getToken().getClaims().get("gameId");
+  public void checkGameAccess(
+    Long gameId,
+    @NotNull JwtAuthenticationToken jwtToken
+  ) {
+    @NotNull
+    final Long claimedGameId = (Long) jwtToken
+      .getToken()
+      .getClaims()
+      .get("gameId");
     if (!claimedGameId.equals(gameId)) {
       throw new AccessDeniedException("Access denied to game " + gameId);
     }

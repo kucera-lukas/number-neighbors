@@ -13,12 +13,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: "dev"
+      SPRING_PROFILES_ACTIVE: "dev,docker"
       POSTGRES_HOSTNAME: postgres
-      POSTGRES_PORT: 5433
+      POSTGRES_PORT: 5432
       <<: *postgres-environment
-    volumes:
-      - .:/app
     networks:
       - number-neighbors-network
     depends_on:
@@ -41,7 +39,6 @@ services:
       - number-neighbors-network
 
 volumes:
-  number-neighbors:
   postgres:
 
 networks:

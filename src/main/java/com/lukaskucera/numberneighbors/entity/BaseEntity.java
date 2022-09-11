@@ -7,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,12 +19,10 @@ public class BaseEntity implements Serializable {
   private Long id;
 
   @CreationTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
   private Instant created;
 
   @UpdateTimestamp
-  @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
   private Instant modified;
 

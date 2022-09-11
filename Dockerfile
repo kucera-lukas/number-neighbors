@@ -9,12 +9,12 @@ RUN mvn dependency:go-offline
 
 COPY ./src ./src
 
-RUN mvn clean install
+RUN mvn clean package -DskipTests=true
 
 FROM openjdk:17-alpine as runner
 
 WORKDIR /app
 
-COPY --from=builder /build/target/*.jar ./*.jar
+COPY --from=builder /build/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "./*.jar" ]
+ENTRYPOINT ["java", "-jar", "app.jar" ]

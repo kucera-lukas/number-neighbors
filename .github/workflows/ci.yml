@@ -7,6 +7,11 @@ jobs:
     name: JDK ${{ matrix.java }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
+    permissions:
+      # Make sure that we can write SpotBugs report,
+      # for example the Dependabot is read-only by default.
+      pull-requests: write
+
     strategy:
       matrix:
         os: [ubuntu-latest]

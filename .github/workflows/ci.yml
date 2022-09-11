@@ -9,9 +9,9 @@ jobs:
 
     permissions:
       contents: read
-      # Make sure that we can write SpotBugs report,
+      # make sure that we can write SpotBugs report,
       # for example the Dependabot is read-only by default.
-      pull-requests: write
+      checks: write
 
     strategy:
       matrix:

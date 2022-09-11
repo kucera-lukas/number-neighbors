@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,20 +23,12 @@ public class BaseEntity implements Serializable {
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
-  private Date created;
+  private Instant created;
 
   @UpdateTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  private Date modified;
-
-  public BaseEntity() {}
-
-  public BaseEntity(Long id, Date created, Date modified) {
-    setId(id);
-    setCreated(created);
-    setModified(modified);
-  }
+  private Instant modified;
 
   public Long getId() {
     return id;
@@ -46,19 +38,11 @@ public class BaseEntity implements Serializable {
     this.id = id;
   }
 
-  public Date getCreated() {
+  public Instant getCreated() {
     return created;
   }
 
-  public void setCreated(Date created) {
-    this.created = created;
-  }
-
-  public Date getModified() {
+  public Instant getModified() {
     return modified;
-  }
-
-  public void setModified(Date modified) {
-    this.modified = modified;
   }
 }

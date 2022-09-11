@@ -1,6 +1,5 @@
 package com.lukaskucera.numberneighbors.config;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
@@ -17,7 +16,7 @@ public class WebSocketSecurityConfig
 
   @Override
   protected void configureInbound(
-    @NotNull MessageSecurityMetadataSourceRegistry messages
+    MessageSecurityMetadataSourceRegistry messages
   ) {
     messages
       .nullDestMatcher()

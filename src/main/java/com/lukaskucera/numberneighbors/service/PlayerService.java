@@ -2,7 +2,6 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.entity.Player;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface PlayerService {
@@ -14,5 +13,5 @@ public interface PlayerService {
 
   void deletePlayerById(Long id);
 
-  void checkPlayerAccess(Long id, @NotNull JwtAuthenticationToken jwtToken);
+  void checkPlayerAccess(Long id, JwtAuthenticationToken jwtToken);
 }

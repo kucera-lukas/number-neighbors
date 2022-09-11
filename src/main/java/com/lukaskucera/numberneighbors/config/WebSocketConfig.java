@@ -1,6 +1,5 @@
 package com.lukaskucera.numberneighbors.config;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -12,12 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
-  public void registerStompEndpoints(@NotNull StompEndpointRegistry registry) {
+  public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/play").withSockJS();
   }
 
   @Override
-  public void configureMessageBroker(@NotNull MessageBrokerRegistry config) {
+  public void configureMessageBroker(MessageBrokerRegistry config) {
     config.setApplicationDestinationPrefixes("/app");
     config.enableSimpleBroker("/topic", "/queue");
   }

@@ -7,7 +7,6 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -33,7 +32,7 @@ public class GameController {
 
   @PostMapping(value = "/games")
   public ResponseEntity<NewGameResponse> newGame(
-    @RequestBody @NotNull NewGameRequest newGameRequest
+    @RequestBody NewGameRequest newGameRequest
   ) {
     final Game game = gameService.newGame(newGameRequest.hostName());
     final Player hostPlayer = game.getHost();
@@ -49,7 +48,7 @@ public class GameController {
   @GetMapping(value = "/games/{id}")
   public ResponseEntity<Game> game(
     @PathVariable Long id,
-    @NotNull JwtAuthenticationToken jwtToken
+    JwtAuthenticationToken jwtToken
   ) {
     gameService.checkGameAccess(id, jwtToken);
     return ResponseEntity.ok(gameService.getGameById(id));
@@ -59,7 +58,7 @@ public class GameController {
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteGame(
     @PathVariable Long id,
-    @NotNull JwtAuthenticationToken jwtToken
+    JwtAuthenticationToken jwtToken
   ) {
     gameService.checkGameAccess(id, jwtToken);
     gameService.deleteGameById(id);

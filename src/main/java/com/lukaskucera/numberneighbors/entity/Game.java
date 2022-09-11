@@ -31,7 +31,7 @@ public class Game extends BaseEntity {
   }
 
   public Set<Player> getPlayers() {
-    return players;
+    return Set.copyOf(players);
   }
 
   public void addPlayer(Player player) {

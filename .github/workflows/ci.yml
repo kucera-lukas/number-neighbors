@@ -2,6 +2,8 @@ name: Continuous Integration
 
 on: [push]
 
+permissions: read-all
+
 jobs:
   build:
     name: JDK ${{ matrix.java }} on ${{ matrix.os }}

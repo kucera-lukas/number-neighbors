@@ -4,6 +4,8 @@ import com.lukaskucera.numberneighbors.entity.Game;
 import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -11,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameServiceImpl implements GameService {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    GameServiceImpl.class
+  );
 
   public static final int GAME_PLAYER_LIMIT = 2;
 
@@ -55,6 +61,11 @@ public class GameServiceImpl implements GameService {
       .get("gameId");
 
     if (claimedGameId == null || !claimedGameId.equals(gameId)) {
+      logger.info(
+        "Authenticated to access the game {} not {}",
+        claimedGameId,
+        gameId
+      );
       throw new AccessDeniedException("Access denied to game " + gameId);
     }
   }

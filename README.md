@@ -7,21 +7,36 @@ number-neighbors is using Java and Postgres.
 
 ## Installation
 
-### Install instructions
+```sh
+git clone git@github.com:kucera-lukas/number-neighbors.git
+```
+
+### Local
 
 1. Install Java https://www.java.com/en/download/
 2. Install Maven https://maven.apache.org/install.html
 3. Install PostgreSQL https://www.postgresql.org/download/
-4. Clone this repository
+4. Generate RSA key pair
 
 ```sh
-git clone git@github.com:kucera-lukas/number-neighbors.git
+./scripts/gen-keys.bash
 ```
 
 5. Install dependencies
 
 ```sh
-mvn install
+mvn clean package -DskipTests=true
+```
+
+### Docker
+
+Installation using Docker is recommended if you don't want to install all
+dependencies locally on your machine and specify environment variables manually.
+
+1. Generate RSA key pair
+
+```sh
+./scripts/gen-keys.bash
 ```
 
 ## Development
@@ -29,13 +44,11 @@ mvn install
 ### Dev server
 
 ```sh
-mvn spring-boot:run
-```
+# local
+mvn spring-boot:run -Dspring.profiles.active=dev
 
-### Maven
-
-```sh
-mvn --help
+# docker
+docker-compose up -d
 ```
 
 ## Contributing

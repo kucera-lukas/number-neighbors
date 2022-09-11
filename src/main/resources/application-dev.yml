@@ -1,0 +1,5 @@
+jwt:
+  private:
+    key: rsakey.pem
+  public:
+    key: rsapubkey.pem

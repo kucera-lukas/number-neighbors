@@ -1,0 +1,7 @@
+spring:
+
+jwt:
+  private:
+    key: ${sm://dev-private-key}
+  public:
+    key: ${sm://dev-public-key}

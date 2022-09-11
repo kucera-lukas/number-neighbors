@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    gcp:
+      core:
+        enabled: true
+      secretmanager:
+        enabled: true
+
+  datasource:
+    url: jdbc:postgresql://${sm://prod-db-hostname}:${sm://prod-db-port}/${sm://prod-db-name}
+    username: ${sm://prod-db-username}
+    password: ${sm://prod-db-password}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+jwt:
+  private:
+    key: ${sm://prod-private-key}
+  public:
+    key: ${sm://prod-public-key}

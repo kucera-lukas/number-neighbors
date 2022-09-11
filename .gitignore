@@ -35,3 +35,5 @@ build/
 ### Maven ###
 mvnw
 mvnw.cmd
+
+.tool-versions

@@ -19,10 +19,17 @@ git clone git@github.com:kucera-lukas/number-neighbors.git
 4. Generate RSA key pair
 
 ```sh
-./scripts/gen-keys.bash
+bash scripts/gen-keys.bash
 ```
 
-5. Install dependencies
+5. Fill environment variables into .env file
+
+```sh
+# in the src/main/resources directory
+cp .env.example .env
+```
+
+6. Install dependencies
 
 ```sh
 mvn clean package -DskipTests=true
@@ -31,17 +38,17 @@ mvn clean package -DskipTests=true
 ### Docker
 
 Installation using Docker is recommended if you don't want to install all
-dependencies locally on your machine and specify environment variables manually.
+dependencies locally on your machine.
 
 1. Generate RSA key pair
 
 ```sh
-./scripts/gen-keys.bash
+bash scripts/gen-keys.bash
 ```
 
 ## Development
 
-### Dev server
+### Server
 
 ```sh
 # local

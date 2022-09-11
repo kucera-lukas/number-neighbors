@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-for file in rsakey.pem rsapubkey.pem
+DIR=src/main/resources
+
+KEY=rsakey.pem
+PUBKEY=rsapubkey.pem
+
+KEY_FILE=$DIR/$KEY
+PUBKEY_FILE=$DIR/$PUBKEY
+
+for file in $KEY_FILE $PUBKEY_FILE
 do
     if [ -e "$file" ]; then
         read -p "$file already exists. Would you like to overwrite it? [y/N]" yn
@@ -12,9 +20,9 @@ do
 done
 
 # generate private key
-openssl genpkey -out rsakey.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+openssl genpkey -out $KEY_FILE -algorithm RSA -pkeyopt rsa_keygen_bits:2048
 
 # generate public key
-openssl pkey -in rsakey.pem -pubout -out rsapubkey.pem
+openssl pkey -in $KEY_FILE -pubout -out $PUBKEY_FILE
 
-echo "rsakey.pem and rsapubkey.pem generated successfully."
+echo "$KEY and $PUBKEY successfully generated in the $DIR directory"

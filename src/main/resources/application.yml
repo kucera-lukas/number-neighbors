@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOSTNAME}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: public
+        jdbc:
+          lob:
+            # Fix Postgres JPA Error (Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented).
+            non_contextual_creation: true
+          batch_size: 50
+        default_batch_fetch_size: 50
+        dialect: org.hibernate.dialect.PostgreSQLDialect

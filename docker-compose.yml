@@ -1,0 +1,49 @@
+version: "3.4"
+
+x-postgres-environment: &postgres-environment
+  POSTGRES_DB: numberneighbors
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+services:
+  number-neighbors:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: "dev"
+      POSTGRES_HOSTNAME: postgres
+      POSTGRES_PORT: 5433
+      <<: *postgres-environment
+    volumes:
+      - .:/app
+    networks:
+      - number-neighbors-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5433:5432"
+    environment: *postgres-environment
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - number-neighbors-network
+
+volumes:
+  number-neighbors:
+  postgres:
+
+networks:
+  number-neighbors-network:
+    driver: bridge

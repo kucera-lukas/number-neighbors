@@ -1,7 +1,5 @@
-spring:
-
 jwt:
   private:
-    key: ${sm://dev-private-key}
+    key: rsakey.pem
   public:
-    key: ${sm://dev-public-key}
+    key: rsapubkey.pem

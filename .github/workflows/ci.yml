@@ -2,14 +2,13 @@ name: Continuous Integration
 
 on: [push]
 
-permissions: read-all
-
 jobs:
   build:
     name: JDK ${{ matrix.java }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     permissions:
+      contents: read
       # Make sure that we can write SpotBugs report,
       # for example the Dependabot is read-only by default.
       pull-requests: write

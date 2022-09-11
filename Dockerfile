@@ -13,6 +13,11 @@ RUN mvn clean package -DskipTests=true
 
 FROM openjdk:17-alpine as runner
 
+RUN addgroup number-neighbors-group && \
+    adduser --ingroup number-neighbors-group \
+    --disabled-password number-neighbors-user
+USER number-neighbors-user
+
 WORKDIR /app
 
 COPY --from=builder /build/target/*.jar app.jar

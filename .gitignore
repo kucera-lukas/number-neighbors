@@ -36,6 +36,7 @@ build/
 mvnw
 mvnw.cmd
 
+### Local Configuration ###
+.env
 .tool-versions
-
 *.pem

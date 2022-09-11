@@ -12,7 +12,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JwtService {
+public final class JwtService {
+
   private static final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.RS256;
   private static final String TYPE_HEADER = "JWT";
   private final JwtEncoder jwtEncoder;
@@ -22,26 +23,32 @@ public class JwtService {
   }
 
   public String generatePlayerToken(String name, Long playerId, Long gameId) {
-    return generate(name, Map.of("playerId", playerId, "gameId", gameId, "authorities", "player"));
+    return generate(
+      name,
+      Map.of("playerId", playerId, "gameId", gameId, "authorities", "player")
+    );
   }
 
   private String generate(String subject, Map<String, Object> claims) {
     final Instant instantNow = Instant.now();
 
-    final JwtClaimsSet.Builder claimsSetBuilder =
-        JwtClaimsSet.builder()
-            .subject(subject)
-            .issuer(JwtConfig.ISSUER)
-            .audience(Collections.singletonList(JwtConfig.AUDIENCE))
-            .notBefore(instantNow)
-            .issuedAt(instantNow);
+    final JwtClaimsSet.Builder claimsSetBuilder = JwtClaimsSet
+      .builder()
+      .subject(subject)
+      .issuer(JwtConfig.ISSUER)
+      .audience(Collections.singletonList(JwtConfig.AUDIENCE))
+      .notBefore(instantNow)
+      .issuedAt(instantNow);
 
     claims.forEach(claimsSetBuilder::claim);
 
-    final JwsHeader jwsHeader = JwsHeader.with(JWS_ALGORITHM::getName).type(TYPE_HEADER).build();
+    final JwsHeader jwsHeader = JwsHeader
+      .with(JWS_ALGORITHM::getName)
+      .type(TYPE_HEADER)
+      .build();
 
     return jwtEncoder
-        .encode(JwtEncoderParameters.from(jwsHeader, claimsSetBuilder.build()))
-        .getTokenValue();
+      .encode(JwtEncoderParameters.from(jwsHeader, claimsSetBuilder.build()))
+      .getTokenValue();
   }
 }

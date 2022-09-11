@@ -18,7 +18,11 @@ import javax.persistence.Table;
 @Table(name = "games")
 public class Game extends BaseEntity {
 
-  @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(
+    mappedBy = "game",
+    cascade = CascadeType.ALL,
+    fetch = FetchType.LAZY
+  )
   @JsonManagedReference
   private final Set<Player> players;
 
@@ -27,7 +31,7 @@ public class Game extends BaseEntity {
   }
 
   public Set<Player> getPlayers() {
-    return players;
+    return Set.copyOf(players);
   }
 
   public void addPlayer(Player player) {
@@ -35,23 +39,30 @@ public class Game extends BaseEntity {
     player.setGame(this);
   }
 
-  public void removePlayer(Player player) {
-    players.remove(player);
-    player.setGame(null);
-  }
-
   @JsonIgnore
   public Player getHost() {
-    return getPlayerByType(Player::isHost, () -> new HostPlayerMissingException(getId()));
+    return getPlayerByType(
+      Player::isHost,
+      () -> new HostPlayerMissingException(getId())
+    );
   }
 
   private <X extends Throwable> Player getPlayerByType(
-      Predicate<? super Player> playerFilter, Supplier<? extends X> exceptionSupplier) throws X {
-    return players.stream().filter(playerFilter).findFirst().orElseThrow(exceptionSupplier);
+    Predicate<? super Player> playerFilter,
+    Supplier<? extends X> exceptionSupplier
+  ) throws X {
+    return players
+      .stream()
+      .filter(playerFilter)
+      .findFirst()
+      .orElseThrow(exceptionSupplier);
   }
 
   @JsonIgnore
   public Player getGuest() {
-    return getPlayerByType(Player::isGuest, () -> new GuestPlayerMissingException(getId()));
+    return getPlayerByType(
+      Player::isGuest,
+      () -> new GuestPlayerMissingException(getId())
+    );
   }
 }

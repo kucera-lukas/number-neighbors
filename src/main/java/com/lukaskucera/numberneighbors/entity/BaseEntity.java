@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @MappedSuperclass
+@SuppressWarnings("NullAway.Init")
 public class BaseEntity implements Serializable {
 
   @Id
@@ -22,22 +23,26 @@ public class BaseEntity implements Serializable {
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false, updatable = false)
-  private Date created;
+  private Instant created;
 
   @UpdateTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  private Date modified;
+  private Instant modified;
 
   public Long getId() {
     return id;
   }
 
-  public Date getCreated() {
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Instant getCreated() {
     return created;
   }
 
-  public Date getModified() {
+  public Instant getModified() {
     return modified;
   }
 }

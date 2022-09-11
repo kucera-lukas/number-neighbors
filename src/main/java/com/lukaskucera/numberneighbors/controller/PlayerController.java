@@ -7,7 +7,6 @@ import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -22,12 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PlayerController {
+
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
   private final JwtService jwtService;
 
   public PlayerController(
-      GameServiceImpl gameService, PlayerServiceImpl playerService, JwtService jwtService) {
+    GameServiceImpl gameService,
+    PlayerServiceImpl playerService,
+    JwtService jwtService
+  ) {
     this.gameService = gameService;
     this.playerService = playerService;
     this.jwtService = jwtService;
@@ -35,31 +38,46 @@ public class PlayerController {
 
   @GetMapping(value = "/players")
   public ResponseEntity<Set<Player>> players(
-      @RequestParam(name = "game") Long gameId, @NotNull JwtAuthenticationToken jwtToken) {
+    @RequestParam(name = "game") Long gameId,
+    JwtAuthenticationToken jwtToken
+  ) {
     gameService.checkGameAccess(gameId, jwtToken);
     return ResponseEntity.ok(playerService.getPlayersByGameId(gameId));
   }
 
   @PostMapping(value = "/players")
   public ResponseEntity<NewPlayerResponse> newPlayer(
-      @RequestParam(name = "game") Long gameId,
-      @RequestBody @NotNull NewPlayerRequest newPlayerRequest) {
-    final Player player = playerService.newPlayer(gameId, newPlayerRequest.name());
-    final String token = jwtService.generatePlayerToken(player.getName(), player.getId(), gameId);
+    @RequestParam(name = "game") Long gameId,
+    @RequestBody NewPlayerRequest newPlayerRequest
+  ) {
+    final Player player = playerService.newPlayer(
+      gameId,
+      newPlayerRequest.name()
+    );
+    final String token = jwtService.generatePlayerToken(
+      player.getName(),
+      player.getId(),
+      gameId
+    );
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
 
   @GetMapping(value = "/players/{id}")
   public ResponseEntity<Player> player(
-      @PathVariable Long id, @NotNull JwtAuthenticationToken jwtToken) {
+    @PathVariable Long id,
+    JwtAuthenticationToken jwtToken
+  ) {
     playerService.checkPlayerAccess(id, jwtToken);
     return ResponseEntity.ok(playerService.getPlayerById(id));
   }
 
   @DeleteMapping(value = "/players/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deletePlayer(@PathVariable Long id, @NotNull JwtAuthenticationToken jwtToken) {
+  public void deletePlayer(
+    @PathVariable Long id,
+    JwtAuthenticationToken jwtToken
+  ) {
     playerService.checkPlayerAccess(id, jwtToken);
     playerService.deletePlayerById(id);
   }

@@ -4,8 +4,6 @@ import com.lukaskucera.numberneighbors.entity.Game;
 import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
-import com.lukaskucera.numberneighbors.repository.PlayerRepository;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -13,20 +11,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameServiceImpl implements GameService {
+
   public static final int GAME_PLAYER_LIMIT = 2;
 
   private final GameRepository gameRepository;
 
-  private final PlayerRepository playerRepository;
-
-  public GameServiceImpl(GameRepository gameRepository, PlayerRepository playerRepository) {
+  public GameServiceImpl(GameRepository gameRepository) {
     this.gameRepository = gameRepository;
-    this.playerRepository = playerRepository;
   }
 
   @Override
   public Game getGameById(Long id) {
-    return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
+    return gameRepository
+      .findById(id)
+      .orElseThrow(() -> new GameNotFoundException(id));
   }
 
   @Override
@@ -50,9 +48,13 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public void checkGameAccess(Long gameId, @NotNull JwtAuthenticationToken jwtToken) {
-    final @NotNull Long claimedGameId = (Long) jwtToken.getToken().getClaims().get("gameId");
-    if (!claimedGameId.equals(gameId)) {
+  public void checkGameAccess(Long gameId, JwtAuthenticationToken jwtToken) {
+    final Long claimedGameId = (Long) jwtToken
+      .getToken()
+      .getClaims()
+      .get("gameId");
+
+    if (claimedGameId == null || !claimedGameId.equals(gameId)) {
       throw new AccessDeniedException("Access denied to game " + gameId);
     }
   }

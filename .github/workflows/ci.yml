@@ -26,7 +26,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn clean install spotbugs:spotbugs --batch-mode --update-snapshots --show-version -DskipTests=true -Dmaven.javadoc.skip=true
+          mvn clean install spotbugs:check --batch-mode --update-snapshots --show-version -DskipTests=true
 
       - name: Push SpotBugs report
         uses: jwgmeligmeyling/spotbugs-github-action@master

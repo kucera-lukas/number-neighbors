@@ -7,6 +7,8 @@ import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -21,6 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PlayerController {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    PlayerController.class
+  );
 
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
@@ -41,6 +47,12 @@ public class PlayerController {
     @RequestParam(name = "game") Long gameId,
     JwtAuthenticationToken jwtToken
   ) {
+    logger.info(
+      "Players info of the game {} requested by player \"{}\"",
+      gameId,
+      jwtToken.getName()
+    );
+
     gameService.checkGameAccess(gameId, jwtToken);
     return ResponseEntity.ok(playerService.getPlayersByGameId(gameId));
   }
@@ -54,8 +66,17 @@ public class PlayerController {
       gameId,
       newPlayerRequest.name()
     );
+
+    logger.info("Guest player {} created in game {}", player.getId(), gameId);
+
     final String token = jwtService.generatePlayerToken(
       player.getName(),
+      player.getId(),
+      gameId
+    );
+
+    logger.info(
+      "Generated JWT token for guest player {} in game {}",
       player.getId(),
       gameId
     );
@@ -68,6 +89,12 @@ public class PlayerController {
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
+    logger.info(
+      "Player {} info requested by player \"{}\"",
+      id,
+      jwtToken.getName()
+    );
+
     playerService.checkPlayerAccess(id, jwtToken);
     return ResponseEntity.ok(playerService.getPlayerById(id));
   }
@@ -80,5 +107,7 @@ public class PlayerController {
   ) {
     playerService.checkPlayerAccess(id, jwtToken);
     playerService.deletePlayerById(id);
+
+    logger.info("Player {} deleted by player \"{}\"", id, jwtToken.getName());
   }
 }

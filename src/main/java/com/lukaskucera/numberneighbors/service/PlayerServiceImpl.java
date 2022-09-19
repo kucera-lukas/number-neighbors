@@ -12,6 +12,8 @@ import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Set;
 import javax.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -19,6 +21,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    PlayerServiceImpl.class
+  );
 
   private final GameRepository gameRepository;
 
@@ -56,6 +62,11 @@ public class PlayerServiceImpl implements PlayerService {
     final Set<Player> players = game.getPlayers();
 
     if (players.size() >= GAME_PLAYER_LIMIT) {
+      logger.info(
+        "Can't add player \"{}\" to the game {} as it's already populated",
+        name,
+        gameId
+      );
       throw new GamePopulatedException(gameId);
     }
 
@@ -63,6 +74,11 @@ public class PlayerServiceImpl implements PlayerService {
       !players.isEmpty() &&
       players.stream().anyMatch(p -> p.getName().equals(name))
     ) {
+      logger.info(
+        "Player named \"{}\" already exists in the game {}",
+        name,
+        gameId
+      );
       throw new PlayerNameAlreadyExistsException(gameId, name);
     }
 
@@ -94,6 +110,11 @@ public class PlayerServiceImpl implements PlayerService {
       .get("playerId");
 
     if (claimedPlayerId == null || !claimedPlayerId.equals(playerId)) {
+      logger.info(
+        "Authenticated to access the player {} not {}",
+        claimedPlayerId,
+        playerId
+      );
       throw new AccessDeniedException("Access denied to player " + playerId);
     }
   }

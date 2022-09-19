@@ -7,6 +7,8 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -20,6 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GameController {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    GameController.class
+  );
 
   private final GameService gameService;
 
@@ -36,8 +42,21 @@ public class GameController {
   ) {
     final Game game = gameService.newGame(newGameRequest.hostName());
     final Player hostPlayer = game.getHost();
+
+    logger.info(
+      "Game {} created for host player {}",
+      game.getId(),
+      hostPlayer.getId()
+    );
+
     final String token = jwtService.generatePlayerToken(
       hostPlayer.getName(),
+      hostPlayer.getId(),
+      game.getId()
+    );
+
+    logger.info(
+      "Generated JWT token for host player {} in game {}",
       hostPlayer.getId(),
       game.getId()
     );
@@ -50,6 +69,12 @@ public class GameController {
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
+    logger.info(
+      "Game {} info requested by player \"{}\"",
+      id,
+      jwtToken.getName()
+    );
+
     gameService.checkGameAccess(id, jwtToken);
     return ResponseEntity.ok(gameService.getGameById(id));
   }
@@ -62,5 +87,7 @@ public class GameController {
   ) {
     gameService.checkGameAccess(id, jwtToken);
     gameService.deleteGameById(id);
+
+    logger.info("Game {} deleted by player \"{}\"", id, jwtToken.getName());
   }
 }

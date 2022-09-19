@@ -41,14 +41,14 @@ public class GameController {
     @RequestBody NewGameRequest newGameRequest
   ) {
     final Game game = gameService.newGame(newGameRequest.hostName());
+    final Player hostPlayer = game.getHost();
 
     logger.info(
-      "Game {} created for host player \"{}\"",
+      "Game {} created for host player {}",
       game.getId(),
-      game.getHost().getName()
+      hostPlayer.getId()
     );
 
-    final Player hostPlayer = game.getHost();
     final String token = jwtService.generatePlayerToken(
       hostPlayer.getName(),
       hostPlayer.getId(),

@@ -5,9 +5,11 @@ spring:
         enabled: true
       secretmanager:
         enabled: true
+      sql:
+        instance-connection-name: ${sm://prod-instance-connection-name}
+        database-name: ${sm://prod-database-name}
 
   datasource:
-    url: jdbc:postgresql://${sm://prod-db-hostname}:${sm://prod-db-port}/${sm://prod-db-name}
     username: ${sm://prod-db-username}
     password: ${sm://prod-db-password}
 

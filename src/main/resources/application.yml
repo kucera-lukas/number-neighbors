@@ -2,10 +2,9 @@ server:
   port: ${PORT:8080}
 
 spring:
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:numberneighbors}?sslmode=disable
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:postgres}
+  sql:
+    init:
+      mode: always
 
   jpa:
     hibernate:

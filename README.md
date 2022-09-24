@@ -26,6 +26,13 @@ bash scripts/gen-keys.bash
 mvn clean package -DskipTests=true
 ```
 
+6. Fill environment variables into .env file
+
+```sh
+# in the src/main/resources directory
+cp .env.example .env
+```
+
 ### Docker
 
 Installation using Docker is recommended if you don't want to install all
@@ -33,14 +40,16 @@ dependencies locally on your machine.
 
 ## Development
 
-### Server
+### Local
 
 ```sh
-# local
 mvn spring-boot:run -Dspring.profiles.active=dev
+```
 
-# docker
-docker-compose up -d
+### Docker
+
+```sh
+docker-compose up
 ```
 
 ## Contributing

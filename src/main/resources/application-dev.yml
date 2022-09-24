@@ -1,3 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${env.POSTGRES_HOSTNAME:localhost}:${env.POSTGRES_PORT:5432}/${env.POSTGRES_DB:numberneighbors}?sslmode=disable
+    username: ${env.POSTGRES_USER:postgres}
+    password: ${env.POSTGRES_PASSWORD:postgres}
+
 jwt:
   private:
     key: rsakey.pem

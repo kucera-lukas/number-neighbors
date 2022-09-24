@@ -1,8 +1,21 @@
 spring:
+  cloud:
+    gcp:
+      core:
+        enabled: false
+      sql:
+        enabled: false
+      secretmanager:
+        enabled: false
+
   datasource:
-    url: jdbc:postgresql://${env.POSTGRES_HOSTNAME:localhost}:${env.POSTGRES_PORT:5432}/${env.POSTGRES_DB:numberneighbors}?sslmode=disable
-    username: ${env.POSTGRES_USER:postgres}
-    password: ${env.POSTGRES_PASSWORD:postgres}
+    url: jdbc:postgresql://${env.POSTGRES_HOSTNAME}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}?sslmode=disable
+    username: ${env.POSTGRES_USER}
+    password: ${env.POSTGRES_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 jwt:
   private:

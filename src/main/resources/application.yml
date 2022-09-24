@@ -7,8 +7,6 @@ spring:
       mode: always
 
   jpa:
-    hibernate:
-      ddl-auto: update
     properties:
       hibernate:
         default_schema: public

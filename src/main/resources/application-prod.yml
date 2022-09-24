@@ -10,8 +10,8 @@ spring:
         database-name: ${sm://prod-database-name}
 
   datasource:
-    username: ${sm://prod-db-username}
-    password: ${sm://prod-db-password}
+    username: ${sm://prod-database-username}
+    password: ${sm://prod-database-password}
 
   jpa:
     hibernate:

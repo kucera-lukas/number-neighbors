@@ -7,10 +7,15 @@ number-neighbors is using Java and Postgres.
 
 ## Installation
 
+1. Clone the repository
+
 ```sh
 git clone git@github.com:kucera-lukas/number-neighbors.git
+```
 
-# generate RSA key pair
+2. Generate RSA key pair
+
+```sh
 bash scripts/gen-keys.bash
 ```
 

@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://${env.POSTGRES_HOSTNAME}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}?sslmode=disable
-    username: ${env.POSTGRES_USER}
-    password: ${env.POSTGRES_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_HOSTNAME:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:numberneighbors}?sslmode=disable
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
 
   jpa:
     hibernate:

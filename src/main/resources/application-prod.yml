@@ -5,15 +5,18 @@ spring:
         enabled: true
       secretmanager:
         enabled: true
+      sql:
+        instance-connection-name: ${sm://prod-instance-connection-name}
+        database-name: ${sm://prod-database-name}
+        enabled: true
 
   datasource:
-    url: jdbc:postgresql://${sm://prod-db-hostname}:${sm://prod-db-port}/${sm://prod-db-name}
-    username: ${sm://prod-db-username}
-    password: ${sm://prod-db-password}
+    username: ${sm://prod-database-username}
+    password: ${sm://prod-database-password}
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
 jwt:
   private:

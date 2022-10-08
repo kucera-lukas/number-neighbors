@@ -7,7 +7,8 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
-import java.time.Instant;
+import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,16 +35,20 @@ public class GameController {
 
   private final GameService gameService;
 
+  private final PlayerServiceImpl playerService;
+
   private final JwtService jwtService;
 
   private final SimpMessagingTemplate simpMessagingTemplate;
 
   public GameController(
     GameServiceImpl gameService,
+    PlayerServiceImpl playerService,
     JwtService jwtService,
     SimpMessagingTemplate simpMessagingTemplate
   ) {
     this.gameService = gameService;
+    this.playerService = playerService;
     this.jwtService = jwtService;
     this.simpMessagingTemplate = simpMessagingTemplate;
   }
@@ -105,26 +109,28 @@ public class GameController {
   }
 
   @MessageMapping(value = "/games/{id}/turn")
-  @SendTo(value = "/queue/turns")
-  public String processTurn(
+  @Transactional
+  public void processTurn(
     @DestinationVariable Long id,
     @Payload String payload,
     JwtAuthenticationToken jwtToken
   ) {
-    logger.info("processTurn, game id: {}", id);
+    logger.info("Processing turn on game id: {}", id);
 
     gameService.checkGameAccess(id, jwtToken);
 
-    final Game game = gameService.getGameById(id);
+    final Player player = playerService.getPlayerById(
+      jwtToken.getToken().getClaim("playerId")
+    );
+    final Player otherPlayer = player.isHost()
+      ? player.getGame().getGuest()
+      : player;
 
-    return Instant.now() + ": hello process" + game.getId() + "got: " + payload;
-  }
-
-  @MessageMapping(value = "/games/turn")
-  @SendTo(value = "/queue/turns")
-  public String testTurn(@Payload String payload) {
-    logger.info("testTurn");
-
-    return Instant.now() + ": hello test, got: " + payload;
+    // custom handshake for player id as username (conflict on different games)
+    simpMessagingTemplate.convertAndSendToUser(
+      player.getName(),
+      "/queue/turns",
+      "payload: me = " + player + " from " + player.getName()
+    );
   }
 }

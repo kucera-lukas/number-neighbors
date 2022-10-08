@@ -15,7 +15,7 @@ const Sock = (): JSX.Element => {
   stompClient.configure({
     webSocketFactory: () => new SockJS("http://localhost:8080/play"),
     onConnect: (receipt) => {
-      stompClient.subscribe("/queue/turns", (message) => {
+      stompClient.subscribe("/user/queue/turns", (message) => {
         console.log("subscription: " + message.body);
       });
     },

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
+import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -40,14 +41,14 @@ public class Game extends BaseEntity {
   }
 
   @JsonIgnore
-  public Player getHost() {
-    return getPlayerByType(
-      Player::isHost,
-      () -> new HostPlayerMissingException(getId())
+  public Player getPlayerByName(String name) {
+    return getPlayer(
+      player -> player.getName().equals(name),
+      () -> new PlayerNotFoundException(name)
     );
   }
 
-  private <X extends Throwable> Player getPlayerByType(
+  private <X extends Throwable> Player getPlayer(
     Predicate<? super Player> playerFilter,
     Supplier<? extends X> exceptionSupplier
   ) throws X {
@@ -59,8 +60,16 @@ public class Game extends BaseEntity {
   }
 
   @JsonIgnore
+  public Player getHost() {
+    return getPlayer(
+      Player::isHost,
+      () -> new HostPlayerMissingException(getId())
+    );
+  }
+
+  @JsonIgnore
   public Player getGuest() {
-    return getPlayerByType(
+    return getPlayer(
       Player::isGuest,
       () -> new GuestPlayerMissingException(getId())
     );

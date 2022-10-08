@@ -7,10 +7,16 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
+import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +37,16 @@ public class GameController {
 
   private final JwtService jwtService;
 
-  public GameController(GameServiceImpl gameService, JwtService jwtService) {
+  private final SimpMessagingTemplate simpMessagingTemplate;
+
+  public GameController(
+    GameServiceImpl gameService,
+    JwtService jwtService,
+    SimpMessagingTemplate simpMessagingTemplate
+  ) {
     this.gameService = gameService;
     this.jwtService = jwtService;
+    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @PostMapping(value = "/games")
@@ -89,5 +102,29 @@ public class GameController {
     gameService.deleteGameById(id);
 
     logger.info("Game {} deleted by player \"{}\"", id, jwtToken.getName());
+  }
+
+  @MessageMapping(value = "/games/{id}/turn")
+  @SendTo(value = "/queue/turns")
+  public String processTurn(
+    @DestinationVariable Long id,
+    @Payload String payload,
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info("processTurn, game id: {}", id);
+
+    gameService.checkGameAccess(id, jwtToken);
+
+    final Game game = gameService.getGameById(id);
+
+    return Instant.now() + ": hello process" + game.getId() + "got: " + payload;
+  }
+
+  @MessageMapping(value = "/games/turn")
+  @SendTo(value = "/queue/turns")
+  public String testTurn(@Payload String payload) {
+    logger.info("testTurn");
+
+    return Instant.now() + ": hello test, got: " + payload;
   }
 }

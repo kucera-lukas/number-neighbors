@@ -1,5 +1,6 @@
 # number-neighbors
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5756862d-7c71-4bcb-98f8-cd0a563eda92/deploy-status)](https://app.netlify.com/sites/peaceful-buttercream-bfccd4/deploys)
 [![Continuous Integration](https://github.com/kucera-lukas/number-neighbors/actions/workflows/ci.yml/badge.svg)](https://github.com/kucera-lukas/number-neighbors/actions/workflows/ci.yml)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/stegoer/server/main.svg)](https://results.pre-commit.ci/latest/github/stegoer/server/main)
 

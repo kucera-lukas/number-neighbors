@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  @Value("${client.uri}")
+  private String clientUri;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -56,9 +60,10 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.addAllowedOrigin(CorsConfiguration.ALL);
+    configuration.addAllowedOrigin(clientUri);
     configuration.addAllowedMethod(CorsConfiguration.ALL);
     configuration.addAllowedHeader(CorsConfiguration.ALL);
+    configuration.setAllowCredentials(true);
 
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 

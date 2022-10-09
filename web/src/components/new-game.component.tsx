@@ -31,7 +31,6 @@ const NewGame = (): JSX.Element => {
         method: "POST",
         body: JSON.stringify({ hostName: name }),
         headers: { "Content-Type": "application/json" },
-        credentials: "omit",
       })
         .then((res) => {
           if (!res.ok) {

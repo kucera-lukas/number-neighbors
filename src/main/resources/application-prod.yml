@@ -23,3 +23,6 @@ jwt:
     key: ${sm://prod-private-key}
   public:
     key: ${sm://prod-public-key}
+
+client:
+  uri: ${sm://prod-client-uri}

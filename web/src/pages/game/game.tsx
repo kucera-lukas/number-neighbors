@@ -24,7 +24,6 @@ const Game = (): JSX.Element => {
         Authorization: token,
         "Content-Type": "application/json",
       },
-      credentials: "omit",
     })
       .then((res) => {
         if (!res.ok) {

@@ -33,7 +33,6 @@ const Invite = (): JSX.Element => {
         method: "POST",
         body: JSON.stringify({ name: name }),
         headers: { "Content-Type": "application/json" },
-        credentials: "omit",
       })
         .then((res) => {
           if (!res.ok) {

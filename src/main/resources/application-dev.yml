@@ -22,3 +22,6 @@ jwt:
     key: rsakey.pem
   public:
     key: rsapubkey.pem
+
+client:
+  uri: ${env.CLIENT_URI}

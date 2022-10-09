@@ -19,7 +19,13 @@
   },
   "rules": {
     "no-undef": "off",
-    "quotes": ["error", "double"],
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true
+      }
+    ],
     "eslint-comments/no-unused-disable": "error",
     "import/order": [
       "error",

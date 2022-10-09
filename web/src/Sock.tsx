@@ -4,7 +4,7 @@ import SockJS from "sockjs-client/dist/sockjs";
 
 const Sock = (): JSX.Element => {
   const auth =
-    "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJnYW1lSWQiOjE1LCJzdWIiOiI0NjU0NjUiLCJhdWQiOiJudW1iZXJuZWlnaGJvcnMiLCJuYmYiOjE2NjUyMzc1ODMsImlzcyI6Imh0dHBzOlwvXC9udW1iZXJuZWlnaGJvcnMubHVrYXNrdWNlcmEuY29tIiwiaWF0IjoxNjY1MjM3NTgzLCJhdXRob3JpdGllcyI6InBsYXllciIsInBsYXllcklkIjoxOH0.Ro2r93zXvRLbZxbyjD8wyv3ATvpPfd2piQVFcXJwYK9LDA9uz5ANY0d4bCBzrHAG8xaxg-Hie6iVcbnvHxJjzj60jCqVq9WrFU8UfaKh9Yz0Vld8yoi2wHY0xEGK-zacnlgGgqJvFMysKpe_OSDFonOMUoVIQv7-sdTJmYqPStmPd7EIyoajunpeqPgaVVnxxpA0HJrwpT23aTnHhWUl5Q9mhzEUntD5CjoXM9Rp6Nv0o8zQZ5ZlYIMdmfYUb6F_CV-89R-IxyIVSDD5zumEO3yzwbMaEIBW4owA-gImS5EwQ-sEY6KDw4P0QwoHpg_Rm0KmyQYCTmGkZYQk8qIn5g";
+    "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJnYW1lSWQiOjE2LCJzdWIiOiIyMCIsImF1ZCI6Im51bWJlcm5laWdoYm9ycyIsIm5iZiI6MTY2NTMwMjA0MywiaXNzIjoiaHR0cHM6XC9cL251bWJlcm5laWdoYm9ycy5sdWthc2t1Y2VyYS5jb20iLCJuYW1lIjoiNDY1NDY1IiwiaWF0IjoxNjY1MzAyMDQzLCJhdXRob3JpdGllcyI6InBsYXllciIsInBsYXllcklkIjoyMH0.gNURp98pcKSET74Xa-Pb8ZdqPTSLthP3um1KC0FSUo3Ye0ld_vkOxkaUKa-smXsWvs-NDqV-Ewf_4XSq8-4fzQeALEgpY3xwF7frzr6z15Rng-xbXJgq8UBfYE9KFbmUPCPERnERlX_6mN0jjhzYoZYszIGylRnUmH9TKE-49rhGouUF8I85s3WGDzFoRsNBkDnkR9Uu53cUvp6O_dkjs5e7jfSRcFC51ji6UhAs2O-jkdXH8g-Zl2Ejnjm4i72VoyClG5pLIHFsqNqfVr1P-O50elVw272ONVlOTUxBI7hbhGD9qHMHhR_HR4v2_-0nMeUdfoXxDqvluD3I2fNpQw";
 
   const stompClient = new Client({
     connectHeaders: {
@@ -30,7 +30,7 @@ const Sock = (): JSX.Element => {
         children="HERE"
         onClick={() =>
           stompClient.publish({
-            destination: "/app/games/15/turn",
+            destination: "/app/games/16/turn",
             body: "test",
             headers: {
               Authorization: auth,

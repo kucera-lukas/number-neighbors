@@ -66,11 +66,7 @@ public class GameController {
       hostPlayer.getId()
     );
 
-    final String token = jwtService.generatePlayerToken(
-      hostPlayer.getName(),
-      hostPlayer.getId(),
-      game.getId()
-    );
+    final String token = jwtService.generatePlayerToken(hostPlayer);
 
     logger.info(
       "Generated JWT token for host player {} in game {}",
@@ -126,11 +122,10 @@ public class GameController {
       ? player.getGame().getGuest()
       : player;
 
-    // custom handshake for player id as username (conflict on different games)
     simpMessagingTemplate.convertAndSendToUser(
-      player.getName(),
+      player.getSub(),
       "/queue/turns",
-      "payload: me = " + player + " from " + player.getName()
+      "payload = " + payload + " from " + player.getName()
     );
   }
 }

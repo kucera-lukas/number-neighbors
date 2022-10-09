@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.config;
 
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -34,6 +35,10 @@ public class JwtConfig {
   public static final String AUDIENCE = "numberneighbors";
   public static final String AUTHORITIES_CLAIM_NAME = "authorities";
   public static final String AUTHORITY_PREFIX = "ROLE_";
+  public static final String PLAYER_AUTHORITY = "player";
+
+  public static final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.RS256;
+  public static final String TYPE_HEADER = "JWT";
 
   @Value("${jwt.public.key}")
   private RSAPublicKey publicKey;
@@ -60,7 +65,7 @@ public class JwtConfig {
   public OAuth2TokenValidator<Jwt> tokenValidator() {
     final List<OAuth2TokenValidator<Jwt>> validators = List.of(
       new JwtTimestampValidator(),
-      new JwtIssuerValidator(JwtConfig.ISSUER),
+      new JwtIssuerValidator(ISSUER),
       audienceValidator(),
       new JwtClaimValidator<>("playerId", Long.class::isInstance),
       new JwtClaimValidator<>("gameId", Long.class::isInstance)
@@ -71,17 +76,15 @@ public class JwtConfig {
   public OAuth2TokenValidator<Jwt> audienceValidator() {
     return new JwtClaimValidator<List<String>>(
       OAuth2TokenIntrospectionClaimNames.AUD,
-      aud -> aud.contains(JwtConfig.AUDIENCE)
+      aud -> aud.contains(AUDIENCE)
     );
   }
 
   @Bean
   public JwtAuthenticationConverter jwtAuthenticationConverter() {
     final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-    grantedAuthoritiesConverter.setAuthoritiesClaimName(
-      JwtConfig.AUTHORITIES_CLAIM_NAME
-    );
-    grantedAuthoritiesConverter.setAuthorityPrefix(JwtConfig.AUTHORITY_PREFIX);
+    grantedAuthoritiesConverter.setAuthoritiesClaimName(AUTHORITIES_CLAIM_NAME);
+    grantedAuthoritiesConverter.setAuthorityPrefix(AUTHORITY_PREFIX);
 
     final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(

@@ -53,14 +53,8 @@ public class WebSocketAuthenticationConfig
     registration.interceptors(
       new ChannelInterceptor() {
         @Override
-        public Message<?> preSend(
-          @Nullable Message<?> message,
-          @Nullable MessageChannel channel
-        ) {
-          if (message == null) {
-            return null;
-          }
-
+        @Nullable
+        public Message<?> preSend(Message<?> message, MessageChannel channel) {
           final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(
             message,
             StompHeaderAccessor.class

@@ -7,10 +7,16 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
+import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +35,22 @@ public class GameController {
 
   private final GameService gameService;
 
+  private final PlayerServiceImpl playerService;
+
   private final JwtService jwtService;
 
-  public GameController(GameServiceImpl gameService, JwtService jwtService) {
+  private final SimpMessagingTemplate simpMessagingTemplate;
+
+  public GameController(
+    GameServiceImpl gameService,
+    PlayerServiceImpl playerService,
+    JwtService jwtService,
+    SimpMessagingTemplate simpMessagingTemplate
+  ) {
     this.gameService = gameService;
+    this.playerService = playerService;
     this.jwtService = jwtService;
+    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @PostMapping(value = "/games")
@@ -49,11 +66,7 @@ public class GameController {
       hostPlayer.getId()
     );
 
-    final String token = jwtService.generatePlayerToken(
-      hostPlayer.getName(),
-      hostPlayer.getId(),
-      game.getId()
-    );
+    final String token = jwtService.generatePlayerToken(hostPlayer);
 
     logger.info(
       "Generated JWT token for host player {} in game {}",
@@ -89,5 +102,35 @@ public class GameController {
     gameService.deleteGameById(id);
 
     logger.info("Game {} deleted by player \"{}\"", id, jwtToken.getName());
+  }
+
+  @MessageMapping(value = "/games/{id}/turn")
+  @Transactional
+  public void processTurn(
+    @DestinationVariable Long id,
+    @Payload String payload,
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info("Processing turn on game id: {}", id);
+
+    gameService.checkGameAccess(id, jwtToken);
+
+    final Player player = playerService.getPlayerById(
+      jwtToken.getToken().getClaim("playerId")
+    );
+    final Player otherPlayer = player.isHost()
+      ? player.getGame().getGuest()
+      : player;
+
+    simpMessagingTemplate.convertAndSendToUser(
+      player.getSub(),
+      "/queue/turns",
+      "payload = " +
+      payload +
+      " from " +
+      player.getName() +
+      " other player is " +
+      otherPlayer
+    );
   }
 }

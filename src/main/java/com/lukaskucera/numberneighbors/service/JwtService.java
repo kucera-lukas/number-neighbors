@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.config.JwtConfig;
-import com.nimbusds.jose.JWSAlgorithm;
+import com.lukaskucera.numberneighbors.entity.Player;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
@@ -20,18 +20,25 @@ public final class JwtService {
     JwtService.class
   );
 
-  private static final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.RS256;
-  private static final String TYPE_HEADER = "JWT";
   private final JwtEncoder jwtEncoder;
 
   public JwtService(JwtEncoder jwtEncoder) {
     this.jwtEncoder = jwtEncoder;
   }
 
-  public String generatePlayerToken(String name, Long playerId, Long gameId) {
+  public String generatePlayerToken(Player player) {
     return generate(
-      name,
-      Map.of("playerId", playerId, "gameId", gameId, "authorities", "player")
+      player.getSub(),
+      Map.of(
+        "playerId",
+        player.getId(),
+        "gameId",
+        player.getGame().getId(),
+        "name",
+        player.getName(),
+        JwtConfig.AUTHORITIES_CLAIM_NAME,
+        JwtConfig.PLAYER_AUTHORITY
+      )
     );
   }
 
@@ -54,8 +61,8 @@ public final class JwtService {
     });
 
     final JwsHeader jwsHeader = JwsHeader
-      .with(JWS_ALGORITHM::getName)
-      .type(TYPE_HEADER)
+      .with(JwtConfig.JWS_ALGORITHM::getName)
+      .type(JwtConfig.TYPE_HEADER)
       .build();
 
     return jwtEncoder

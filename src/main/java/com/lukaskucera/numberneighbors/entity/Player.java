@@ -69,6 +69,11 @@ public class Player extends BaseEntity {
   }
 
   @JsonIgnore
+  public String getSub() {
+    return getId().toString();
+  }
+
+  @JsonIgnore
   public Boolean isHost() {
     return type == PlayerType.HOST;
   }

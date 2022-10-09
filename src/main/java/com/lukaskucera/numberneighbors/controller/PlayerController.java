@@ -69,11 +69,7 @@ public class PlayerController {
 
     logger.info("Guest player {} created in game {}", player.getId(), gameId);
 
-    final String token = jwtService.generatePlayerToken(
-      player.getName(),
-      player.getId(),
-      gameId
-    );
+    final String token = jwtService.generatePlayerToken(player);
 
     logger.info(
       "Generated JWT token for guest player {} in game {}",

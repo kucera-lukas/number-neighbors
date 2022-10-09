@@ -22,7 +22,8 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .cors(AbstractHttpConfigurer::disable)
+      .cors()
+      .and()
       .csrf(AbstractHttpConfigurer::disable)
       .httpBasic(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
@@ -55,8 +56,9 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.addAllowedOriginPattern(CorsConfiguration.ALL);
+    configuration.addAllowedOrigin(CorsConfiguration.ALL);
     configuration.addAllowedMethod(CorsConfiguration.ALL);
+    configuration.addAllowedHeader(CorsConfiguration.ALL);
 
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 

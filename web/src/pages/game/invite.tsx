@@ -1,21 +1,22 @@
-import ErrorText from "../components/errors/error.text";
-import Sock from "../components/sock";
-import { SERVER_URI } from "../config/environment";
-import LocalStorageService from "../services/local-storage.service";
+import ErrorText from "../../components/errors/error.text";
+import { SERVER_URI } from "../../config/environment";
+import LocalStorageService from "../../services/local-storage.service";
 
 import { Button, Center, Stack, TextInput, Title } from "@mantine/core";
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import type Game from "../types/game.type";
+import type Player from "../../types/player.type";
 
-type NewGameResponse = {
-  game: Game;
+type NewPlayerResponse = {
+  player: Player;
   token: string;
 };
 
-const Home = (): JSX.Element => {
+const Invite = (): JSX.Element => {
   const navigate = useNavigate();
+  const params = useParams();
+  const gameId = params.gameId as string;
   const [name, setName] = useState<string>();
   const [error, setError] = useState<string>();
 
@@ -23,9 +24,9 @@ const Home = (): JSX.Element => {
     if (!name) {
       setError("Name is required");
     } else {
-      fetch(`${SERVER_URI}/games`, {
+      fetch(`${SERVER_URI}/players?game=${gameId}`, {
         method: "POST",
-        body: JSON.stringify({ hostName: name }),
+        body: JSON.stringify({ name: name }),
         headers: { "Content-Type": "application/json" },
       })
         .then((res) => {
@@ -34,13 +35,13 @@ const Home = (): JSX.Element => {
           }
           return res.json();
         })
-        .then((res: NewGameResponse) => {
+        .then((res: NewPlayerResponse) => {
           LocalStorageService.set("token", res.token);
-          navigate(`/game/${res.game.id}`);
+          navigate(`/game/${gameId}`);
         })
         .catch((error: Error) => setError(error.message));
     }
-  }, [name, navigate]);
+  }, [gameId, name, navigate]);
 
   return (
     <Center>
@@ -53,12 +54,11 @@ const Home = (): JSX.Element => {
           value={name}
           onChange={(event) => setName(event.currentTarget.value)}
         />
-        <Button onClick={onClick}>New game</Button>
+        <Button onClick={onClick}>Join game {gameId}</Button>
         {error && <ErrorText error={error} />}
-        <Sock />
       </Stack>
     </Center>
   );
 };
 
-export default Home;
+export default Invite;

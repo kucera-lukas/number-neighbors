@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -25,10 +23,6 @@ import org.springframework.util.StringUtils;
  */
 @Service
 public class StompHeaderAccessorBearerTokenResolver {
-
-  private static final Logger logger = LoggerFactory.getLogger(
-    StompHeaderAccessorBearerTokenResolver.class
-  );
 
   private static final Pattern authorizationPattern = Pattern.compile(
     "^Bearer (?<token>[a-zA-Z0-9-._~+/]+=*)$",

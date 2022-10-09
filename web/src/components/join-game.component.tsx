@@ -10,6 +10,9 @@ const JoinGame = (): JSX.Element => {
   const [error, setError] = useState<string>();
 
   const onJoin = useCallback(() => {
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    setError(undefined);
+
     if (gameID === undefined) {
       setError("Game identifier is required");
     } else if (gameID < 0) {

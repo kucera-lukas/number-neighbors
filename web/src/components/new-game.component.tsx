@@ -15,7 +15,7 @@ type NewGameResponse = {
 
 const NewGame = (): JSX.Element => {
   const navigate = useNavigate();
-  const [name, setName] = useState<string>();
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -24,11 +24,14 @@ const NewGame = (): JSX.Element => {
       setError("Player name is required");
     } else {
       setLoading(true);
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setError(undefined);
 
       fetch(`${SERVER_URI}/games`, {
         method: "POST",
         body: JSON.stringify({ hostName: name }),
         headers: { "Content-Type": "application/json" },
+        credentials: "omit",
       })
         .then((res) => {
           if (!res.ok) {
@@ -37,7 +40,7 @@ const NewGame = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewGameResponse) => {
-          LocalStorageService.set("token", res.token);
+          LocalStorageService.set("token", `Bearer ${res.token}`);
           navigate(`/game/${res.game.id}`);
         })
         .catch((error: Error) => {

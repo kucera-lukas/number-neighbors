@@ -17,7 +17,7 @@ const Invite = (): JSX.Element => {
   const navigate = useNavigate();
   const params = useParams();
   const gameId = params.gameId as string;
-  const [name, setName] = useState<string>();
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -26,11 +26,14 @@ const Invite = (): JSX.Element => {
       setError("Name is required");
     } else {
       setLoading(true);
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setError(undefined);
 
       fetch(`${SERVER_URI}/players?game=${gameId}`, {
         method: "POST",
         body: JSON.stringify({ name: name }),
         headers: { "Content-Type": "application/json" },
+        credentials: "omit",
       })
         .then((res) => {
           if (!res.ok) {
@@ -39,7 +42,7 @@ const Invite = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewPlayerResponse) => {
-          LocalStorageService.set("token", res.token);
+          LocalStorageService.set("token", `Bearer ${res.token}`);
           navigate(`/game/${gameId}`);
         })
         .catch((error: Error) => {

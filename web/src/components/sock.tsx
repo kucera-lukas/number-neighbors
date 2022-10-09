@@ -1,4 +1,5 @@
-import React from "react";
+import { SERVER_URI } from "../config/environment";
+
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client/dist/sockjs";
 
@@ -12,8 +13,8 @@ const Sock = (): JSX.Element => {
   });
 
   stompClient.configure({
-    webSocketFactory: () => new SockJS("http://localhost:8080/play"),
-    onConnect: (receipt) => {
+    webSocketFactory: () => new SockJS(`${SERVER_URI}/play`),
+    onConnect: (): void => {
       stompClient.subscribe("/user/queue/turns", (message) => {
         console.log("subscription: " + message.body);
       });
@@ -26,7 +27,6 @@ const Sock = (): JSX.Element => {
     <div>
       <button
         title="HERE"
-        children="HERE"
         onClick={() =>
           stompClient.publish({
             destination: "/app/games/16/turn",
@@ -36,7 +36,9 @@ const Sock = (): JSX.Element => {
             },
           })
         }
-      ></button>
+      >
+        HERE
+      </button>
     </div>
   );
 };

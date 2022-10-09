@@ -1,5 +1,6 @@
 # number-neighbors
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5756862d-7c71-4bcb-98f8-cd0a563eda92/deploy-status)](https://app.netlify.com/sites/number-neighbors/deploys)
 [![Continuous Integration](https://github.com/kucera-lukas/number-neighbors/actions/workflows/ci.yml/badge.svg)](https://github.com/kucera-lukas/number-neighbors/actions/workflows/ci.yml)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/stegoer/server/main.svg)](https://results.pre-commit.ci/latest/github/stegoer/server/main)
 
@@ -19,42 +20,61 @@ git clone git@github.com:kucera-lukas/number-neighbors.git
 bash scripts/gen-keys.bash
 ```
 
-### Local
+### Server
+
+#### Local
 
 1. Install Java https://www.java.com/en/download/
 2. Install Maven https://maven.apache.org/install.html
 3. Install PostgreSQL https://www.postgresql.org/download/
-4. Fill environment variables into .env file
-5. Install dependencies
+4. Install dependencies
 
 ```sh
 mvn clean package -DskipTests=true
 ```
 
-6. Fill environment variables into .env file
+5. Fill environment variables into .env file
 
 ```sh
 # in the src/main/resources directory
 cp .env.example .env
 ```
 
-### Docker
+#### Docker
 
 Installation using Docker is recommended if you don't want to install all
 dependencies locally on your machine.
 
+Currently no additional setup is required.
+
+### Client
+
+```shell
+# in the web directory
+npm install
+```
+
 ## Development
 
-### Local
+### Server
+
+#### Local
 
 ```sh
 mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
-### Docker
+#### Docker
 
 ```sh
 docker-compose up
+```
+
+### Client
+
+```shell
+# in the web directory
+npm run dev
 ```
 
 ## Contributing

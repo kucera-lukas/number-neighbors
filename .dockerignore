@@ -6,6 +6,8 @@ scripts/
 
 target/
 
+web/
+
 .dockerignore
 .gitignore
 .pre-commit-config.yaml

@@ -1,35 +1,33 @@
-import { SERVER_URI } from "../../config/environment";
-import PageLayout from "../../layouts/page.layout";
-import LocalStorageService from "../../services/local-storage.service";
+import { SERVER_URI } from "../config/environment";
+import AccordionLayout from "../layouts/accordion.layout";
+import LocalStorageService from "../services/local-storage.service";
 
-import { Button, Stack, TextInput } from "@mantine/core";
+import { TextInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import type Player from "../../types/player.type";
+import type Game from "../types/game.type";
 
-type NewPlayerResponse = {
-  player: Player;
+type NewGameResponse = {
+  game: Game;
   token: string;
 };
 
-const Invite = (): JSX.Element => {
+const NewGame = (): JSX.Element => {
   const navigate = useNavigate();
-  const params = useParams();
-  const gameId = params.gameId as string;
   const [name, setName] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
-  const onJoin = useCallback(() => {
+  const onCreate = useCallback(() => {
     if (!name) {
-      setError("Name is required");
+      setError("Player name is required");
     } else {
       setLoading(true);
 
-      fetch(`${SERVER_URI}/players?game=${gameId}`, {
+      fetch(`${SERVER_URI}/games`, {
         method: "POST",
-        body: JSON.stringify({ name: name }),
+        body: JSON.stringify({ hostName: name }),
         headers: { "Content-Type": "application/json" },
       })
         .then((res) => {
@@ -38,19 +36,22 @@ const Invite = (): JSX.Element => {
           }
           return res.json();
         })
-        .then((res: NewPlayerResponse) => {
+        .then((res: NewGameResponse) => {
           LocalStorageService.set("token", res.token);
-          navigate(`/game/${gameId}`);
+          navigate(`/game/${res.game.id}`);
         })
         .catch((error: Error) => {
           setError(error.message);
           setLoading(false);
         });
     }
-  }, [gameId, name, navigate]);
+  }, [name, navigate]);
 
   return (
-    <PageLayout title="invite">
+    <AccordionLayout
+      title="New Game"
+      value="new-game"
+    >
       <Stack spacing="xs">
         <TextInput
           placeholder="Your name"
@@ -62,15 +63,15 @@ const Invite = (): JSX.Element => {
           error={error}
         />
         <Button
-          onClick={onJoin}
+          onClick={onCreate}
           disabled={loading || !name}
           style={{ alignSelf: "flex-end" }}
         >
-          Join game {gameId}
+          Create
         </Button>
       </Stack>
-    </PageLayout>
+    </AccordionLayout>
   );
 };
 
-export default Invite;
+export default NewGame;

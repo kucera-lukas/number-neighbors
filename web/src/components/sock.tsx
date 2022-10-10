@@ -21,7 +21,7 @@ const Sock = (): JSX.Element => {
     },
   });
 
-  stompClient.activate();
+  //stompClient.activate();
 
   return (
     <div>

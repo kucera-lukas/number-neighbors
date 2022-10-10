@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
+  @SuppressWarnings("NullAway.Init")
   @Value("${client.uri}")
   private String clientUri;
 

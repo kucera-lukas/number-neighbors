@@ -1,12 +1,12 @@
-import { SERVER_URI } from "../config/environment";
-import AccordionLayout from "../layouts/accordion.layout";
-import LocalStorageService from "../services/local-storage.service";
+import { SERVER_URI } from "../../config/environment";
+import AccordionLayout from "../../layouts/accordion.layout";
+import LocalStorageService from "../../services/local-storage.service";
 
 import { TextInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import type Game from "../types/game.type";
+import type Game from "../../types/game.type";
 
 type NewGameResponse = {
   game: Game;

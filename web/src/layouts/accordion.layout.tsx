@@ -21,7 +21,7 @@ const AccordionLayout = ({
     >
       <Accordion.Item value={value}>
         <Accordion.Control>
-          <Text size="sm">{title}</Text>
+          <Text size="md">{title}</Text>
           {description && (
             <Text
               size="xs"

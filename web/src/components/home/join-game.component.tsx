@@ -1,4 +1,4 @@
-import AccordionLayout from "../layouts/accordion.layout";
+import AccordionLayout from "../../layouts/accordion.layout";
 
 import { NumberInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";

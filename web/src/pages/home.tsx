@@ -1,5 +1,5 @@
-import JoinGame from "../components/join-game.component";
-import NewGame from "../components/new-game.component";
+import JoinGame from "../components/home/join-game.component";
+import NewGame from "../components/home/new-game.component";
 import PageLayout from "../layouts/page.layout";
 
 import { Stack } from "@mantine/core";

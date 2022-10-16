@@ -123,14 +123,9 @@ public class GameController {
       : player;
 
     simpMessagingTemplate.convertAndSendToUser(
-      player.getSub(),
+      otherPlayer.getSub(),
       "/queue/turns",
-      "payload = " +
-      payload +
-      " from " +
-      player.getName() +
-      " other player is " +
-      otherPlayer
+      player.getGame()
     );
   }
 }

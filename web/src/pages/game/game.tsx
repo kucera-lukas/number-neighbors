@@ -1,10 +1,13 @@
 import ErrorText from "../../components/errors/error.text";
-import GameState from "../../components/game-state.component";
+import GameInfo from "../../components/game/game-info.component";
+import GameInvite from "../../components/game/game-invite.component";
+import Play from "../../components/game/play.component";
 import { SERVER_URI } from "../../config/environment";
 import { GameProvider } from "../../context/game.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import PageLayout from "../../layouts/page.layout";
 
+import { Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -49,7 +52,11 @@ const Game = (): JSX.Element => {
     <PageLayout title="game">
       {game && (
         <GameProvider game={game}>
-          <GameState />
+          <Stack>
+            <GameInfo />
+            <GameInvite />
+            <Play />
+          </Stack>
         </GameProvider>
       )}
       {error && <ErrorText error={error} />}

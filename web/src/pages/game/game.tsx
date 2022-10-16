@@ -1,18 +1,21 @@
 import ErrorText from "../../components/errors/error.text";
 import GameState from "../../components/game-state.component";
 import { SERVER_URI } from "../../config/environment";
+import { GameProvider } from "../../context/game.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import PageLayout from "../../layouts/page.layout";
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import type GameType from "../../types/game.type";
+
 const Game = (): JSX.Element => {
   const params = useParams();
   const gameId = params.gameId as string;
   const [token] = useLocalStorageItem<string>("token");
   const [error, setError] = useState<string>();
-  const [authenticated, setAuthenticated] = useState(false);
+  const [game, setGame] = useState<GameType>();
 
   useEffect(() => {
     // eslint-disable-next-line unicorn/no-useless-undefined
@@ -29,21 +32,26 @@ const Game = (): JSX.Element => {
         if (!res.ok) {
           throw new Error(res.status.toLocaleString());
         }
+
+        return res.json();
       })
-      .then(() => {
+      .then((res: GameType) => {
+        setGame(res);
         // eslint-disable-next-line unicorn/no-useless-undefined
         setError(undefined);
-        setAuthenticated(true);
       })
       .catch((error: Error) => {
         setError(error.message);
-        setAuthenticated(false);
       });
   }, [gameId, token]);
 
   return (
     <PageLayout title="game">
-      {authenticated ? <GameState /> : "Not authenticated"}
+      {game && (
+        <GameProvider game={game}>
+          <GameState />
+        </GameProvider>
+      )}
       {error && <ErrorText error={error} />}
     </PageLayout>
   );

@@ -21,7 +21,7 @@ import javax.persistence.UniqueConstraint;
   }
 )
 @SuppressWarnings("NullAway.Init")
-public class Number extends BaseEntity {
+public class NumberEntity extends BaseEntity {
 
   @Column(name = "value", nullable = false)
   private int value;
@@ -33,11 +33,11 @@ public class Number extends BaseEntity {
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "player_id", updatable = false, nullable = false)
   @JsonBackReference
-  private Player player;
+  private PlayerEntity player;
 
-  public Number() {}
+  public NumberEntity() {}
 
-  public Number(int value, NumberType type, Player player) {
+  public NumberEntity(int value, NumberType type, PlayerEntity player) {
     setValue(value);
     setType(type);
     setPlayer(player);
@@ -59,11 +59,11 @@ public class Number extends BaseEntity {
     this.type = type;
   }
 
-  public Player getPlayer() {
+  public PlayerEntity getPlayer() {
     return player;
   }
 
-  public void setPlayer(Player player) {
+  public void setPlayer(PlayerEntity player) {
     this.player = player;
   }
 }

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "games")
-public class Game extends BaseEntity {
+public class GameEntity extends BaseEntity {
 
   @OneToMany(
     mappedBy = "game",
@@ -25,31 +25,31 @@ public class Game extends BaseEntity {
     fetch = FetchType.LAZY
   )
   @JsonManagedReference
-  private final Set<Player> players;
+  private final Set<PlayerEntity> players;
 
-  public Game() {
+  public GameEntity() {
     this.players = new HashSet<>();
   }
 
-  public Set<Player> getPlayers() {
+  public Set<PlayerEntity> getPlayers() {
     return Set.copyOf(players);
   }
 
-  public void addPlayer(Player player) {
+  public void addPlayer(PlayerEntity player) {
     players.add(player);
     player.setGame(this);
   }
 
   @JsonIgnore
-  public Player getPlayerByName(String name) {
+  public PlayerEntity getPlayerByName(String name) {
     return getPlayer(
       player -> player.getName().equals(name),
       () -> new PlayerNotFoundException(name)
     );
   }
 
-  private <X extends Throwable> Player getPlayer(
-    Predicate<? super Player> playerFilter,
+  private <X extends Throwable> PlayerEntity getPlayer(
+    Predicate<? super PlayerEntity> playerFilter,
     Supplier<? extends X> exceptionSupplier
   ) throws X {
     return players
@@ -60,17 +60,17 @@ public class Game extends BaseEntity {
   }
 
   @JsonIgnore
-  public Player getHost() {
+  public PlayerEntity getHost() {
     return getPlayer(
-      Player::isHost,
+      PlayerEntity::isHost,
       () -> new HostPlayerMissingException(getId())
     );
   }
 
   @JsonIgnore
-  public Player getGuest() {
+  public PlayerEntity getGuest() {
     return getPlayer(
-      Player::isGuest,
+      PlayerEntity::isGuest,
       () -> new GuestPlayerMissingException(getId())
     );
   }

@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.service;
 
-import com.lukaskucera.numberneighbors.entity.Game;
-import com.lukaskucera.numberneighbors.entity.Player;
+import com.lukaskucera.numberneighbors.entity.GameEntity;
+import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import org.slf4j.Logger;
@@ -14,12 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameServiceImpl implements GameService {
 
+  public static final int GAME_PLAYER_LIMIT = 2;
   private static final Logger logger = LoggerFactory.getLogger(
     GameServiceImpl.class
   );
-
-  public static final int GAME_PLAYER_LIMIT = 2;
-
   private final GameRepository gameRepository;
 
   public GameServiceImpl(GameRepository gameRepository) {
@@ -27,17 +25,17 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public Game getGameById(Long id) {
+  public GameEntity getGameById(Long id) {
     return gameRepository
       .findById(id)
       .orElseThrow(() -> new GameNotFoundException(id));
   }
 
   @Override
-  public Game newGame(String hostName) {
-    final Game game = new Game();
+  public GameEntity newGame(String hostName) {
+    final GameEntity game = new GameEntity();
 
-    game.addPlayer(new Player(hostName, game));
+    game.addPlayer(new PlayerEntity(hostName, game));
 
     gameRepository.save(game);
 

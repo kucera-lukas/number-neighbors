@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.controller;
 
-import com.lukaskucera.numberneighbors.entity.Game;
-import com.lukaskucera.numberneighbors.entity.Player;
+import com.lukaskucera.numberneighbors.entity.GameEntity;
+import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewGameRequest;
 import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
@@ -57,8 +57,8 @@ public class GameController {
   public ResponseEntity<NewGameResponse> newGame(
     @RequestBody NewGameRequest newGameRequest
   ) {
-    final Game game = gameService.newGame(newGameRequest.hostName());
-    final Player hostPlayer = game.getHost();
+    final GameEntity game = gameService.newGame(newGameRequest.hostName());
+    final PlayerEntity hostPlayer = game.getHost();
 
     logger.info(
       "Game {} created for host player {}",
@@ -78,7 +78,7 @@ public class GameController {
   }
 
   @GetMapping(value = "/games/{id}")
-  public ResponseEntity<Game> game(
+  public ResponseEntity<GameEntity> game(
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
@@ -115,11 +115,11 @@ public class GameController {
 
     gameService.checkGameAccess(id, jwtToken);
 
-    final Player player = playerService.getPlayerById(
+    final PlayerEntity player = playerService.getPlayerById(
       jwtToken.getToken().getClaim("playerId")
     );
-    final Game game = player.getGame();
-    final Player otherPlayer = player.isHost()
+    final GameEntity game = player.getGame();
+    final PlayerEntity otherPlayer = player.isHost()
       ? game.getGuest()
       : game.getHost();
 

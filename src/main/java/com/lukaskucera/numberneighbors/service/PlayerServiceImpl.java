@@ -2,9 +2,9 @@ package com.lukaskucera.numberneighbors.service;
 
 import static com.lukaskucera.numberneighbors.service.GameServiceImpl.GAME_PLAYER_LIMIT;
 
-import com.lukaskucera.numberneighbors.entity.Game;
-import com.lukaskucera.numberneighbors.entity.Number;
-import com.lukaskucera.numberneighbors.entity.Player;
+import com.lukaskucera.numberneighbors.entity.GameEntity;
+import com.lukaskucera.numberneighbors.entity.NumberEntity;
+import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
@@ -43,14 +43,14 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
-  public Player getPlayerById(Long id) {
+  public PlayerEntity getPlayerById(Long id) {
     return playerRepository
       .findById(id)
       .orElseThrow(() -> new PlayerNotFoundException(id));
   }
 
   @Override
-  public Set<Player> getPlayersByGameId(Long gameId) {
+  public Set<PlayerEntity> getPlayersByGameId(Long gameId) {
     return gameRepository
       .findById(gameId)
       .orElseThrow(() -> new GameNotFoundException(gameId))
@@ -59,11 +59,11 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   @Transactional
-  public Player newPlayer(Long gameId, String name) {
-    final Game game = gameRepository
+  public PlayerEntity newPlayer(Long gameId, String name) {
+    final GameEntity game = gameRepository
       .findById(gameId)
       .orElseThrow(() -> new GameNotFoundException(gameId));
-    final Set<Player> players = game.getPlayers();
+    final Set<PlayerEntity> players = game.getPlayers();
 
     if (players.size() >= GAME_PLAYER_LIMIT) {
       logger.info(
@@ -86,7 +86,7 @@ public class PlayerServiceImpl implements PlayerService {
       throw new PlayerNameAlreadyExistsException(gameId, name);
     }
 
-    final Player player = new Player(name, game);
+    final PlayerEntity player = new PlayerEntity(name, game);
     game.addPlayer(player);
 
     playerRepository.save(player);
@@ -105,13 +105,13 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   @Transactional
-  public Player addNumbersToPlayerById(
+  public PlayerEntity addNumbersToPlayerById(
     Long id,
     int first,
     int second,
     int third
   ) {
-    final Player player = getPlayerById(id);
+    final PlayerEntity player = getPlayerById(id);
 
     if (!player.getNumbers().isEmpty()) {
       throw new PlayerNumbersPopulatedException(id);
@@ -129,7 +129,7 @@ public class PlayerServiceImpl implements PlayerService {
     numberMap
       .entrySet()
       .stream()
-      .map(entry -> new Number(entry.getValue(), entry.getKey(), player))
+      .map(entry -> new NumberEntity(entry.getValue(), entry.getKey(), player))
       .forEach(player::addNumber);
 
     playerRepository.save(player);

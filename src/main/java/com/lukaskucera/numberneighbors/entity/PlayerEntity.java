@@ -27,7 +27,7 @@ import javax.persistence.UniqueConstraint;
   }
 )
 @SuppressWarnings("NullAway.Init")
-public class Player extends BaseEntity {
+public class PlayerEntity extends BaseEntity {
 
   @OneToMany(
     mappedBy = "player",
@@ -35,7 +35,7 @@ public class Player extends BaseEntity {
     fetch = FetchType.LAZY
   )
   @JsonManagedReference
-  private final Set<Number> numbers;
+  private final Set<NumberEntity> numbers;
 
   @Column(name = "name", nullable = false)
   private String name;
@@ -47,31 +47,31 @@ public class Player extends BaseEntity {
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "game_id", updatable = false, nullable = false)
   @JsonBackReference
-  private Game game;
+  private GameEntity game;
 
-  public Player() {
+  public PlayerEntity() {
     this.numbers = new HashSet<>();
   }
 
-  public Player(String name, Game game) {
+  public PlayerEntity(String name, GameEntity game) {
     setName(name);
     setType(game.getPlayers().isEmpty() ? PlayerType.HOST : PlayerType.GUEST);
     setGame(game);
     this.numbers = new HashSet<>();
   }
 
-  public Player(String name, Game game, Set<Number> numbers) {
+  public PlayerEntity(String name, GameEntity game, Set<NumberEntity> numbers) {
     setName(name);
     setType(game.getPlayers().isEmpty() ? PlayerType.HOST : PlayerType.GUEST);
     setGame(game);
     this.numbers = numbers;
   }
 
-  public Set<Number> getNumbers() {
+  public Set<NumberEntity> getNumbers() {
     return Set.copyOf(numbers);
   }
 
-  public void addNumber(Number number) {
+  public void addNumber(NumberEntity number) {
     numbers.add(number);
     number.setPlayer(this);
   }
@@ -92,11 +92,11 @@ public class Player extends BaseEntity {
     this.type = type;
   }
 
-  public Game getGame() {
+  public GameEntity getGame() {
     return game;
   }
 
-  public void setGame(Game game) {
+  public void setGame(GameEntity game) {
     this.game = game;
   }
 

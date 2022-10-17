@@ -118,9 +118,10 @@ public class GameController {
     final Player player = playerService.getPlayerById(
       jwtToken.getToken().getClaim("playerId")
     );
+    final Game game = player.getGame();
     final Player otherPlayer = player.isHost()
-      ? player.getGame().getGuest()
-      : player;
+      ? game.getGuest()
+      : game.getHost();
 
     simpMessagingTemplate.convertAndSendToUser(
       otherPlayer.getSub(),

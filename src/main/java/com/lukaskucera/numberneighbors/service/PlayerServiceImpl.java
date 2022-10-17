@@ -3,13 +3,17 @@ package com.lukaskucera.numberneighbors.service;
 import static com.lukaskucera.numberneighbors.service.GameServiceImpl.GAME_PLAYER_LIMIT;
 
 import com.lukaskucera.numberneighbors.entity.Game;
+import com.lukaskucera.numberneighbors.entity.Number;
 import com.lukaskucera.numberneighbors.entity.Player;
+import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
+import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
+import java.util.Map;
 import java.util.Set;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -97,6 +101,40 @@ public class PlayerServiceImpl implements PlayerService {
     } catch (EmptyResultDataAccessException e) {
       throw new PlayerNotFoundException(id);
     }
+  }
+
+  @Override
+  @Transactional
+  public Player addNumbersToPlayerById(
+    Long id,
+    int first,
+    int second,
+    int third
+  ) {
+    final Player player = getPlayerById(id);
+
+    if (!player.getNumbers().isEmpty()) {
+      throw new PlayerNumbersPopulatedException(id);
+    }
+
+    final Map<NumberType, Integer> numberMap = Map.of(
+      NumberType.FIRST,
+      first,
+      NumberType.SECOND,
+      second,
+      NumberType.THIRD,
+      third
+    );
+
+    numberMap
+      .entrySet()
+      .stream()
+      .map(entry -> new Number(entry.getValue(), entry.getKey(), player))
+      .forEach(player::addNumber);
+
+    playerRepository.save(player);
+
+    return player;
   }
 
   @Override

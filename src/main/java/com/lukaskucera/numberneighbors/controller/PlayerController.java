@@ -2,6 +2,7 @@ package com.lukaskucera.numberneighbors.controller;
 
 import com.lukaskucera.numberneighbors.entity.Player;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
+import com.lukaskucera.numberneighbors.request.PlayerPickRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
@@ -105,5 +106,25 @@ public class PlayerController {
     playerService.deletePlayerById(id);
 
     logger.info("Player {} deleted by player \"{}\"", id, jwtToken.getName());
+  }
+
+  @PostMapping(value = "/players/{id}/pick")
+  public ResponseEntity<Player> playerPick(
+    @PathVariable Long id,
+    @RequestBody PlayerPickRequest playerPickRequest,
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info("Player {} number pick {}", id, playerPickRequest);
+
+    playerService.checkPlayerAccess(id, jwtToken);
+
+    playerService.addNumbersToPlayerById(
+      id,
+      playerPickRequest.first(),
+      playerPickRequest.second(),
+      playerPickRequest.third()
+    );
+
+    return ResponseEntity.ok(playerService.getPlayerById(id));
   }
 }

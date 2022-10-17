@@ -13,5 +13,7 @@ public interface PlayerService {
 
   void deletePlayerById(Long id);
 
+  Player addNumbersToPlayerById(Long id, int first, int second, int third);
+
   void checkPlayerAccess(Long id, JwtAuthenticationToken jwtToken);
 }

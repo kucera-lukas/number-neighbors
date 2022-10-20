@@ -1,7 +1,8 @@
 package com.lukaskucera.numberneighbors.controller;
 
-import com.lukaskucera.numberneighbors.entity.Player;
+import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
+import com.lukaskucera.numberneighbors.request.PlayerPickRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
@@ -43,7 +44,7 @@ public class PlayerController {
   }
 
   @GetMapping(value = "/players")
-  public ResponseEntity<Set<Player>> players(
+  public ResponseEntity<Set<PlayerEntity>> players(
     @RequestParam(name = "game") Long gameId,
     JwtAuthenticationToken jwtToken
   ) {
@@ -62,7 +63,7 @@ public class PlayerController {
     @RequestParam(name = "game") Long gameId,
     @RequestBody NewPlayerRequest newPlayerRequest
   ) {
-    final Player player = playerService.newPlayer(
+    final PlayerEntity player = playerService.newPlayer(
       gameId,
       newPlayerRequest.name()
     );
@@ -81,7 +82,7 @@ public class PlayerController {
   }
 
   @GetMapping(value = "/players/{id}")
-  public ResponseEntity<Player> player(
+  public ResponseEntity<PlayerEntity> player(
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
@@ -105,5 +106,25 @@ public class PlayerController {
     playerService.deletePlayerById(id);
 
     logger.info("Player {} deleted by player \"{}\"", id, jwtToken.getName());
+  }
+
+  @PostMapping(value = "/players/{id}/pick")
+  public ResponseEntity<PlayerEntity> playerPick(
+    @PathVariable Long id,
+    @RequestBody PlayerPickRequest playerPickRequest,
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info("Player {} number pick {}", id, playerPickRequest);
+
+    playerService.checkPlayerAccess(id, jwtToken);
+
+    playerService.addNumbersToPlayerById(
+      id,
+      playerPickRequest.first(),
+      playerPickRequest.second(),
+      playerPickRequest.third()
+    );
+
+    return ResponseEntity.ok(playerService.getPlayerById(id));
   }
 }

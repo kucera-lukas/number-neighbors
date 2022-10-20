@@ -5,7 +5,7 @@ import { useHref } from "react-router-dom";
 
 const GameInvite = (): JSX.Element => {
   const inviteHref = useHref("invite");
-  const inviteLink = `${window.location.protocol}//${window.location.host}${inviteHref}/invite`;
+  const inviteLink = `${window.location.protocol}//${window.location.host}${inviteHref}`;
 
   return (
     <AccordionLayout

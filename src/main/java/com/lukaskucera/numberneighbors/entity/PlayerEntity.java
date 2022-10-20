@@ -54,10 +54,7 @@ public class PlayerEntity extends BaseEntity {
   }
 
   public PlayerEntity(String name, GameEntity game) {
-    setName(name);
-    setType(game.getPlayers().isEmpty() ? PlayerType.HOST : PlayerType.GUEST);
-    setGame(game);
-    this.numbers = new HashSet<>();
+    this(name, game, new HashSet<>());
   }
 
   public PlayerEntity(String name, GameEntity game, Set<NumberEntity> numbers) {

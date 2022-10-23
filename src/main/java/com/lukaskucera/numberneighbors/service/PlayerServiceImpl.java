@@ -8,6 +8,7 @@ import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
+import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
@@ -44,7 +45,16 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public Long getPlayerIdFromToken(JwtAuthenticationToken jwtToken) {
-    return (Long) jwtToken.getToken().getClaims().get("playerId");
+    final Long playerId = (Long) jwtToken
+      .getToken()
+      .getClaims()
+      .get("playerId");
+
+    if (playerId == null) {
+      throw new PlayerIdMissingInJwtTokenClaimsException(jwtToken);
+    }
+
+    return playerId;
   }
 
   @Override

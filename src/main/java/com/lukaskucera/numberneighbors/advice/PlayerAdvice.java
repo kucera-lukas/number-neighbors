@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.advice;
 
+import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
@@ -33,5 +34,15 @@ class PlayerAdvice extends ResponseEntityExceptionHandler {
     PlayerNumbersPopulatedException ex
   ) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(PlayerIdMissingInJwtTokenClaimsException.class)
+  ResponseEntity<String> handlePlayerIdMissingInJwtTokenClaims(
+    PlayerIdMissingInJwtTokenClaimsException ex
+  ) {
+    return ResponseEntity
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
+      .body(ex.getMessage());
   }
 }

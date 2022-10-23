@@ -30,7 +30,7 @@ class PlayerAdvice extends ResponseEntityExceptionHandler {
   @ResponseBody
   @ExceptionHandler(PlayerNumbersPopulatedException.class)
   ResponseEntity<String> handlePlayerNumbersPopulated(
-    PlayerNotFoundException ex
+    PlayerNumbersPopulatedException ex
   ) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }

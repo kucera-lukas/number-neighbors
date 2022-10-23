@@ -16,24 +16,30 @@ const Play = (): JSX.Element => {
       console.log("game:", JSON.parse(message.body));
     });
   });
+  const disabled = !game?.players.find((player) => !player.numbers);
 
   return (
     <AccordionLayout
       title="Play"
       value="play"
+      disabled={disabled}
     >
       <Stack spacing="xs">
         <button onClick={() => stompClient.activate()}>Start</button>
         <button
-          onClick={() =>
+          onClick={() => {
+            if (!game) {
+              return;
+            }
+
             stompClient.publish({
               destination: `/app/games/${game.id}/turn`,
               body: "test",
               headers: {
                 Authorization: token,
               },
-            })
-          }
+            });
+          }}
         >
           Turn
         </button>

@@ -1,4 +1,6 @@
 import { SERVER_URI } from "../../config/environment";
+import { useGame } from "../../context/game.context";
+import { usePlayer } from "../../context/player.context";
 import AccordionLayout from "../../layouts/accordion.layout";
 import LocalStorageService from "../../services/local-storage.service";
 
@@ -16,6 +18,8 @@ type NewGameResponse = {
 const NewGame = (): JSX.Element => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [, setGame] = useGame();
+  const [, setPlayer] = usePlayer();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -39,7 +43,11 @@ const NewGame = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewGameResponse) => {
+          // new game created so the first player is guaranteed to exist
+          setPlayer(res.game.players[0]);
+          setGame(res.game);
           LocalStorageService.set("token", `Bearer ${res.token}`);
+
           navigate(`/game/${res.game.id}`);
         })
         .catch((error: Error) => {
@@ -47,7 +55,7 @@ const NewGame = (): JSX.Element => {
           setLoading(false);
         });
     }
-  }, [name, navigate]);
+  }, [name, navigate, setGame, setPlayer]);
 
   return (
     <AccordionLayout

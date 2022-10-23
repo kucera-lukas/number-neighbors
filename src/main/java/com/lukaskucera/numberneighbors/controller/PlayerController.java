@@ -6,6 +6,7 @@ import com.lukaskucera.numberneighbors.request.PlayerPickRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
+import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -31,15 +32,19 @@ public class PlayerController {
 
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
+
+  private final NumberServiceImpl numberService;
   private final JwtService jwtService;
 
   public PlayerController(
     GameServiceImpl gameService,
     PlayerServiceImpl playerService,
+    NumberServiceImpl numberService,
     JwtService jwtService
   ) {
     this.gameService = gameService;
     this.playerService = playerService;
+    this.numberService = numberService;
     this.jwtService = jwtService;
   }
 
@@ -81,6 +86,49 @@ public class PlayerController {
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
 
+  @GetMapping(value = "/players/me")
+  public ResponseEntity<PlayerEntity> currentPlayer(
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info(
+      "Current player info requested by player {}",
+      jwtToken.getName()
+    );
+
+    final Long playerId = playerService.getPlayerIdFromToken(jwtToken);
+
+    playerService.checkPlayerAccess(playerId, jwtToken);
+
+    return ResponseEntity.ok(playerService.getPlayerById(playerId));
+  }
+
+  @PostMapping(value = "/players/pick")
+  public ResponseEntity<PlayerEntity> playerPick(
+    @RequestBody PlayerPickRequest playerPickRequest,
+    JwtAuthenticationToken jwtToken
+  ) {
+    final Long playerId = playerService.getPlayerIdFromToken(jwtToken);
+
+    logger.info("Player {} number pick {}", playerId, playerPickRequest);
+
+    playerService.checkPlayerAccess(playerId, jwtToken);
+
+    numberService.validateNumbers(
+      playerPickRequest.first(),
+      playerPickRequest.second(),
+      playerPickRequest.third()
+    );
+
+    playerService.addNumbersToPlayerById(
+      playerId,
+      playerPickRequest.first(),
+      playerPickRequest.second(),
+      playerPickRequest.third()
+    );
+
+    return ResponseEntity.ok(playerService.getPlayerById(playerId));
+  }
+
   @GetMapping(value = "/players/{id}")
   public ResponseEntity<PlayerEntity> player(
     @PathVariable Long id,
@@ -106,25 +154,5 @@ public class PlayerController {
     playerService.deletePlayerById(id);
 
     logger.info("Player {} deleted by player \"{}\"", id, jwtToken.getName());
-  }
-
-  @PostMapping(value = "/players/{id}/pick")
-  public ResponseEntity<PlayerEntity> playerPick(
-    @PathVariable Long id,
-    @RequestBody PlayerPickRequest playerPickRequest,
-    JwtAuthenticationToken jwtToken
-  ) {
-    logger.info("Player {} number pick {}", id, playerPickRequest);
-
-    playerService.checkPlayerAccess(id, jwtToken);
-
-    playerService.addNumbersToPlayerById(
-      id,
-      playerPickRequest.first(),
-      playerPickRequest.second(),
-      playerPickRequest.third()
-    );
-
-    return ResponseEntity.ok(playerService.getPlayerById(id));
   }
 }

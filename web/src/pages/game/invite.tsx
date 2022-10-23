@@ -1,4 +1,5 @@
 import { SERVER_URI } from "../../config/environment";
+import { usePlayer } from "../../context/player.context";
 import PageLayout from "../../layouts/page.layout";
 import LocalStorageService from "../../services/local-storage.service";
 
@@ -18,6 +19,7 @@ const Invite = (): JSX.Element => {
   const params = useParams();
   const gameId = params.gameId as string;
   const [name, setName] = useState("");
+  const [, setPlayer] = usePlayer();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -41,7 +43,9 @@ const Invite = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewPlayerResponse) => {
+          setPlayer(res.player);
           LocalStorageService.set("token", `Bearer ${res.token}`);
+
           navigate(`/game/${gameId}`);
         })
         .catch((error: Error) => {
@@ -49,7 +53,7 @@ const Invite = (): JSX.Element => {
           setLoading(false);
         });
     }
-  }, [gameId, name, navigate]);
+  }, [gameId, name, navigate, setPlayer]);
 
   return (
     <PageLayout title="invite">

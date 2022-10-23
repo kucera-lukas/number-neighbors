@@ -43,6 +43,11 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
+  public Long getPlayerIdFromToken(JwtAuthenticationToken jwtToken) {
+    return (Long) jwtToken.getToken().getClaims().get("playerId");
+  }
+
+  @Override
   public PlayerEntity getPlayerById(Long id) {
     return playerRepository
       .findById(id)
@@ -142,10 +147,7 @@ public class PlayerServiceImpl implements PlayerService {
     Long playerId,
     JwtAuthenticationToken jwtToken
   ) {
-    final Long claimedPlayerId = (Long) jwtToken
-      .getToken()
-      .getClaims()
-      .get("playerId");
+    final Long claimedPlayerId = getPlayerIdFromToken(jwtToken);
 
     if (claimedPlayerId == null || !claimedPlayerId.equals(playerId)) {
       logger.info(

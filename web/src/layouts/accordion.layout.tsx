@@ -6,21 +6,23 @@ export type AccordionLayoutProps = PropsWithChildren<{
   value: string;
   title: string;
   description?: string;
+  disabled?: boolean;
 }>;
 
 const AccordionLayout = ({
   value,
   title,
   description,
+  disabled,
   children,
 }: AccordionLayoutProps): JSX.Element => {
   return (
     <Accordion
-      defaultValue={value}
       variant="separated"
+      {...(disabled ? {} : { defaultValue: value })}
     >
       <Accordion.Item value={value}>
-        <Accordion.Control>
+        <Accordion.Control disabled={disabled}>
           <Text size="md">{title}</Text>
           {description && (
             <Text

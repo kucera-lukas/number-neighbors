@@ -5,6 +5,8 @@ import java.util.Set;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface PlayerService {
+  Long getPlayerIdFromToken(JwtAuthenticationToken jwtToken);
+
   PlayerEntity getPlayerById(Long id);
 
   Set<PlayerEntity> getPlayersByGameId(Long id);

@@ -1,4 +1,4 @@
-import { STORAGE_KEY_PREFIX } from "../constants";
+import { STORAGE_KEY_PREFIX } from "../constants/storage.constants";
 
 const LocalStorageService = {
   get(key: string): string | undefined {

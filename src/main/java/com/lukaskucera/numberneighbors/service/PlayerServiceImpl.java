@@ -8,6 +8,7 @@ import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
+import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
@@ -40,6 +41,20 @@ public class PlayerServiceImpl implements PlayerService {
   ) {
     this.gameRepository = gameRepository;
     this.playerRepository = playerRepository;
+  }
+
+  @Override
+  public Long getPlayerIdFromToken(JwtAuthenticationToken jwtToken) {
+    final Long playerId = (Long) jwtToken
+      .getToken()
+      .getClaims()
+      .get("playerId");
+
+    if (playerId == null) {
+      throw new PlayerIdMissingInJwtTokenClaimsException(jwtToken);
+    }
+
+    return playerId;
   }
 
   @Override
@@ -142,10 +157,7 @@ public class PlayerServiceImpl implements PlayerService {
     Long playerId,
     JwtAuthenticationToken jwtToken
   ) {
-    final Long claimedPlayerId = (Long) jwtToken
-      .getToken()
-      .getClaims()
-      .get("playerId");
+    final Long claimedPlayerId = getPlayerIdFromToken(jwtToken);
 
     if (claimedPlayerId == null || !claimedPlayerId.equals(playerId)) {
       logger.info(

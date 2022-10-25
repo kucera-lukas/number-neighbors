@@ -16,7 +16,7 @@ const GameInfo = (): JSX.Element => {
         <List>
           <List.Item>
             <Text size="sm">
-              <>Game ID: {game.id}</>
+              <>Game ID: {game?.id}</>
             </Text>
           </List.Item>
           <List.Item>
@@ -24,7 +24,7 @@ const GameInfo = (): JSX.Element => {
               <>
                 Host player ID:{" "}
                 {
-                  game.players.find((player) => player.type == PlayerType.HOST)
+                  game?.players.find((player) => player.type == PlayerType.HOST)
                     ?.id
                 }
               </>
@@ -35,8 +35,9 @@ const GameInfo = (): JSX.Element => {
               <>
                 Guest player ID:{" "}
                 {
-                  game.players.find((player) => player.type == PlayerType.GUEST)
-                    ?.id
+                  game?.players.find(
+                    (player) => player.type == PlayerType.GUEST,
+                  )?.id
                 }
               </>
             </Text>

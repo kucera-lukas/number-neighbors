@@ -1,7 +1,7 @@
 import { SERVER_URI } from "../../config/environment";
 import { useGame } from "../../context/game.context";
 import { usePlayer } from "../../context/player.context";
-import AccordionLayout from "../../layouts/accordion.layout";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import LocalStorageService from "../../services/local-storage.service";
 
 import { TextInput, Button, Stack } from "@mantine/core";
@@ -58,7 +58,7 @@ const NewGame = (): JSX.Element => {
   }, [name, navigate, setGame, setPlayer]);
 
   return (
-    <AccordionLayout
+    <AccordionItemLayout
       title="New Game"
       value="new-game"
     >
@@ -80,7 +80,7 @@ const NewGame = (): JSX.Element => {
           Create
         </Button>
       </Stack>
-    </AccordionLayout>
+    </AccordionItemLayout>
   );
 };
 

@@ -7,9 +7,9 @@ import { SERVER_URI } from "../../config/environment";
 import { useGame } from "../../context/game.context";
 import { usePlayer } from "../../context/player.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
+import AccordionLayout from "../../layouts/accordion.layout";
 import PageLayout from "../../layouts/page.layout";
 
-import { Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -88,12 +88,12 @@ const Game = (): JSX.Element => {
   return (
     <PageLayout title="game">
       {gameIdMatch && player && (
-        <Stack>
+        <AccordionLayout defaultValues={["game-info"]}>
           <GameInfo />
           <GameInvite />
           <ChooseNumbers />
           <Play />
-        </Stack>
+        </AccordionLayout>
       )}
 
       {error && <ErrorText error={error} />}

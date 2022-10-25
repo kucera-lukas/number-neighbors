@@ -1,5 +1,5 @@
 import { useGame } from "../../context/game.context";
-import AccordionLayout from "../../layouts/accordion.layout";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import PlayerType from "../../types/player-type.type";
 
 import { List, Stack, Text } from "@mantine/core";
@@ -8,7 +8,7 @@ const GameInfo = (): JSX.Element => {
   const [game] = useGame();
 
   return (
-    <AccordionLayout
+    <AccordionItemLayout
       title="Game Info"
       value="game-info"
     >
@@ -44,7 +44,7 @@ const GameInfo = (): JSX.Element => {
           </List.Item>
         </List>
       </Stack>
-    </AccordionLayout>
+    </AccordionItemLayout>
   );
 };
 

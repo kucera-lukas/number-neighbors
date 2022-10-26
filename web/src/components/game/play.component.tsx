@@ -11,15 +11,20 @@ const Play = (): JSX.Element => {
   const [game, setGame] = useGame();
   const [token] = useLocalStorageItem<string>("token");
   const stompClient = useStompClient("play", token, (client) => {
+    client.subscribe("/user/queue/updates", (message) => {
+      setGame(JSON.parse(message.body) as Game);
+    });
+
     client.subscribe("/user/queue/turns", (message) => {
       setGame(JSON.parse(message.body) as Game);
-      console.log("game:", JSON.parse(message.body));
     });
   });
   const disabled =
     !game ||
     game.players.length !== 2 ||
     game.players.some((player) => player.numbers.length === 0);
+
+  console.log(game?.players);
 
   return (
     <AccordionItemLayout

@@ -121,15 +121,13 @@ public class PlayerServiceImpl implements PlayerService {
   @Override
   @Transactional
   public PlayerEntity addNumbersToPlayerById(
-    Long id,
+    PlayerEntity player,
     int first,
     int second,
     int third
   ) {
-    final PlayerEntity player = getPlayerById(id);
-
     if (!player.getNumbers().isEmpty()) {
-      throw new PlayerNumbersPopulatedException(id);
+      throw new PlayerNumbersPopulatedException(player.getId());
     }
 
     final Map<NumberType, Integer> numberMap = Map.of(

@@ -16,7 +16,7 @@ public interface PlayerService {
   void deletePlayerById(Long id);
 
   PlayerEntity addNumbersToPlayerById(
-    Long id,
+    PlayerEntity player,
     int first,
     int second,
     int third

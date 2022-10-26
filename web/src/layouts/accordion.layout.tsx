@@ -1,41 +1,44 @@
-import { Accordion, Text } from "@mantine/core";
+import { AccordionValuesContext } from "../context/accordion.context";
+
+import { Accordion } from "@mantine/core";
+import { useEffect, useState } from "react";
 
 import type { PropsWithChildren } from "react";
 
 export type AccordionLayoutProps = PropsWithChildren<{
-  value: string;
-  title: string;
-  description?: string;
+  defaultValues: string[];
   disabled?: boolean;
 }>;
 
 const AccordionLayout = ({
-  value,
-  title,
-  description,
+  defaultValues,
   disabled,
   children,
 }: AccordionLayoutProps): JSX.Element => {
+  const [values, setValues] = useState<string[]>(disabled ? [] : defaultValues);
+
+  useEffect(() => {
+    setValues(defaultValues);
+  }, [defaultValues]);
+
+  useEffect(() => {
+    if (disabled) {
+      setValues([]);
+    }
+  }, [disabled]);
+
   return (
-    <Accordion
-      variant="separated"
-      {...(disabled ? {} : { defaultValue: value })}
-    >
-      <Accordion.Item value={value}>
-        <Accordion.Control disabled={disabled}>
-          <Text size="md">{title}</Text>
-          {description && (
-            <Text
-              size="xs"
-              color="dimmed"
-            >
-              {description}
-            </Text>
-          )}
-        </Accordion.Control>
-        <Accordion.Panel>{children}</Accordion.Panel>
-      </Accordion.Item>
-    </Accordion>
+    <AccordionValuesContext.Provider value={[values, setValues]}>
+      <Accordion
+        value={disabled ? [] : values}
+        onChange={setValues}
+        variant="separated"
+        multiple
+        {...(disabled ? {} : { defaultValue: defaultValues })}
+      >
+        {children}
+      </Accordion>
+    </AccordionValuesContext.Provider>
   );
 };
 

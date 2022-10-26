@@ -1,4 +1,4 @@
-import AccordionLayout from "../../layouts/accordion.layout";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
 import { NumberInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
@@ -23,7 +23,7 @@ const JoinGame = (): JSX.Element => {
   }, [gameID, navigate]);
 
   return (
-    <AccordionLayout
+    <AccordionItemLayout
       title="Join Game"
       value="join-game"
     >
@@ -46,7 +46,7 @@ const JoinGame = (): JSX.Element => {
           Join
         </Button>
       </Stack>
-    </AccordionLayout>
+    </AccordionItemLayout>
   );
 };
 

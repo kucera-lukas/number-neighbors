@@ -1,16 +1,15 @@
 import JoinGame from "../components/home/join-game.component";
 import NewGame from "../components/home/new-game.component";
+import AccordionLayout from "../layouts/accordion.layout";
 import PageLayout from "../layouts/page.layout";
-
-import { Stack } from "@mantine/core";
 
 const Home = (): JSX.Element => {
   return (
     <PageLayout title="home">
-      <Stack>
+      <AccordionLayout defaultValues={["new-game", "join-game"]}>
         <NewGame />
         <JoinGame />
-      </Stack>
+      </AccordionLayout>
     </PageLayout>
   );
 };

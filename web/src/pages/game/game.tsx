@@ -7,10 +7,10 @@ import { SERVER_URI } from "../../config/environment";
 import { useGame } from "../../context/game.context";
 import { usePlayer } from "../../context/player.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
+import AccordionLayout from "../../layouts/accordion.layout";
 import PageLayout from "../../layouts/page.layout";
 
-import { Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import type GameType from "../../types/game.type";
@@ -24,14 +24,17 @@ const Game = (): JSX.Element => {
   const [game, setGame] = useGame();
   const [player, setPlayer] = usePlayer();
   const gameIdMatch = game?.id.toString() === gameId;
+  const playerPartOfGame = game?.players.some(
+    (gamePlayer) => gamePlayer.id === player?.id,
+  );
 
-  useEffect(() => {
-    if (gameIdMatch) {
-      return;
-    }
-
+  const resetError = useCallback(() => {
     // eslint-disable-next-line unicorn/no-useless-undefined
     setError(undefined);
+  }, []);
+
+  useEffect(() => {
+    resetError();
 
     fetch(`${SERVER_URI}/games/${gameId}`, {
       method: "GET",
@@ -49,17 +52,16 @@ const Game = (): JSX.Element => {
       })
       .then((res: GameType) => {
         setGame(res);
-        // eslint-disable-next-line unicorn/no-useless-undefined
-        setError(undefined);
+        resetError();
       })
       .catch((error: Error) => {
         setError(error.message);
       });
-  }, [gameId, gameIdMatch, setGame, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId, gameIdMatch, token]);
 
   useEffect(() => {
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    setError(undefined);
+    resetError();
 
     fetch(`${SERVER_URI}/players/me`, {
       method: "GET",
@@ -77,23 +79,23 @@ const Game = (): JSX.Element => {
       })
       .then((res: Player) => {
         setPlayer(res);
-        // eslint-disable-next-line unicorn/no-useless-undefined
-        setError(undefined);
+        resetError();
       })
       .catch((error: Error) => {
         setError(error.message);
       });
-  }, [setPlayer, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerPartOfGame, token]);
 
   return (
     <PageLayout title="game">
-      {gameIdMatch && player && (
-        <Stack>
+      {gameIdMatch && playerPartOfGame && (
+        <AccordionLayout defaultValues={["game-info"]}>
           <GameInfo />
           <GameInvite />
           <ChooseNumbers />
           <Play />
-        </Stack>
+        </AccordionLayout>
       )}
 
       {error && <ErrorText error={error} />}

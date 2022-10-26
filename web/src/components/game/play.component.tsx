@@ -1,7 +1,7 @@
 import { useGame } from "../../context/game.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import useStompClient from "../../hooks/stomp-client.hook";
-import AccordionLayout from "../../layouts/accordion.layout";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
 import { Stack } from "@mantine/core";
 
@@ -16,10 +16,13 @@ const Play = (): JSX.Element => {
       console.log("game:", JSON.parse(message.body));
     });
   });
-  const disabled = !game?.players.find((player) => !player.numbers);
+  const disabled =
+    !game ||
+    game.players.length !== 2 ||
+    game.players.some((player) => player.numbers.length === 0);
 
   return (
-    <AccordionLayout
+    <AccordionItemLayout
       title="Play"
       value="play"
       disabled={disabled}
@@ -44,7 +47,7 @@ const Play = (): JSX.Element => {
           Turn
         </button>
       </Stack>
-    </AccordionLayout>
+    </AccordionItemLayout>
   );
 };
 

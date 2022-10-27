@@ -24,8 +24,6 @@ const Play = (): JSX.Element => {
     game.players.length !== 2 ||
     game.players.some((player) => player.numbers.length === 0);
 
-  console.log(game?.players);
-
   return (
     <AccordionItemLayout
       title="Play"

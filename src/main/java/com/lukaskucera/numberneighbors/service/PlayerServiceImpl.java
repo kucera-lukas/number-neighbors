@@ -126,7 +126,7 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   @Transactional
-  public PlayerEntity addNumbersToPlayerById(
+  public PlayerEntity addNumbersToPlayer(
     PlayerEntity player,
     int first,
     int second,
@@ -174,7 +174,7 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
-  public void sendGameToOtherPlayer(PlayerEntity player) {
+  public void sendUpdateToOtherPlayer(PlayerEntity player) {
     Optional<PlayerEntity> otherPlayer = Optional.empty();
 
     try {

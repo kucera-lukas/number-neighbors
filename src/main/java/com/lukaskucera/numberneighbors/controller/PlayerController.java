@@ -82,7 +82,7 @@ public class PlayerController {
       gameId
     );
 
-    playerService.sendGameToOtherPlayer(player);
+    playerService.sendUpdateToOtherPlayer(player);
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
@@ -114,22 +114,22 @@ public class PlayerController {
 
     playerService.checkPlayerAccess(playerId, jwtToken);
 
-    final PlayerEntity player = playerService.getPlayerById(playerId);
-
     numberService.validateNumbers(
       playerPickRequest.first(),
       playerPickRequest.second(),
       playerPickRequest.third()
     );
 
-    playerService.addNumbersToPlayerById(
+    final PlayerEntity player = playerService.getPlayerById(playerId);
+
+    playerService.addNumbersToPlayer(
       player,
       playerPickRequest.first(),
       playerPickRequest.second(),
       playerPickRequest.third()
     );
 
-    playerService.sendGameToOtherPlayer(player);
+    playerService.sendUpdateToOtherPlayer(player);
 
     return ResponseEntity.ok(player);
   }

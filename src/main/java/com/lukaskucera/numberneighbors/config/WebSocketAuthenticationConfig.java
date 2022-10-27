@@ -60,11 +60,10 @@ public class WebSocketAuthenticationConfig
             StompHeaderAccessor.class
           );
 
-          if (accessor == null) {
-            return null;
-          }
-
-          if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+          if (
+            accessor != null &&
+            StompCommand.CONNECT.equals(accessor.getCommand())
+          ) {
             final String token = stompHeaderAccessorBearerTokenResolver.resolve(
               accessor
             );

@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,20 +34,17 @@ public class PlayerController {
   private final PlayerServiceImpl playerService;
   private final NumberServiceImpl numberService;
   private final JwtService jwtService;
-  private final SimpMessagingTemplate simpMessagingTemplate;
 
   public PlayerController(
     GameServiceImpl gameService,
     PlayerServiceImpl playerService,
     NumberServiceImpl numberService,
-    JwtService jwtService,
-    SimpMessagingTemplate simpMessagingTemplate
+    JwtService jwtService
   ) {
     this.gameService = gameService;
     this.playerService = playerService;
     this.numberService = numberService;
     this.jwtService = jwtService;
-    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @GetMapping(value = "/players")
@@ -86,11 +82,7 @@ public class PlayerController {
       gameId
     );
 
-    simpMessagingTemplate.convertAndSendToUser(
-      player.getOtherPlayer().getSub(),
-      "/queue/updates",
-      player.getGame()
-    );
+    playerService.sendGameToOtherPlayer(player);
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
@@ -137,13 +129,9 @@ public class PlayerController {
       playerPickRequest.third()
     );
 
-    simpMessagingTemplate.convertAndSendToUser(
-      player.getOtherPlayer().getSub(),
-      "/queue/updates",
-      player.getGame()
-    );
+    playerService.sendGameToOtherPlayer(player);
 
-    return ResponseEntity.ok(playerService.getPlayerById(playerId));
+    return ResponseEntity.ok(player);
   }
 
   @GetMapping(value = "/players/{id}")

@@ -23,4 +23,6 @@ public interface PlayerService {
   );
 
   void checkPlayerAccess(Long id, JwtAuthenticationToken jwtToken);
+
+  void sendGameToOtherPlayer(PlayerEntity player);
 }

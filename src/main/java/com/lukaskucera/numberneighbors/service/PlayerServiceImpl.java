@@ -9,17 +9,20 @@ import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
 import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
+import com.lukaskucera.numberneighbors.exception.PlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -32,15 +35,18 @@ public class PlayerServiceImpl implements PlayerService {
   );
 
   private final GameRepository gameRepository;
-
   private final PlayerRepository playerRepository;
+
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   public PlayerServiceImpl(
     GameRepository gameRepository,
-    PlayerRepository playerRepository
+    PlayerRepository playerRepository,
+    SimpMessagingTemplate simpMessagingTemplate
   ) {
     this.gameRepository = gameRepository;
     this.playerRepository = playerRepository;
+    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @Override
@@ -165,5 +171,24 @@ public class PlayerServiceImpl implements PlayerService {
       );
       throw new AccessDeniedException("Access denied to player " + playerId);
     }
+  }
+
+  @Override
+  public void sendGameToOtherPlayer(PlayerEntity player) {
+    Optional<PlayerEntity> otherPlayer = Optional.empty();
+
+    try {
+      otherPlayer = Optional.of(player.getOtherPlayer());
+    } catch (PlayerMissingException e) {
+      logger.info("player missing: {}", e.getMessage());
+    }
+
+    otherPlayer.ifPresent(p ->
+      simpMessagingTemplate.convertAndSendToUser(
+        p.getSub(),
+        "/queue/updates",
+        player.getGame()
+      )
+    );
   }
 }

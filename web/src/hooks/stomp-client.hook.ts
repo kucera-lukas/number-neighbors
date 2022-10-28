@@ -19,6 +19,8 @@ const useStompClient = (
     onConnect: () => onConnect(stompClient),
   });
 
+  stompClient.activate();
+
   return stompClient;
 };
 

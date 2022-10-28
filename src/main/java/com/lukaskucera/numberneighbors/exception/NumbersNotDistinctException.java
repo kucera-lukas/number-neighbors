@@ -1,15 +1,12 @@
 package com.lukaskucera.numberneighbors.exception;
 
+import java.util.Arrays;
+
 public class NumbersNotDistinctException extends RuntimeException {
 
-  public NumbersNotDistinctException(int first, int second, int third) {
+  public NumbersNotDistinctException(int... numbers) {
     super(
-      String.format(
-        "Number [%d, %d, %d] are not distinct",
-        first,
-        second,
-        third
-      )
+      String.format("Number %s are not distinct", Arrays.toString(numbers))
     );
   }
 }

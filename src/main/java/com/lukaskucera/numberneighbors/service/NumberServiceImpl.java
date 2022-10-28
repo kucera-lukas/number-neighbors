@@ -2,7 +2,9 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.exception.NumberOutOfRangeException;
 import com.lukaskucera.numberneighbors.exception.NumbersNotDistinctException;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,22 +19,30 @@ public class NumberServiceImpl implements NumberService {
   }
 
   @Override
-  public boolean areNumbersDistinct(int first, int second, int third) {
-    return first != second && first != third && second != third;
+  public boolean areNumbersDistinct(int... numbers) {
+    final Set<Integer> seen = new HashSet<>();
+
+    for (int number : numbers) {
+      if (!seen.add(number)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   @Override
-  public void validateNumbers(int first, int second, int third) {
-    if (!areNumbersDistinct(first, second, third)) {
-      throw new NumbersNotDistinctException(first, second, third);
+  public void validateNumbers(int... numbers) {
+    if (!areNumbersDistinct(numbers)) {
+      throw new NumbersNotDistinctException(numbers);
     }
 
-    List<Integer> numberList = List.of(first, second, third);
-
-    numberList.forEach(number -> {
-      if (!isNumberInRange(number)) {
-        throw new NumberOutOfRangeException(number);
-      }
-    });
+    Arrays
+      .stream(numbers)
+      .forEach(number -> {
+        if (!isNumberInRange(number)) {
+          throw new NumberOutOfRangeException(number);
+        }
+      });
   }
 }

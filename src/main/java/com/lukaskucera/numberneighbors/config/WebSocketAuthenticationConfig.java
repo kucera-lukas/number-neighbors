@@ -60,11 +60,10 @@ public class WebSocketAuthenticationConfig
             StompHeaderAccessor.class
           );
 
-          if (accessor == null) {
-            return null;
-          }
-
-          if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+          if (
+            accessor != null &&
+            StompCommand.CONNECT.equals(accessor.getCommand())
+          ) {
             final String token = stompHeaderAccessorBearerTokenResolver.resolve(
               accessor
             );
@@ -75,10 +74,7 @@ public class WebSocketAuthenticationConfig
 
             accessor.setUser(authentication);
 
-            logger.info(
-              "Player \"{}\" authenticated",
-              authentication.getName()
-            );
+            logger.info("Player {} connected", authentication.getName());
           }
 
           return message;

@@ -7,6 +7,7 @@ import com.lukaskucera.numberneighbors.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,14 @@ public class GameServiceImpl implements GameService {
   );
   private final GameRepository gameRepository;
 
-  public GameServiceImpl(GameRepository gameRepository) {
+  private final SimpMessagingTemplate simpMessagingTemplate;
+
+  public GameServiceImpl(
+    GameRepository gameRepository,
+    SimpMessagingTemplate simpMessagingTemplate
+  ) {
     this.gameRepository = gameRepository;
+    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @Override
@@ -65,6 +72,17 @@ public class GameServiceImpl implements GameService {
         gameId
       );
       throw new AccessDeniedException("Access denied to game " + gameId);
+    }
+  }
+
+  @Override
+  public void sendUpdateToPlayers(GameEntity game) {
+    for (PlayerEntity player : game.getPlayers()) {
+      simpMessagingTemplate.convertAndSendToUser(
+        player.getSub(),
+        "/queue/updates",
+        game
+      );
     }
   }
 }

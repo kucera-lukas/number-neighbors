@@ -32,7 +32,6 @@ public class PlayerController {
 
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
-
   private final NumberServiceImpl numberService;
   private final JwtService jwtService;
 
@@ -83,6 +82,8 @@ public class PlayerController {
       gameId
     );
 
+    gameService.sendUpdateToPlayers(player.getGame());
+
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
 
@@ -119,14 +120,18 @@ public class PlayerController {
       playerPickRequest.third()
     );
 
-    playerService.addNumbersToPlayerById(
-      playerId,
+    final PlayerEntity player = playerService.getPlayerById(playerId);
+
+    playerService.addNumbersToPlayer(
+      player,
       playerPickRequest.first(),
       playerPickRequest.second(),
       playerPickRequest.third()
     );
 
-    return ResponseEntity.ok(playerService.getPlayerById(playerId));
+    gameService.sendUpdateToPlayers(player.getGame());
+
+    return ResponseEntity.ok(player);
   }
 
   @GetMapping(value = "/players/{id}")

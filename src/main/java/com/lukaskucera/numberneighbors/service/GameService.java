@@ -11,4 +11,6 @@ public interface GameService {
   void deleteGameById(Long id);
 
   void checkGameAccess(Long id, JwtAuthenticationToken jwtToken);
+
+  void sendUpdateToPlayers(GameEntity game);
 }

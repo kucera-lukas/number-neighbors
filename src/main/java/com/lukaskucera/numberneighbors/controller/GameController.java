@@ -118,13 +118,9 @@ public class GameController {
     final PlayerEntity player = playerService.getPlayerById(
       jwtToken.getToken().getClaim("playerId")
     );
-    final GameEntity game = player.getGame();
-    final PlayerEntity otherPlayer = player.isHost()
-      ? game.getGuest()
-      : game.getHost();
 
     simpMessagingTemplate.convertAndSendToUser(
-      otherPlayer.getSub(),
+      player.getOtherPlayer().getSub(),
       "/queue/turns",
       player.getGame()
     );

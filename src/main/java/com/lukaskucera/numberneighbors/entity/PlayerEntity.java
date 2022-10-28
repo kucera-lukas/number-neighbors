@@ -89,22 +89,27 @@ public class PlayerEntity extends BaseEntity {
     this.type = type;
   }
 
-  public GameEntity getGame() {
-    return game;
-  }
-
-  public void setGame(GameEntity game) {
-    this.game = game;
-  }
-
   @JsonIgnore
   public String getSub() {
     return getId().toString();
   }
 
   @JsonIgnore
+  public PlayerEntity getOtherPlayer() {
+    return this.isHost() ? this.getGame().getGuest() : this.getGame().getHost();
+  }
+
+  @JsonIgnore
   public Boolean isHost() {
     return type == PlayerType.HOST;
+  }
+
+  public GameEntity getGame() {
+    return game;
+  }
+
+  public void setGame(GameEntity game) {
+    this.game = game;
   }
 
   @JsonIgnore

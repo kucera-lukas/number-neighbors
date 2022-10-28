@@ -9,14 +9,12 @@ import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
 import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
-import com.lukaskucera.numberneighbors.exception.PlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -171,24 +169,5 @@ public class PlayerServiceImpl implements PlayerService {
       );
       throw new AccessDeniedException("Access denied to player " + playerId);
     }
-  }
-
-  @Override
-  public void sendUpdateToOtherPlayer(PlayerEntity player) {
-    Optional<PlayerEntity> otherPlayer = Optional.empty();
-
-    try {
-      otherPlayer = Optional.of(player.getOtherPlayer());
-    } catch (PlayerMissingException e) {
-      logger.info("player missing: {}", e.getMessage());
-    }
-
-    otherPlayer.ifPresent(p ->
-      simpMessagingTemplate.convertAndSendToUser(
-        p.getSub(),
-        "/queue/updates",
-        player.getGame()
-      )
-    );
   }
 }

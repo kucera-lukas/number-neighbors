@@ -82,7 +82,7 @@ public class PlayerController {
       gameId
     );
 
-    playerService.sendUpdateToOtherPlayer(player);
+    gameService.sendUpdateToPlayers(player.getGame());
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
@@ -129,7 +129,7 @@ public class PlayerController {
       playerPickRequest.third()
     );
 
-    playerService.sendUpdateToOtherPlayer(player);
+    gameService.sendUpdateToPlayers(player.getGame());
 
     return ResponseEntity.ok(player);
   }

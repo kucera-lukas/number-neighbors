@@ -74,10 +74,7 @@ public class WebSocketAuthenticationConfig
 
             accessor.setUser(authentication);
 
-            logger.info(
-              "Player \"{}\" authenticated",
-              authentication.getName()
-            );
+            logger.info("Player \"{}\" connected", authentication.getName());
           }
 
           return message;

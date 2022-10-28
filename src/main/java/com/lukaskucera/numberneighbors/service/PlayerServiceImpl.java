@@ -20,7 +20,6 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -35,16 +34,12 @@ public class PlayerServiceImpl implements PlayerService {
   private final GameRepository gameRepository;
   private final PlayerRepository playerRepository;
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
-
   public PlayerServiceImpl(
     GameRepository gameRepository,
-    PlayerRepository playerRepository,
-    SimpMessagingTemplate simpMessagingTemplate
+    PlayerRepository playerRepository
   ) {
     this.gameRepository = gameRepository;
     this.playerRepository = playerRepository;
-    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @Override

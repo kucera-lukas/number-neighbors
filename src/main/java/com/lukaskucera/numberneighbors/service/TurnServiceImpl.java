@@ -95,15 +95,17 @@ public class TurnServiceImpl implements TurnService {
   }
 
   public void checkAvailableNumbers(PlayerEntity player, int value) {
-    player
-      .getNumbers()
-      .stream()
-      .filter(number -> !number.getIsGuessed())
-      .map(NumberEntity::getAvailableNumbers)
-      .flatMap(List::stream)
-      .distinct()
-      .filter(number -> number.equals(value))
-      .findFirst()
-      .orElseThrow(() -> new TurnRequiresAvailableNumberException(value));
+    if (
+      player
+        .getNumbers()
+        .stream()
+        .filter(number -> !number.getIsGuessed())
+        .map(NumberEntity::getAvailableNumbers)
+        .flatMap(List::stream)
+        .distinct()
+        .noneMatch(number -> number.equals(value))
+    ) {
+      throw new TurnRequiresAvailableNumberException(value);
+    }
   }
 }

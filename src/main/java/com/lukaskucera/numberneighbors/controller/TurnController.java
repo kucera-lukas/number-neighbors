@@ -31,7 +31,7 @@ public class TurnController {
   private final TurnServiceImpl turnService;
   private final SimpMessagingTemplate simpMessagingTemplate;
 
-  TurnController(
+  public TurnController(
     GameServiceImpl gameService,
     PlayerServiceImpl playerService,
     TurnServiceImpl turnService,

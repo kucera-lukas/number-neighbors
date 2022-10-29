@@ -23,6 +23,7 @@ public class ResponseEntity extends BaseEntity {
   private ResponseType type;
 
   @OneToOne(mappedBy = "response")
+  @Nullable
   private AnswerEntity answer;
 
   @OneToOne(optional = false, fetch = FetchType.EAGER)

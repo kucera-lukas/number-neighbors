@@ -19,6 +19,7 @@ public class TurnEntity extends BaseEntity {
   private int value;
 
   @OneToOne(mappedBy = "turn")
+  @Nullable
   private ResponseEntity response;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)

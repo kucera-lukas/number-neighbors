@@ -9,6 +9,7 @@ import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,7 @@ public class PlayerController {
   @PostMapping(value = "/players")
   public ResponseEntity<NewPlayerResponse> newPlayer(
     @RequestParam(name = "game") Long gameId,
-    @RequestBody NewPlayerRequest newPlayerRequest
+    @Valid @RequestBody NewPlayerRequest newPlayerRequest
   ) {
     final PlayerEntity player = playerService.newPlayer(
       gameId,
@@ -96,31 +97,23 @@ public class PlayerController {
       jwtToken.getName()
     );
 
-    final Long playerId = playerService.getPlayerIdFromToken(jwtToken);
-
-    playerService.checkPlayerAccess(playerId, jwtToken);
-
-    return ResponseEntity.ok(playerService.getPlayerById(playerId));
+    return ResponseEntity.ok(playerService.getPlayerByJwtToken(jwtToken));
   }
 
   @PostMapping(value = "/players/pick")
   public ResponseEntity<PlayerEntity> playerPick(
-    @RequestBody PlayerPickRequest playerPickRequest,
+    @Valid @RequestBody PlayerPickRequest playerPickRequest,
     JwtAuthenticationToken jwtToken
   ) {
-    final Long playerId = playerService.getPlayerIdFromToken(jwtToken);
-
-    logger.info("Player {} number pick {}", playerId, playerPickRequest);
-
-    playerService.checkPlayerAccess(playerId, jwtToken);
-
     numberService.validateNumbers(
       playerPickRequest.first(),
       playerPickRequest.second(),
       playerPickRequest.third()
     );
 
-    final PlayerEntity player = playerService.getPlayerById(playerId);
+    final PlayerEntity player = playerService.getPlayerByJwtToken(jwtToken);
+
+    logger.info("Player {} number pick {}", player.getId(), playerPickRequest);
 
     playerService.addNumbersToPlayer(
       player,

@@ -1,9 +1,9 @@
 package com.lukaskucera.numberneighbors.advice;
 
+import com.lukaskucera.numberneighbors.exception.GameMissingPlayersException;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
+import com.lukaskucera.numberneighbors.exception.GamePlayersNotPickedNumbersException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
-import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
-import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,18 +27,22 @@ class GameAdvice extends ResponseEntityExceptionHandler {
   }
 
   @ResponseBody
-  @ExceptionHandler(HostPlayerMissingException.class)
-  ResponseEntity<String> handleHostPlayerMissing(
-    HostPlayerMissingException ex
+  @ExceptionHandler(GameMissingPlayersException.class)
+  ResponseEntity<String> handleGameMissingPlayers(
+    GameMissingPlayersException ex
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    return ResponseEntity
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
+      .body(ex.getMessage());
   }
 
   @ResponseBody
-  @ExceptionHandler(GuestPlayerMissingException.class)
-  ResponseEntity<String> handleGuestPlayerMissing(
-    GuestPlayerMissingException ex
+  @ExceptionHandler(GamePlayersNotPickedNumbersException.class)
+  ResponseEntity<String> handleGamePlayersNotPickedNumbers(
+    GamePlayersNotPickedNumbersException ex
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    return ResponseEntity
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
+      .body(ex.getMessage());
   }
 }

@@ -9,6 +9,8 @@ public interface PlayerService {
 
   PlayerEntity getPlayerById(Long id);
 
+  PlayerEntity getPlayerByJwtToken(JwtAuthenticationToken jwtToken);
+
   Set<PlayerEntity> getPlayersByGameId(Long id);
 
   PlayerEntity newPlayer(Long gameId, String name);

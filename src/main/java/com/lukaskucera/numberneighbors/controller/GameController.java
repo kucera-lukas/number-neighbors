@@ -9,6 +9,7 @@ import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class GameController {
 
   @PostMapping(value = "/games")
   public ResponseEntity<NewGameResponse> newGame(
-    @RequestBody NewGameRequest newGameRequest
+    @Valid @RequestBody NewGameRequest newGameRequest
   ) {
     final GameEntity game = gameService.newGame(newGameRequest.hostName());
     final PlayerEntity hostPlayer = game.getHost();

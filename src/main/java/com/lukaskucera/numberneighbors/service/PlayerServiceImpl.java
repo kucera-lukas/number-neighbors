@@ -1,7 +1,5 @@
 package com.lukaskucera.numberneighbors.service;
 
-import static com.lukaskucera.numberneighbors.service.GameServiceImpl.GAME_PLAYER_LIMIT;
-
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.NumberEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
@@ -64,6 +62,13 @@ public class PlayerServiceImpl implements PlayerService {
   }
 
   @Override
+  public PlayerEntity getPlayerByJwtToken(JwtAuthenticationToken jwtToken) {
+    final Long playerId = getPlayerIdFromToken(jwtToken);
+
+    return getPlayerById(playerId);
+  }
+
+  @Override
   public Set<PlayerEntity> getPlayersByGameId(Long gameId) {
     return gameRepository
       .findById(gameId)
@@ -79,7 +84,7 @@ public class PlayerServiceImpl implements PlayerService {
       .orElseThrow(() -> new GameNotFoundException(gameId));
     final Set<PlayerEntity> players = game.getPlayers();
 
-    if (players.size() >= GAME_PLAYER_LIMIT) {
+    if (players.size() >= GameServiceImpl.PLAYER_COUNT) {
       logger.info(
         "Can't add player \"{}\" to the game {} as it's already populated",
         name,

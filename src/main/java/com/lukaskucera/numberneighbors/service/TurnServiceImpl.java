@@ -9,7 +9,6 @@ import com.lukaskucera.numberneighbors.exception.TurnRequiresAvailableNumberExce
 import com.lukaskucera.numberneighbors.exception.TurnRequiresChosenNumberException;
 import com.lukaskucera.numberneighbors.repository.TurnRepository;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,62 +27,83 @@ public class TurnServiceImpl implements TurnService {
 
   @Override
   public TurnEntity newTurn(PlayerEntity player, int value) {
-    final List<TurnEntity> gameTurns = player.getGame().getTurns();
-    final int gameTurnCount = gameTurns.size();
-
-    // host must be the first player
-    if (gameTurnCount == 0 && player.isGuest()) {
-      throw new PlayerNotOnTurnException(player.getId());
-    }
-
-    final Optional<TurnEntity> lastTurn = Optional.ofNullable(
-      gameTurnCount == 0 ? null : gameTurns.get(gameTurnCount - 1)
-    );
-
-    lastTurn.ifPresent(turn -> {
-      // current player must not have played the last turn
-      if (turn.getId().equals(player.getId())) {
-        throw new PlayerNotOnTurnException(player.getId());
-      }
-
-      if (!turn.isComplete()) {
-        throw new TurnNotCompletedException(turn.getId());
-      }
-    });
-
-    final List<NumberEntity> numbers = player.getNumbers();
-    final List<Integer> chosenNumbers = numbers
-      .stream()
-      .filter(number -> !number.getIsGuessed())
-      .map(NumberEntity::getValue)
-      .toList();
-    final List<TurnEntity> playerTurns = player.getTurns();
-    final int playerTurnCount = playerTurns.size();
-
-    final boolean mustBeChosen =
-      playerTurnCount >= 2 &&
-      playerTurns
-        .subList(playerTurnCount - 2, playerTurnCount)
-        .stream()
-        .noneMatch(turn -> chosenNumbers.contains(turn.getValue()));
-
-    if (mustBeChosen && !chosenNumbers.contains(value)) {
-      throw new TurnRequiresChosenNumberException(value);
-    }
-
-    numbers
-      .stream()
-      .map(NumberEntity::getAvailableNumbers)
-      .flatMap(List::stream)
-      .distinct()
-      .filter(number -> number.equals(value))
-      .findFirst()
-      .orElseThrow(() -> new TurnRequiresAvailableNumberException(value));
+    checkGameTurns(player);
+    checkNumbers(player, value);
 
     final TurnEntity turn = new TurnEntity(value, player);
 
     turnRepository.save(turn);
 
     return turn;
+  }
+
+  public void checkGameTurns(PlayerEntity player) {
+    final List<TurnEntity> gameTurns = player.getGame().getTurns();
+    final int gameTurnCount = gameTurns.size();
+
+    if (gameTurnCount == 0) {
+      checkFirstTurn(player);
+    } else {
+      checkLastTurn(player, gameTurns.get(gameTurnCount - 1));
+    }
+  }
+
+  public void checkNumbers(PlayerEntity player, int value) {
+    checkChosenNumbers(player, value);
+    checkAvailableNumbers(player, value);
+  }
+
+  public void checkFirstTurn(PlayerEntity player) {
+    if (player.isGuest()) {
+      throw new PlayerNotOnTurnException(player.getId());
+    }
+  }
+
+  public void checkLastTurn(PlayerEntity player, TurnEntity lastTurn) {
+    // current player must not have played the last turn
+    if (lastTurn.getId().equals(player.getId())) {
+      throw new PlayerNotOnTurnException(player.getId());
+    }
+
+    if (!lastTurn.isComplete()) {
+      throw new TurnNotCompletedException(lastTurn.getId());
+    }
+  }
+
+  public void checkChosenNumbers(PlayerEntity player, int value) {
+    final List<TurnEntity> playerTurns = player.getTurns();
+    final int playerTurnCount = playerTurns.size();
+
+    if (playerTurnCount < 2) {
+      return;
+    }
+
+    final List<Integer> chosenNumbers = player
+      .getNumbers()
+      .stream()
+      .filter(number -> !number.getIsGuessed())
+      .map(NumberEntity::getValue)
+      .toList();
+    final boolean mustBeChosen = playerTurns
+      .subList(playerTurnCount - 2, playerTurnCount)
+      .stream()
+      .noneMatch(turn -> chosenNumbers.contains(turn.getValue()));
+
+    if (mustBeChosen && !chosenNumbers.contains(value)) {
+      throw new TurnRequiresChosenNumberException(value);
+    }
+  }
+
+  public void checkAvailableNumbers(PlayerEntity player, int value) {
+    player
+      .getNumbers()
+      .stream()
+      .filter(number -> !number.getIsGuessed())
+      .map(NumberEntity::getAvailableNumbers)
+      .flatMap(List::stream)
+      .distinct()
+      .filter(number -> number.equals(value))
+      .findFirst()
+      .orElseThrow(() -> new TurnRequiresAvailableNumberException(value));
   }
 }

@@ -26,7 +26,7 @@ public class NumberEntity extends BaseEntity {
   @Column(name = "value", nullable = false)
   private int value;
 
-  @Enumerated(EnumType.STRING)
+  @Enumerated(EnumType.ORDINAL)
   @Column(name = "type", updatable = false, nullable = false)
   private NumberType type;
 

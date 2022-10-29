@@ -26,8 +26,6 @@ public class RestAdvice extends ResponseEntityExceptionHandler {
     HttpStatus status,
     WebRequest request
   ) {
-    logger.info(ex.getClass().getName());
-
     final BindingResult bindingResult = ex.getBindingResult();
     final List<String> errors = new ArrayList<>();
 

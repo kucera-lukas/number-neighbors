@@ -59,6 +59,8 @@ public class TurnController {
   ) {
     logger.info("New turn in game {} by player {}", gameId, jwtToken.getName());
 
+    gameService.checkGameAccess(gameId, jwtToken);
+
     final PlayerEntity player = playerService.getPlayerByJwtToken(jwtToken);
 
     gameService.checkGameReady(player.getGame());

@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,15 +29,18 @@ public class TurnController {
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
   private final TurnServiceImpl turnService;
+  private final SimpMessagingTemplate simpMessagingTemplate;
 
   TurnController(
     GameServiceImpl gameService,
     PlayerServiceImpl playerService,
-    TurnServiceImpl turnService
+    TurnServiceImpl turnService,
+    SimpMessagingTemplate simpMessagingTemplate
   ) {
     this.gameService = gameService;
     this.playerService = playerService;
     this.turnService = turnService;
+    this.simpMessagingTemplate = simpMessagingTemplate;
   }
 
   @GetMapping("/turns")
@@ -66,6 +70,12 @@ public class TurnController {
     gameService.checkGameReady(player.getGame());
 
     final TurnEntity turn = turnService.newTurn(player, newTurnRequest.value());
+
+    simpMessagingTemplate.convertAndSendToUser(
+      player.getOtherPlayer().getSub(),
+      "/queue/turns",
+      turn
+    );
 
     return ResponseEntity.ok(turn);
   }

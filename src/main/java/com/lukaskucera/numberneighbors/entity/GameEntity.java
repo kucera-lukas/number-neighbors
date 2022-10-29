@@ -6,6 +6,7 @@ import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -14,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.OrderBy;
 
 @Entity
 @Table(name = "games")
@@ -27,8 +29,18 @@ public class GameEntity extends BaseEntity {
   @JsonManagedReference
   private final Set<PlayerEntity> players;
 
+  @OneToMany(
+    mappedBy = "game",
+    cascade = CascadeType.ALL,
+    fetch = FetchType.LAZY
+  )
+  @OrderBy(clause = "created ASC")
+  @JsonManagedReference
+  private final List<TurnEntity> turns;
+
   public GameEntity() {
     this.players = new HashSet<>();
+    this.turns = List.of();
   }
 
   public Set<PlayerEntity> getPlayers() {
@@ -38,6 +50,15 @@ public class GameEntity extends BaseEntity {
   public void addPlayer(PlayerEntity player) {
     players.add(player);
     player.setGame(this);
+  }
+
+  public List<TurnEntity> getTurns() {
+    return List.copyOf(turns);
+  }
+
+  public void addTurn(TurnEntity turn) {
+    turns.add(turn);
+    turn.setGame(this);
   }
 
   @JsonIgnore

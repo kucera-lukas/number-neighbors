@@ -2,8 +2,11 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.exception.GameMissingPlayersException;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
+import com.lukaskucera.numberneighbors.exception.GamePlayersNotPickedNumbersException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameServiceImpl implements GameService {
 
-  public static final int GAME_PLAYER_LIMIT = 2;
+  public static final int PLAYER_COUNT = 2;
   private static final Logger logger = LoggerFactory.getLogger(
     GameServiceImpl.class
   );
@@ -76,8 +79,41 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
+  public void checkGameReady(GameEntity game) {
+    final Set<PlayerEntity> players = game.getPlayers();
+
+    if (players.size() != PLAYER_COUNT) {
+      logger.info(
+        "Game {} has {} player(s), {} is needed",
+        game.getId(),
+        players.size(),
+        PLAYER_COUNT
+      );
+
+      throw new GameMissingPlayersException(game.getId());
+    }
+
+    if (
+      players
+        .stream()
+        .anyMatch(player ->
+          player.getNumbers().size() !=
+          NumberServiceImpl.NUMBER_COUNT_PER_PLAYER
+        )
+    ) {
+      throw new GamePlayersNotPickedNumbersException(game.getId());
+    }
+  }
+
+  @Override
   public void sendUpdateToPlayers(GameEntity game) {
     for (PlayerEntity player : game.getPlayers()) {
+      logger.debug(
+        "Sending game {} update to player {}",
+        game.getId(),
+        player.getId()
+      );
+
       simpMessagingTemplate.convertAndSendToUser(
         player.getSub(),
         "/queue/updates",

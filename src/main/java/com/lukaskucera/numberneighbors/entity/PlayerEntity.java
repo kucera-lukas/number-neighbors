@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import org.hibernate.annotations.OrderBy;
 
 @Entity
@@ -66,6 +67,7 @@ public class PlayerEntity extends BaseEntity {
   private final List<AnswerEntity> answers;
 
   @Column(name = "name", nullable = false)
+  @NotBlank(message = "Player name can't be blank")
   private String name;
 
   @Enumerated(EnumType.STRING)

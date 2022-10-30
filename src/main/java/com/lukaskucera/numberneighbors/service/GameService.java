@@ -12,5 +12,7 @@ public interface GameService {
 
   void checkGameAccess(Long id, JwtAuthenticationToken jwtToken);
 
+  void checkGameReady(GameEntity game);
+
   void sendUpdateToPlayers(GameEntity game);
 }

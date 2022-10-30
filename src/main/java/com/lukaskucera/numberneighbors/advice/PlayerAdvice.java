@@ -1,8 +1,11 @@
 package com.lukaskucera.numberneighbors.advice;
 
+import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
+import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
 import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
+import com.lukaskucera.numberneighbors.exception.PlayerNotOnTurnException;
 import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +44,30 @@ class PlayerAdvice extends ResponseEntityExceptionHandler {
   ResponseEntity<String> handlePlayerIdMissingInJwtTokenClaims(
     PlayerIdMissingInJwtTokenClaimsException ex
   ) {
+    return ResponseEntity
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
+      .body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(HostPlayerMissingException.class)
+  ResponseEntity<String> handleHostPlayerMissing(
+    HostPlayerMissingException ex
+  ) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(GuestPlayerMissingException.class)
+  ResponseEntity<String> handleGuestPlayerMissing(
+    GuestPlayerMissingException ex
+  ) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(PlayerNotOnTurnException.class)
+  ResponseEntity<String> handlePlayerNotOnTurn(PlayerNotOnTurnException ex) {
     return ResponseEntity
       .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .body(ex.getMessage());

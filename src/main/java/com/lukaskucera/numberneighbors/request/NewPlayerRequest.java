@@ -1,3 +1,7 @@
 package com.lukaskucera.numberneighbors.request;
 
-public record NewPlayerRequest(String name) {}
+import javax.validation.constraints.NotBlank;
+
+public record NewPlayerRequest(
+  @NotBlank(message = "Player name can't be blank") String name
+) {}

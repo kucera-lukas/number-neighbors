@@ -6,7 +6,7 @@ public class NumbersNotDistinctException extends RuntimeException {
 
   public NumbersNotDistinctException(int... numbers) {
     super(
-      String.format("Number %s are not distinct", Arrays.toString(numbers))
+      String.format("Numbers %s are not distinct", Arrays.toString(numbers))
     );
   }
 }

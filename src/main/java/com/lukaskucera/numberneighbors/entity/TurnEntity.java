@@ -1,6 +1,9 @@
 package com.lukaskucera.numberneighbors.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lukaskucera.numberneighbors.enums.ResponseType;
+import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.lang.Nullable;
 
 @Entity
@@ -16,6 +20,7 @@ import org.springframework.lang.Nullable;
 public class TurnEntity extends BaseEntity {
 
   @Column(name = "value", updatable = false, nullable = false)
+  @Range(min = NumberServiceImpl.MIN_NUMBER, max = NumberServiceImpl.MAX_NUMBER)
   private int value;
 
   @OneToOne(mappedBy = "turn")
@@ -75,5 +80,18 @@ public class TurnEntity extends BaseEntity {
 
   public void setPlayer(PlayerEntity player) {
     this.player = player;
+  }
+
+  @JsonIgnore
+  public boolean isComplete() {
+    if (response == null) {
+      return false;
+    }
+
+    if (response.getType() == ResponseType.PASS) {
+      return true;
+    }
+
+    return response.getAnswer() != null;
   }
 }

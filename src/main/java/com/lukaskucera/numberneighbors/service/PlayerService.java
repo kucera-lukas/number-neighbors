@@ -17,12 +17,5 @@ public interface PlayerService {
 
   void deletePlayerById(Long id);
 
-  PlayerEntity addNumbersToPlayer(
-    PlayerEntity player,
-    int first,
-    int second,
-    int third
-  );
-
   void checkPlayerAccess(Long id, JwtAuthenticationToken jwtToken);
 }

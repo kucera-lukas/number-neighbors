@@ -73,7 +73,7 @@ public class NumberController {
 
     logger.info("Adding new numbers for player {}", player.getId());
 
-    playerService.addNumbersToPlayer(
+    final List<NumberEntity> numbers = numberService.addNumbersToPlayer(
       player,
       newNumbersRequest.first(),
       newNumbersRequest.second(),
@@ -82,6 +82,6 @@ public class NumberController {
 
     gameService.sendUpdateToPlayers(player.getGame());
 
-    return ResponseEntity.ok(player.getNumbers());
+    return ResponseEntity.ok(numbers);
   }
 }

@@ -2,6 +2,7 @@ package com.lukaskucera.numberneighbors.advice;
 
 import com.lukaskucera.numberneighbors.exception.NumberOutOfRangeException;
 import com.lukaskucera.numberneighbors.exception.NumbersNotDistinctException;
+import com.lukaskucera.numberneighbors.exception.NumbersPopulatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,5 +29,11 @@ class NumberAdvice extends ResponseEntityExceptionHandler {
     return ResponseEntity
       .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(NumbersPopulatedException.class)
+  ResponseEntity<String> handleNumbersPopulated(NumbersPopulatedException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }
 }

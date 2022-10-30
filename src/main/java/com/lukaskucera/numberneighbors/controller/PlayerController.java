@@ -2,11 +2,9 @@ package com.lukaskucera.numberneighbors.controller;
 
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
-import com.lukaskucera.numberneighbors.request.PlayerPickRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
-import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
 import javax.validation.Valid;
@@ -33,18 +31,15 @@ public class PlayerController {
 
   private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
-  private final NumberServiceImpl numberService;
   private final JwtService jwtService;
 
   public PlayerController(
     GameServiceImpl gameService,
     PlayerServiceImpl playerService,
-    NumberServiceImpl numberService,
     JwtService jwtService
   ) {
     this.gameService = gameService;
     this.playerService = playerService;
-    this.numberService = numberService;
     this.jwtService = jwtService;
   }
 
@@ -54,7 +49,7 @@ public class PlayerController {
     JwtAuthenticationToken jwtToken
   ) {
     logger.info(
-      "Players info of the game {} requested by player \"{}\"",
+      "Players info of the game {} requested by player {}",
       gameId,
       jwtToken.getName()
     );
@@ -100,40 +95,13 @@ public class PlayerController {
     return ResponseEntity.ok(playerService.getPlayerByJwtToken(jwtToken));
   }
 
-  @PostMapping(value = "/players/pick")
-  public ResponseEntity<PlayerEntity> playerPick(
-    @Valid @RequestBody PlayerPickRequest playerPickRequest,
-    JwtAuthenticationToken jwtToken
-  ) {
-    numberService.validateNumbers(
-      playerPickRequest.first(),
-      playerPickRequest.second(),
-      playerPickRequest.third()
-    );
-
-    final PlayerEntity player = playerService.getPlayerByJwtToken(jwtToken);
-
-    logger.info("Player {} number pick {}", player.getId(), playerPickRequest);
-
-    playerService.addNumbersToPlayer(
-      player,
-      playerPickRequest.first(),
-      playerPickRequest.second(),
-      playerPickRequest.third()
-    );
-
-    gameService.sendUpdateToPlayers(player.getGame());
-
-    return ResponseEntity.ok(player);
-  }
-
   @GetMapping(value = "/players/{id}")
   public ResponseEntity<PlayerEntity> player(
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
     logger.info(
-      "Player {} info requested by player \"{}\"",
+      "Player {} info requested by player {}",
       id,
       jwtToken.getName()
     );
@@ -151,6 +119,6 @@ public class PlayerController {
     playerService.checkPlayerAccess(id, jwtToken);
     playerService.deletePlayerById(id);
 
-    logger.info("Player {} deleted by player \"{}\"", id, jwtToken.getName());
+    logger.info("Player {} deleted by player {}", id, jwtToken.getName());
   }
 }

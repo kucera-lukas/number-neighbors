@@ -6,7 +6,6 @@ import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaims
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotOnTurnException;
-import com.lukaskucera.numberneighbors.exception.PlayerNumbersPopulatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,14 +28,6 @@ class PlayerAdvice extends ResponseEntityExceptionHandler {
   @ExceptionHandler(PlayerNotFoundException.class)
   ResponseEntity<String> handlePlayerNotFound(PlayerNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-  }
-
-  @ResponseBody
-  @ExceptionHandler(PlayerNumbersPopulatedException.class)
-  ResponseEntity<String> handlePlayerNumbersPopulated(
-    PlayerNumbersPopulatedException ex
-  ) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }
 
   @ResponseBody

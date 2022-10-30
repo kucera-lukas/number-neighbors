@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -18,6 +19,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class RestAdvice extends ResponseEntityExceptionHandler {
+
+  @Override
+  protected ResponseEntity<Object> handleMissingServletRequestParameter(
+    MissingServletRequestParameterException ex,
+    HttpHeaders headers,
+    HttpStatus status,
+    WebRequest request
+  ) {
+    logger.error("MissingServletRequestParameter: " + ex.getMessage());
+
+    return handleExceptionInternal(
+      ex,
+      ex.getMessage(),
+      headers,
+      status,
+      request
+    );
+  }
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -36,6 +55,8 @@ public class RestAdvice extends ResponseEntityExceptionHandler {
     for (final ObjectError error : bindingResult.getGlobalErrors()) {
       errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
     }
+
+    logger.error("MethodArgumentNotValid: " + errors);
 
     return handleExceptionInternal(
       ex,

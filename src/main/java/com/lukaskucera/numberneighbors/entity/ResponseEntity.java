@@ -28,6 +28,7 @@ public class ResponseEntity extends BaseEntity {
 
   @OneToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "turn_id", updatable = false, nullable = false)
+  @JsonBackReference
   private TurnEntity turn;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)

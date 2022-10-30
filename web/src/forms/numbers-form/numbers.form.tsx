@@ -9,12 +9,11 @@ import useLocalStorageItem from "../../hooks/localstorage.hook";
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
 
-import type Player from "../../types/player.type";
 import type { NumbersFormValues } from "./numbers-form.types";
 
 const NumbersForm = (): JSX.Element => {
   const form = useNumbersForm();
-  const [player, setPlayer] = usePlayer();
+  const [player] = usePlayer();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [token] = useLocalStorageItem<string>("token");
@@ -27,11 +26,15 @@ const NumbersForm = (): JSX.Element => {
 
   const onSubmit = useCallback(
     (values: NumbersFormValues) => {
+      if (!player) {
+        return;
+      }
+
       resetError();
 
       setLoading(true);
 
-      fetch(`${SERVER_URI}/players/pick`, {
+      fetch(`${SERVER_URI}/numbers?player=${player.id}`, {
         method: "POST",
         body: JSON.stringify(values),
         headers: {
@@ -43,12 +46,6 @@ const NumbersForm = (): JSX.Element => {
           if (!res.ok) {
             throw new Error(res.status.toLocaleString());
           }
-
-          return res.json();
-        })
-        .then((res: Player) => {
-          setPlayer(res);
-          resetError();
         })
         .catch((error: Error) => {
           setError(error.message);
@@ -56,7 +53,7 @@ const NumbersForm = (): JSX.Element => {
 
       setLoading(false);
     },
-    [resetError, setPlayer, token],
+    [player, resetError, token],
   );
 
   return (

@@ -4,7 +4,9 @@ import com.lukaskucera.numberneighbors.entity.NumberEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
 import com.lukaskucera.numberneighbors.exception.PlayerNotOnTurnException;
+import com.lukaskucera.numberneighbors.exception.ResponseAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.TurnNotCompletedException;
+import com.lukaskucera.numberneighbors.exception.TurnNotFoundException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresAvailableNumberException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresChosenNumberException;
 import com.lukaskucera.numberneighbors.repository.TurnRepository;
@@ -21,6 +23,13 @@ public class TurnServiceImpl implements TurnService {
   }
 
   @Override
+  public TurnEntity getTurnById(Long id) {
+    return turnRepository
+      .findById(id)
+      .orElseThrow(() -> new TurnNotFoundException(id));
+  }
+
+  @Override
   public List<TurnEntity> getTurnsByGameId(Long id) {
     return turnRepository.findTurnEntitiesByGameId(id);
   }
@@ -32,9 +41,19 @@ public class TurnServiceImpl implements TurnService {
 
     final TurnEntity turn = new TurnEntity(value, player);
 
+    player.addTurn(turn);
+    player.getGame().addTurn(turn);
+
     turnRepository.save(turn);
 
     return turn;
+  }
+
+  @Override
+  public void checkTurnNeedsResponse(TurnEntity turn) {
+    if (turn.getResponse() != null) {
+      throw new ResponseAlreadyExistsException(turn.getId());
+    }
   }
 
   public void checkGameTurns(PlayerEntity player) {
@@ -61,7 +80,7 @@ public class TurnServiceImpl implements TurnService {
 
   public void checkLastTurn(PlayerEntity player, TurnEntity lastTurn) {
     // current player must not have played the last turn
-    if (lastTurn.getId().equals(player.getId())) {
+    if (lastTurn.getPlayer().getId().equals(player.getId())) {
       throw new PlayerNotOnTurnException(player.getId());
     }
 

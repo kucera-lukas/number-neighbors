@@ -1,6 +1,7 @@
 package com.lukaskucera.numberneighbors.advice;
 
 import com.lukaskucera.numberneighbors.exception.TurnNotCompletedException;
+import com.lukaskucera.numberneighbors.exception.TurnNotFoundException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresAvailableNumberException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresChosenNumberException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 public class TurnAdvice {
+
+  @ResponseBody
+  @ExceptionHandler(TurnNotFoundException.class)
+  ResponseEntity<String> handleTurnNotFound(TurnNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
 
   @ResponseBody
   @ExceptionHandler(TurnNotCompletedException.class)

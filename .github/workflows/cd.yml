@@ -6,6 +6,7 @@ on:
 
 env:
   IMAGE: ghcr.io/kucera-lukas/number-neighbors:latest
+  CACHE_IMAGE: ghcr.io/kucera-lukas/number-neighbors-paketo-cache-image:latest
 
 jobs:
   deploy:
@@ -44,7 +45,7 @@ jobs:
               --path . \
               --env "BP_JVM_VERSION=17" \
               --env "BP_NATIVE_IMAGE=true" \
-              --cache-image $IMAGE \
+              --cache-image $CACHE_IMAGE \
               --publish
 
       - name: Install flyctl

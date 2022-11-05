@@ -37,14 +37,16 @@ jobs:
       # BP_JVM_VERSION 17, because we use Java 17 inside our Maven build
       # but Paketo defaults to 11
       - name: Build app with pack CLI & publish to GitHub Container Registry
+        env:
+          IMAGE: ${{ IMAGE }}
         run: |
-          pack build ${{ IMAGE }} \
+          pack build $IMAGE \
               --builder paketobuildpacks/builder:tiny \
               --buildpack paketo-buildpacks/java-native-image \
               --path . \
               --env "BP_JVM_VERSION=17" \
               --env "BP_NATIVE_IMAGE=true" \
-              --cache-image ${{ IMAGE }} \
+              --cache-image $IMAGE \
               --publish
 
       - name: Install flyctl

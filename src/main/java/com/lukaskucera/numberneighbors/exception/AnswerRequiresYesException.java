@@ -6,11 +6,10 @@ public class AnswerRequiresYesException extends RuntimeException {
 
   public AnswerRequiresYesException(Long responseId) {
     super(
-      String.format(
-        "answer to response %d is required to be %s",
-        responseId,
-        AnwserType.YES
-      )
+      "answer to response " +
+      responseId +
+      " is required to be " +
+      AnwserType.YES
     );
   }
 }

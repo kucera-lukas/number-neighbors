@@ -6,12 +6,13 @@ public class NumberOutOfRangeException extends RuntimeException {
 
   public NumberOutOfRangeException(int number) {
     super(
-      String.format(
-        "Number %d is not in the range [%d, %d]",
-        number,
-        NumberServiceImpl.MIN_NUMBER,
-        NumberServiceImpl.MAX_NUMBER
-      )
+      "number " +
+      number +
+      " is not in the range [" +
+      NumberServiceImpl.MIN_NUMBER +
+      ", " +
+      NumberServiceImpl.MAX_NUMBER +
+      "]"
     );
   }
 }

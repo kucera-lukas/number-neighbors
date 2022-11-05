@@ -8,10 +8,8 @@ public class PlayerIdMissingInJwtTokenClaimsException extends RuntimeException {
     JwtAuthenticationToken jwtToken
   ) {
     super(
-      String.format(
-        "Player ID is missing in the JWT token claims: %s",
-        jwtToken.getToken().getClaims()
-      )
+      "player ID is missing in the JWT token claims: " +
+      jwtToken.getToken().getClaims()
     );
   }
 }

@@ -1,28 +1,9 @@
 spring:
-  cloud:
-    gcp:
-      core:
-        enabled: true
-      secretmanager:
-        enabled: true
-      sql:
-        instance-connection-name: ${sm://prod-instance-connection-name}
-        database-name: ${sm://prod-database-name}
-        enabled: true
-
   datasource:
-    username: ${sm://prod-database-username}
-    password: ${sm://prod-database-password}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
+    url: ${env.DATABASE_URL}
 
 jwt:
   private:
-    key: ${sm://prod-private-key}
+    key: ${env.PRIVATE_KEY}
   public:
-    key: ${sm://prod-public-key}
-
-client:
-  uri: ${sm://prod-client-uri}
+    key: ${env.PUBLIC_KEY}

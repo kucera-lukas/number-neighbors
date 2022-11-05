@@ -1,5 +1,7 @@
 package com.lukaskucera.numberneighbors.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    SecurityConfig.class
+  );
 
   @SuppressWarnings("NullAway.Init")
   @Value("${client.uri}")
@@ -61,7 +67,9 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.addAllowedOrigin(clientUri);
+    logger.debug("setting allowed origin pattern to {}", clientUri);
+
+    configuration.addAllowedOriginPattern(clientUri);
     configuration.addAllowedMethod(CorsConfiguration.ALL);
     configuration.addAllowedHeader(CorsConfiguration.ALL);
     configuration.setAllowCredentials(true);

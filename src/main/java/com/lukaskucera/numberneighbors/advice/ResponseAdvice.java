@@ -2,6 +2,7 @@ package com.lukaskucera.numberneighbors.advice;
 
 import com.lukaskucera.numberneighbors.exception.ResponseAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.ResponseNotFoundException;
+import com.lukaskucera.numberneighbors.exception.ResponsePassedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,5 +24,13 @@ public class ResponseAdvice {
     ResponseAlreadyExistsException ex
   ) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+  }
+
+  @ResponseBody
+  @ExceptionHandler(ResponsePassedException.class)
+  ResponseEntity<String> handleResponsePassed(ResponsePassedException ex) {
+    return ResponseEntity
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
+      .body(ex.getMessage());
   }
 }

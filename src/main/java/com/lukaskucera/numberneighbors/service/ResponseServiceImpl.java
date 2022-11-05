@@ -5,6 +5,7 @@ import com.lukaskucera.numberneighbors.entity.TurnEntity;
 import com.lukaskucera.numberneighbors.enums.ResponseType;
 import com.lukaskucera.numberneighbors.exception.AnswerAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.ResponseNotFoundException;
+import com.lukaskucera.numberneighbors.exception.ResponsePassedException;
 import com.lukaskucera.numberneighbors.repository.ResponseRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,10 @@ public class ResponseServiceImpl implements ResponseService {
 
   @Override
   public void checkResponseNeedsAnswer(ResponseEntity response) {
+    if (response.getType() == ResponseType.PASS) {
+      throw new ResponsePassedException(response.getId());
+    }
+
     if (response.getAnswer() != null) {
       throw new AnswerAlreadyExistsException(response.getId());
     }

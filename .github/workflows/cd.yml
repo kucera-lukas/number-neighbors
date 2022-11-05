@@ -5,7 +5,7 @@ on:
     branches: [main, feat/fly-io-deployment]
 
 env:
-  IMAGE: ghcr.io/kucera-lukas/nuumber-neighbors:latest
+  IMAGE: ghcr.io/kucera-lukas/number-neighbors:latest
 
 jobs:
   deploy:

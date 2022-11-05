@@ -4,7 +4,7 @@ kill_timeout = 5
 processes = []
 
 [build]
-builder = "paketobuildpacks/builder:base"
+image = "ghcr.io/kucera-lukas/number-neighbors:latest"
 
 [env]
 SPRING_PROFILES_ACTIVE = "prod"

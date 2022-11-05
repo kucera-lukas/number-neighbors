@@ -1,12 +1,16 @@
 package com.lukaskucera.numberneighbors.advice;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -19,6 +23,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class RestAdvice extends ResponseEntityExceptionHandler {
+
+  private static final Pattern FIELD_PATTERN = Pattern.compile(
+    "\\[\"([\\w]+)\"\\]"
+  );
+
+  /**
+   * inspired by <a href="https://stackoverflow.com/a/64576320">
+   * stackoverflow.com/a/64576320</a>
+   */
+  private static final Pattern ENUM_VALUES_PATTERN = Pattern.compile(
+    "values accepted for Enum class: (\\[[\\w\\s,]+\\]);"
+  );
 
   @Override
   protected ResponseEntity<Object> handleMissingServletRequestParameter(
@@ -36,6 +52,32 @@ public class RestAdvice extends ResponseEntityExceptionHandler {
       status,
       request
     );
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleHttpMessageNotReadable(
+    HttpMessageNotReadableException ex,
+    HttpHeaders headers,
+    HttpStatus status,
+    WebRequest request
+  ) {
+    final String message = ex.getMessage();
+
+    logger.error("HttpMessageNotReadable: " + message);
+
+    String body = null;
+
+    if (message != null && ex.getCause() instanceof InvalidFormatException) {
+      Matcher fieldMatcher = FIELD_PATTERN.matcher(message);
+      Matcher enumMatcher = ENUM_VALUES_PATTERN.matcher(message);
+
+      if (fieldMatcher.find() && enumMatcher.find()) {
+        body =
+          fieldMatcher.group(1) + ": must be one of " + enumMatcher.group(1);
+      }
+    }
+
+    return handleExceptionInternal(ex, body, headers, status, request);
   }
 
   @Override

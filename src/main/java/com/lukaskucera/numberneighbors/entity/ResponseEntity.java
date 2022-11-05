@@ -3,6 +3,7 @@ package com.lukaskucera.numberneighbors.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.enums.ResponseType;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "responses")

@@ -55,7 +55,7 @@ public class TurnEntity extends BaseEntity {
     this.value = value;
   }
 
-  @Nulla
+  @Nullable
   public ResponseEntity getResponse() {
     return response;
   }

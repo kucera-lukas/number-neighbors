@@ -4,6 +4,6 @@ public class TurnRequiresChosenNumberException
   extends TurnRequiresNumberException {
 
   public TurnRequiresChosenNumberException(int value) {
-    super(String.format("Turn requires a chosen number, %d is not", value));
+    super("turn requires a chosen number, " + value + " is not");
   }
 }

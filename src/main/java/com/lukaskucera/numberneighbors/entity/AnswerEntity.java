@@ -21,8 +21,9 @@ public class AnswerEntity extends BaseEntity {
   @Column(name = "type", updatable = false, nullable = false)
   private AnwserType type;
 
-  @OneToOne(optional = false, fetch = FetchType.EAGER)
+  @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "response_id", updatable = false, nullable = false)
+  @JsonBackReference
   private ResponseEntity response;
 
   @ManyToOne(optional = false, fetch = FetchType.LAZY)

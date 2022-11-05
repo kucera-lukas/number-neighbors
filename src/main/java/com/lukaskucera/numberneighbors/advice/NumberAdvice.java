@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.advice;
 
+import com.lukaskucera.numberneighbors.exception.NumberNotFoundException;
 import com.lukaskucera.numberneighbors.exception.NumberOutOfRangeException;
 import com.lukaskucera.numberneighbors.exception.NumbersNotDistinctException;
 import com.lukaskucera.numberneighbors.exception.NumbersPopulatedException;
@@ -12,6 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 class NumberAdvice extends ResponseEntityExceptionHandler {
+
+  @ResponseBody
+  @ExceptionHandler(NumberNotFoundException.class)
+  ResponseEntity<String> handleNumberNotFound(NumberNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
 
   @ResponseBody
   @ExceptionHandler(NumberOutOfRangeException.class)

@@ -29,9 +29,8 @@ public class RestAdvice extends ResponseEntityExceptionHandler {
   );
 
   /**
-   * inspired by <a
-   * href="https://stackoverflow.com/a/64576320">stackoverflow.com/a/64576320
-   * </a>
+   * inspired by <a href="https://stackoverflow.com/a/64576320">
+   * stackoverflow.com/a/64576320</a>
    */
   private static final Pattern ENUM_VALUES_PATTERN = Pattern.compile(
     "values accepted for Enum class: (\\[[\\w\\s,]+\\]);"

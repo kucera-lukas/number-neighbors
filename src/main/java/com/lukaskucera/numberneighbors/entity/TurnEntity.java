@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.enums.ResponseType;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "turns")
@@ -55,7 +55,7 @@ public class TurnEntity extends BaseEntity {
     this.value = value;
   }
 
-  @Nullable
+  @Nulla
   public ResponseEntity getResponse() {
     return response;
   }

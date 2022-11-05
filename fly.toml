@@ -1,5 +1,3 @@
-# fly.toml file generated for number-neighbors on 2022-11-05T18:02:34+01:00
-
 app = "number-neighbors"
 kill_signal = "SIGINT"
 kill_timeout = 5

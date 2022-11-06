@@ -3,12 +3,11 @@ package com.lukaskucera.numberneighbors;
 import org.hibernate.dialect.PostgreSQL10Dialect;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AdviceMode;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.nativex.hint.AotProxyHint;
 import org.springframework.nativex.hint.NativeHint;
 import org.springframework.nativex.hint.ProxyBits;
 import org.springframework.nativex.hint.TypeHint;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 @NativeHint(
   types = {
@@ -45,7 +44,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
   }
 )
 @SpringBootApplication
-@EnableAsync(proxyTargetClass = true, mode = AdviceMode.PROXY)
+@EnableCaching(proxyTargetClass = true)
 public class NumberNeighborsApplication {
 
   public static void main(String[] args) {

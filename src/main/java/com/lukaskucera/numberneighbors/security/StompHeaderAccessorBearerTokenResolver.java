@@ -1,9 +1,9 @@
 package com.lukaskucera.numberneighbors.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

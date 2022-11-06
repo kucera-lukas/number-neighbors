@@ -10,7 +10,6 @@ import org.springframework.nativex.hint.ProxyBits;
 import org.springframework.nativex.hint.TypeHint;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication
 @NativeHint(
   types = {
     @TypeHint(
@@ -45,6 +44,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
     ),
   }
 )
+@SpringBootApplication
 @EnableAsync(proxyTargetClass = true, mode = AdviceMode.PROXY)
 public class NumberNeighborsApplication {
 

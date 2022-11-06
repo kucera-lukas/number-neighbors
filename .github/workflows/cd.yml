@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        pack: [7.37.0]
+        pack: [7.8.1]
 
     steps:
       - name: Checkout repository

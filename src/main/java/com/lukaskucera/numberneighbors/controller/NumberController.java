@@ -3,8 +3,11 @@ package com.lukaskucera.numberneighbors.controller;
 import com.lukaskucera.numberneighbors.entity.NumberEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewNumbersRequest;
+import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
+import com.lukaskucera.numberneighbors.service.NumberService;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
+import com.lukaskucera.numberneighbors.service.PlayerService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.List;
 import javax.validation.Valid;
@@ -25,9 +28,9 @@ public class NumberController {
     NumberController.class
   );
 
-  private final GameServiceImpl gameService;
-  private final PlayerServiceImpl playerService;
-  private final NumberServiceImpl numberService;
+  private final GameService gameService;
+  private final PlayerService playerService;
+  private final NumberService numberService;
 
   public NumberController(
     GameServiceImpl gameService,

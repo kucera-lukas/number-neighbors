@@ -3,8 +3,11 @@ package com.lukaskucera.numberneighbors.controller;
 import com.lukaskucera.numberneighbors.entity.AnswerEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewAnswerRequest;
+import com.lukaskucera.numberneighbors.service.AnswerService;
 import com.lukaskucera.numberneighbors.service.AnswerServiceImpl;
+import com.lukaskucera.numberneighbors.service.PlayerService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
+import com.lukaskucera.numberneighbors.service.ResponseService;
 import com.lukaskucera.numberneighbors.service.ResponseServiceImpl;
 import java.util.List;
 import javax.validation.Valid;
@@ -26,9 +29,9 @@ public class AnswerController {
     AnswerController.class
   );
 
-  private final PlayerServiceImpl playerService;
-  private final ResponseServiceImpl responseService;
-  private final AnswerServiceImpl answerService;
+  private final PlayerService playerService;
+  private final ResponseService responseService;
+  private final AnswerService answerService;
   private final SimpMessagingTemplate simpMessagingTemplate;
 
   public AnswerController(

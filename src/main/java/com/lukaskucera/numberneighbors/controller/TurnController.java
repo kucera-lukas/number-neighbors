@@ -3,8 +3,11 @@ package com.lukaskucera.numberneighbors.controller;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
 import com.lukaskucera.numberneighbors.request.NewTurnRequest;
+import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
+import com.lukaskucera.numberneighbors.service.PlayerService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
+import com.lukaskucera.numberneighbors.service.TurnService;
 import com.lukaskucera.numberneighbors.service.TurnServiceImpl;
 import java.util.List;
 import javax.validation.Valid;
@@ -26,9 +29,9 @@ public class TurnController {
     TurnController.class
   );
 
-  private final GameServiceImpl gameService;
-  private final PlayerServiceImpl playerService;
-  private final TurnServiceImpl turnService;
+  private final GameService gameService;
+  private final PlayerService playerService;
+  private final TurnService turnService;
   private final SimpMessagingTemplate simpMessagingTemplate;
 
   public TurnController(

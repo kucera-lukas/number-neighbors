@@ -7,6 +7,7 @@ import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
+import com.lukaskucera.numberneighbors.service.PlayerService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -36,7 +37,7 @@ public class GameController {
 
   private final GameService gameService;
 
-  private final PlayerServiceImpl playerService;
+  private final PlayerService playerService;
 
   private final JwtService jwtService;
 

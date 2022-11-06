@@ -47,7 +47,7 @@ jobs:
         run: |
           pack build $IMAGE_NAME \
               --builder paketobuildpacks/builder:tiny \
-              --buildpack paketo-buildpacks/java-native-image@PACK_VERSION \
+              --buildpack paketo-buildpacks/java-native-image@$PACK_VERSION \
               --path . \
               --env "BP_JVM_VERSION=17" \
               --env "BP_NATIVE_IMAGE=true" \

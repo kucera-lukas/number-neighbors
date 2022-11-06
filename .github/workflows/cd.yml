@@ -5,12 +5,17 @@ on:
     branches: [main, feat/fly-io-deployment]
 
 env:
-  IMAGE: ghcr.io/kucera-lukas/number-neighbors:latest
-  CACHE_IMAGE: ghcr.io/kucera-lukas/number-neighbors-paketo-cache-image:latest
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/kucera-lukas/number-neighbors:latest
+  CACHE_IMAGE_NAME: ghcr.io/kucera-lukas/number-neighbors-paketo-cache-image:latest
 
 jobs:
-  deploy:
+  build-and-push-image:
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+      packages: write
 
     strategy:
       fail-fast: false
@@ -18,17 +23,14 @@ jobs:
         os: [ubuntu-latest]
         pack: [7.37.0]
 
-    env:
-      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
     steps:
-      - name: Git Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -41,16 +43,37 @@ jobs:
       # but Paketo defaults to 11
       - name: Build app with pack CLI & publish to GitHub Container Registry
         env:
-          PACK: ${{ matrix.pack }}
+          PACK_VERSION: ${{ matrix.pack }}
         run: |
           pack build $IMAGE \
               --builder paketobuildpacks/builder:tiny \
-              --buildpack paketo-buildpacks/java-native-image@$PACK \
+              --buildpack paketo-buildpacks/java-native-image@PACK_VERSION \
               --path . \
               --env "BP_JVM_VERSION=17" \
               --env "BP_NATIVE_IMAGE=true" \
               --cache-image $CACHE_IMAGE \
               --publish
+
+  deploy:
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      packages: read
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master

@@ -45,16 +45,18 @@ jobs:
         env:
           PACK_VERSION: ${{ matrix.pack }}
         run: |
-          pack build $IMAGE \
+          pack build $IMAGE_NAME \
               --builder paketobuildpacks/builder:tiny \
               --buildpack paketo-buildpacks/java-native-image@PACK_VERSION \
               --path . \
               --env "BP_JVM_VERSION=17" \
               --env "BP_NATIVE_IMAGE=true" \
-              --cache-image $CACHE_IMAGE \
+              --cache-image $CACHE_IMAGE_NAME \
               --publish
 
   deploy:
+    needs: build-and-push-image
+
     runs-on: ${{ matrix.os }}
 
     permissions:
@@ -79,4 +81,4 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy app to fly.io
-        run: flyctl deploy --image $IMAGE
+        run: flyctl deploy --image $IMAGE_NAME

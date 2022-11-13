@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.controller;
 
+import com.lukaskucera.numberneighbors.dto.TurnDTO;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
 import com.lukaskucera.numberneighbors.request.NewTurnRequest;
@@ -72,9 +73,9 @@ public class TurnController {
     final TurnEntity turn = turnService.newTurn(player, newTurnRequest.value());
 
     simpMessagingTemplate.convertAndSendToUser(
-      player.getOtherPlayer().getSub(),
+      player.getOpponent().getSub(),
       "/queue/turns",
-      turn
+      TurnDTO.fromTurn(turn)
     );
 
     return ResponseEntity.ok(turn);

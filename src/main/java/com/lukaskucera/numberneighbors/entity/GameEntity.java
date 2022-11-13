@@ -2,14 +2,12 @@ package com.lukaskucera.numberneighbors.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
-import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
-import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,7 +38,7 @@ public class GameEntity extends BaseEntity {
 
   public GameEntity() {
     this.players = new HashSet<>();
-    this.turns = List.of();
+    this.turns = new ArrayList<>();
   }
 
   public Set<PlayerEntity> getPlayers() {
@@ -62,37 +60,30 @@ public class GameEntity extends BaseEntity {
   }
 
   @JsonIgnore
-  public PlayerEntity getPlayerByName(String name) {
-    return getPlayer(
-      player -> player.getName().equals(name),
-      () -> new PlayerNotFoundException(name)
-    );
+  public Optional<PlayerEntity> getPlayerByName(String name) {
+    return getPlayer(player -> player.getName().equals(name));
   }
 
-  private <X extends Throwable> PlayerEntity getPlayer(
-    Predicate<? super PlayerEntity> playerFilter,
-    Supplier<? extends X> exceptionSupplier
-  ) throws X {
-    return players
-      .stream()
-      .filter(playerFilter)
-      .findFirst()
-      .orElseThrow(exceptionSupplier);
+  private Optional<PlayerEntity> getPlayer(
+    Predicate<? super PlayerEntity> playerFilter
+  ) {
+    return players.stream().filter(playerFilter).findFirst();
   }
 
   @JsonIgnore
-  public PlayerEntity getHost() {
-    return getPlayer(
-      PlayerEntity::isHost,
-      () -> new HostPlayerMissingException(getId())
-    );
+  public Optional<PlayerEntity> getHost() {
+    return getPlayer(PlayerEntity::isHost);
   }
 
   @JsonIgnore
-  public PlayerEntity getGuest() {
-    return getPlayer(
-      PlayerEntity::isGuest,
-      () -> new GuestPlayerMissingException(getId())
+  public Optional<PlayerEntity> getGuest() {
+    return getPlayer(PlayerEntity::isGuest);
+  }
+
+  @JsonIgnore
+  public boolean isReady() {
+    return (
+      players.size() == 2 && players.stream().allMatch(PlayerEntity::isReady)
     );
   }
 }

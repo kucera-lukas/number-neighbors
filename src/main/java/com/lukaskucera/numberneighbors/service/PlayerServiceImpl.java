@@ -2,12 +2,10 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
-import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePopulatedException;
 import com.lukaskucera.numberneighbors.exception.PlayerIdMissingInJwtTokenClaimsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
-import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import java.util.Set;
 import javax.transaction.Transactional;
@@ -25,14 +23,9 @@ public class PlayerServiceImpl implements PlayerService {
     PlayerServiceImpl.class
   );
 
-  private final GameRepository gameRepository;
   private final PlayerRepository playerRepository;
 
-  public PlayerServiceImpl(
-    GameRepository gameRepository,
-    PlayerRepository playerRepository
-  ) {
-    this.gameRepository = gameRepository;
+  public PlayerServiceImpl(PlayerRepository playerRepository) {
     this.playerRepository = playerRepository;
   }
 
@@ -66,27 +59,21 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public Set<PlayerEntity> getPlayersByGameId(Long gameId) {
-    return gameRepository
-      .findById(gameId)
-      .orElseThrow(() -> new GameNotFoundException(gameId))
-      .getPlayers();
+    return playerRepository.findPlayerEntitiesByGameId(gameId);
   }
 
   @Override
   @Transactional
-  public PlayerEntity newPlayer(Long gameId, String name) {
-    final GameEntity game = gameRepository
-      .findById(gameId)
-      .orElseThrow(() -> new GameNotFoundException(gameId));
+  public PlayerEntity newPlayer(String name, GameEntity game) {
     final Set<PlayerEntity> players = game.getPlayers();
 
     if (players.size() >= GameServiceImpl.PLAYER_COUNT) {
       logger.info(
         "Can't add player \"{}\" to the game {} as it's already populated",
         name,
-        gameId
+        game.getId()
       );
-      throw new GamePopulatedException(gameId);
+      throw new GamePopulatedException(game.getId());
     }
 
     if (
@@ -96,9 +83,9 @@ public class PlayerServiceImpl implements PlayerService {
       logger.info(
         "Player named \"{}\" already exists in the game {}",
         name,
-        gameId
+        game.getId()
       );
-      throw new PlayerNameAlreadyExistsException(gameId, name);
+      throw new PlayerNameAlreadyExistsException(game.getId(), name);
     }
 
     final PlayerEntity player = new PlayerEntity(name, game);

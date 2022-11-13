@@ -1,5 +1,4 @@
 import { SERVER_URI } from "../../config/environment";
-import { usePlayer } from "../../context/player.context";
 import PageLayout from "../../layouts/page.layout";
 import LocalStorageService from "../../services/local-storage.service";
 
@@ -7,10 +6,10 @@ import { Button, Stack, TextInput } from "@mantine/core";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import type Player from "../../types/player.type";
+import type PlayerPayload from "../../types/player-payload.type";
 
 type NewPlayerResponse = {
-  player: Player;
+  player: PlayerPayload;
   token: string;
 };
 
@@ -19,7 +18,6 @@ const Invite = (): JSX.Element => {
   const params = useParams();
   const gameId = params.gameId as string;
   const [name, setName] = useState("");
-  const [, setPlayer] = usePlayer();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -43,7 +41,6 @@ const Invite = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewPlayerResponse) => {
-          setPlayer(res.player);
           LocalStorageService.set("token", `Bearer ${res.token}`);
 
           navigate(`/game/${gameId}`);
@@ -53,7 +50,7 @@ const Invite = (): JSX.Element => {
           setLoading(false);
         });
     }
-  }, [gameId, name, navigate, setPlayer]);
+  }, [gameId, name, navigate]);
 
   return (
     <PageLayout title="invite">

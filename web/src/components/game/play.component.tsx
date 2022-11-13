@@ -1,28 +1,48 @@
-import { useGame } from "../../context/game.context";
+import { useGamePayload } from "../../context/game-payload.context";
+import { useTurns } from "../../context/turns.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import useStompClient from "../../hooks/stomp-client.hook";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
-import { Stack } from "@mantine/core";
+import { List } from "@mantine/core";
 
-import type Game from "../../types/game.type";
+import type GamePayload from "../../types/game-payload.type";
+import type TurnPayload from "../../types/turn-payload.type";
+import type { IMessage } from "@stomp/stompjs";
+
+const STOMP_ENDPOINT = "play";
+const PAYLOAD_DESTINATION = "/user/queue/payload";
+const TURNS_DESTINATION = "/user/queue/turns";
 
 const Play = (): JSX.Element => {
-  const [game, setGame] = useGame();
+  const [gamePayload, setGamePayload] = useGamePayload();
+  const [turns, setTurns] = useTurns();
   const [token] = useLocalStorageItem<string>("token");
-  const stompClient = useStompClient("play", token, (client) => {
-    client.subscribe("/user/queue/updates", (message) => {
-      setGame(JSON.parse(message.body) as Game);
-    });
+  const disabled = !gamePayload?.ready;
 
-    client.subscribe("/user/queue/turns", (message) => {
-      setGame(JSON.parse(message.body) as Game);
+  const onPayload = (message: IMessage) =>
+    setGamePayload(JSON.parse(message.body) as GamePayload);
+
+  const onTurn = (message: IMessage) => {
+    const turn = JSON.parse(message.body) as TurnPayload;
+
+    setTurns((turns) => {
+      if (turns === undefined) {
+        turns = [turn];
+      } else if (turn.id === turns.at(-1)?.id) {
+        turns[turns.length - 1] = turn;
+      } else {
+        turns.push(turn);
+      }
+
+      return turns;
     });
+  };
+
+  useStompClient(STOMP_ENDPOINT, token, (client) => {
+    client.subscribe(PAYLOAD_DESTINATION, onPayload);
+    client.subscribe(TURNS_DESTINATION, onTurn);
   });
-  const disabled =
-    !game ||
-    game.players.length !== 2 ||
-    game.players.some((player) => player.numbers.length === 0);
 
   return (
     <AccordionItemLayout
@@ -30,26 +50,13 @@ const Play = (): JSX.Element => {
       value="play"
       disabled={disabled}
     >
-      <Stack spacing="xs">
-        <button onClick={() => stompClient.activate()}>Start</button>
-        <button
-          onClick={() => {
-            if (!game) {
-              return;
-            }
-
-            stompClient.publish({
-              destination: `/app/games/${game.id}/turn`,
-              body: "test",
-              headers: {
-                Authorization: token,
-              },
-            });
-          }}
-        >
-          Turn
-        </button>
-      </Stack>
+      <List>
+        {turns?.map((turn) => (
+          <List.Item key={turn.id.toString()}>
+            <>Turn: {turn.id}</>
+          </List.Item>
+        ))}
+      </List>
     </AccordionItemLayout>
   );
 };

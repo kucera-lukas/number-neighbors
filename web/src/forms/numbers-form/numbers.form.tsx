@@ -3,7 +3,7 @@ import useNumbersForm from "./numbers-form.hook";
 
 import ErrorText from "../../components/errors/error.text";
 import { SERVER_URI } from "../../config/environment";
-import { usePlayer } from "../../context/player.context";
+import { useGamePayload } from "../../context/game-payload.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
@@ -13,16 +13,12 @@ import type { NumbersFormValues } from "./numbers-form.types";
 
 const NumbersForm = (): JSX.Element => {
   const form = useNumbersForm();
-  const [player] = usePlayer();
+  const [gamePayload] = useGamePayload();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [token] = useLocalStorageItem<string>("token");
+  const player = gamePayload?.player;
   const disabled = player?.numbers.length === 3 || loading;
-
-  const resetError = useCallback(() => {
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    setError(undefined);
-  }, []);
 
   const onSubmit = useCallback(
     (values: NumbersFormValues) => {
@@ -30,8 +26,8 @@ const NumbersForm = (): JSX.Element => {
         return;
       }
 
-      resetError();
-
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setError(undefined);
       setLoading(true);
 
       fetch(`${SERVER_URI}/numbers?player=${player.id}`, {
@@ -53,7 +49,7 @@ const NumbersForm = (): JSX.Element => {
 
       setLoading(false);
     },
-    [player, resetError, token],
+    [player, token],
   );
 
   return (

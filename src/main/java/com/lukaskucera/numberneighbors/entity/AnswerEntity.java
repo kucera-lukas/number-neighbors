@@ -36,7 +36,7 @@ public class AnswerEntity extends BaseEntity {
   public AnswerEntity(AnwserType type, ResponseEntity response) {
     setType(type);
     setResponse(response);
-    setPlayer(response.getPlayer().getOtherPlayer());
+    setPlayer(response.getPlayer().getOpponent());
   }
 
   public AnwserType getType() {

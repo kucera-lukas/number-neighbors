@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 public interface GameService {
   GameEntity getGameById(Long id);
 
-  GameEntity newGame(String hostName);
+  GameEntity newGame();
 
   void deleteGameById(Long id);
 
@@ -14,5 +14,5 @@ public interface GameService {
 
   void checkGameReady(GameEntity game);
 
-  void sendUpdateToPlayers(GameEntity game);
+  void sendPayloadToPlayers(GameEntity game);
 }

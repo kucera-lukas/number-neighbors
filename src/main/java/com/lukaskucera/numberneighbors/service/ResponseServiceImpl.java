@@ -36,7 +36,7 @@ public class ResponseServiceImpl implements ResponseService {
     final ResponseEntity response = new ResponseEntity(type, turn);
 
     turn.setResponse(response);
-    turn.getPlayer().getOtherPlayer().addResponse(response);
+    turn.getPlayer().getOpponent().addResponse(response);
 
     responseRepository.save(response);
 

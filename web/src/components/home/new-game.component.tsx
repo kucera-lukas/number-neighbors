@@ -1,6 +1,4 @@
 import { SERVER_URI } from "../../config/environment";
-import { useGame } from "../../context/game.context";
-import { usePlayer } from "../../context/player.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
@@ -8,10 +6,10 @@ import { TextInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import type Game from "../../types/game.type";
+import type GamePayload from "../../types/game-payload.type";
 
 type NewGameResponse = {
-  game: Game;
+  game: GamePayload;
   token: string;
 };
 
@@ -19,8 +17,6 @@ const NewGame = (): JSX.Element => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [, setToken] = useLocalStorageItem<string>("token");
-  const [, setGame] = useGame();
-  const [, setPlayer] = usePlayer();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -44,9 +40,6 @@ const NewGame = (): JSX.Element => {
           return res.json();
         })
         .then((res: NewGameResponse) => {
-          // new game created so the first player is guaranteed to exist
-          setPlayer(res.game.players[0]);
-          setGame(res.game);
           setToken(`Bearer ${res.token}`);
 
           navigate(`/game/${res.game.id}`);
@@ -56,7 +49,7 @@ const NewGame = (): JSX.Element => {
           setLoading(false);
         });
     }
-  }, [name, navigate, setGame, setPlayer, setToken]);
+  }, [name, navigate, setToken]);
 
   return (
     <AccordionItemLayout

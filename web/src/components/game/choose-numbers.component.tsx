@@ -1,5 +1,5 @@
 import { useAccordionValues } from "../../context/accordion.context";
-import { usePlayer } from "../../context/player.context";
+import { useGamePayload } from "../../context/game-payload.context";
 import NumbersForm from "../../forms/numbers-form/numbers.form";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
@@ -7,8 +7,8 @@ import { useEffect } from "react";
 
 const ChooseNumbers = (): JSX.Element => {
   const [, setAccordionValues] = useAccordionValues();
-  const [player] = usePlayer();
-  const disabled = player?.numbers.length == 3;
+  const [gamePayload] = useGamePayload();
+  const disabled = gamePayload?.player?.numbers.length === 3;
 
   useEffect(() => {
     if (disabled) {

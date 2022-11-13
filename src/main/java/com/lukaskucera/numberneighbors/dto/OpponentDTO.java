@@ -1,16 +1,16 @@
-package com.lukaskucera.numberneighbors.payload;
+package com.lukaskucera.numberneighbors.dto;
 
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.enums.PlayerType;
 
-public record OpponentPayload(
+public record OpponentDTO(
   Long id,
   String name,
   PlayerType type,
   boolean ready
 ) {
-  public static OpponentPayload fromPlayer(PlayerEntity player) {
-    return new OpponentPayload(
+  public static OpponentDTO fromPlayer(PlayerEntity player) {
+    return new OpponentDTO(
       player.getId(),
       player.getName(),
       player.getType(),

@@ -1,11 +1,11 @@
 package com.lukaskucera.numberneighbors.service;
 
+import com.lukaskucera.numberneighbors.dto.GameDTO;
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.exception.GameMissingPlayersException;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePlayersNotPickedNumbersException;
-import com.lukaskucera.numberneighbors.payload.GamePayload;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -116,7 +116,7 @@ public class GameServiceImpl implements GameService {
       simpMessagingTemplate.convertAndSendToUser(
         player.getSub(),
         "/queue/payload",
-        GamePayload.fromPlayer(player)
+        GameDTO.fromPlayer(player)
       );
     }
   }

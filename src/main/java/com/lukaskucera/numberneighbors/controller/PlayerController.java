@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.controller;
 
+import com.lukaskucera.numberneighbors.dto.OpponentDTO;
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
@@ -8,6 +9,7 @@ import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public class PlayerController {
   }
 
   @GetMapping(value = "/players")
-  public ResponseEntity<Set<PlayerEntity>> players(
+  public ResponseEntity<Set<OpponentDTO>> players(
     @RequestParam(name = "game") Long gameId,
     JwtAuthenticationToken jwtToken
   ) {
@@ -56,7 +58,14 @@ public class PlayerController {
     );
 
     gameService.checkGameAccess(gameId, jwtToken);
-    return ResponseEntity.ok(playerService.getPlayersByGameId(gameId));
+
+    return ResponseEntity.ok(
+      playerService
+        .getPlayersByGameId(gameId)
+        .stream()
+        .map(OpponentDTO::fromPlayer)
+        .collect(Collectors.toSet())
+    );
   }
 
   @PostMapping(value = "/players")
@@ -83,18 +92,6 @@ public class PlayerController {
     gameService.sendPayloadToPlayers(player.getGame());
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
-  }
-
-  @GetMapping(value = "/players/me")
-  public ResponseEntity<PlayerEntity> currentPlayer(
-    JwtAuthenticationToken jwtToken
-  ) {
-    logger.info(
-      "Current player info requested by player {}",
-      jwtToken.getName()
-    );
-
-    return ResponseEntity.ok(playerService.getPlayerByJwtToken(jwtToken));
   }
 
   @GetMapping(value = "/players/{id}")

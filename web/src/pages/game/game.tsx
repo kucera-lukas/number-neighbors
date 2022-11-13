@@ -22,7 +22,7 @@ const Game = (): JSX.Element => {
     // eslint-disable-next-line unicorn/no-useless-undefined
     setError(undefined);
 
-    fetch(`${SERVER_URI}/games/payload`, {
+    fetch(`${SERVER_URI}/games/${gameId}`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -43,7 +43,7 @@ const Game = (): JSX.Element => {
         setError(error.message);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameId, gameIdMatch, token]);
+  }, [gameId, token]);
 
   return (
     <PageLayout title="game">

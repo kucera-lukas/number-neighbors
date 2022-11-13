@@ -1,15 +1,11 @@
 import ErrorText from "../../components/errors/error.text";
-import ChooseNumbers from "../../components/game/choose-numbers.component";
-import GameInfo from "../../components/game/game-info.component";
-import GameInvite from "../../components/game/game-invite.component";
-import Play from "../../components/game/play.component";
+import GameAccordion from "../../components/game/game-accordion.component";
 import { SERVER_URI } from "../../config/environment";
 import { useGamePayload } from "../../context/game-payload.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
-import AccordionLayout from "../../layouts/accordion.layout";
 import PageLayout from "../../layouts/page.layout";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import type GamePayload from "../../types/game-payload.type";
@@ -49,22 +45,9 @@ const Game = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, gameIdMatch, token]);
 
-  // we don't want to reset the state of the accordion values
-  // during each re-render
-  const accordionLayout = useMemo(() => {
-    return (
-      <AccordionLayout defaultValues={["game-info"]}>
-        <GameInfo />
-        <GameInvite />
-        <ChooseNumbers />
-        <Play />
-      </AccordionLayout>
-    );
-  }, []);
-
   return (
     <PageLayout title="game">
-      {gameIdMatch && accordionLayout}
+      {gameIdMatch && <GameAccordion />}
       {error && <ErrorText error={error} />}
     </PageLayout>
   );

@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.controller;
 
+import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
@@ -63,9 +64,10 @@ public class PlayerController {
     @RequestParam(name = "game") Long gameId,
     @Valid @RequestBody NewPlayerRequest newPlayerRequest
   ) {
+    final GameEntity game = gameService.getGameById(gameId);
     final PlayerEntity player = playerService.newPlayer(
-      gameId,
-      newPlayerRequest.name()
+      newPlayerRequest.name(),
+      game
     );
 
     logger.info("Guest player {} created in game {}", player.getId(), gameId);
@@ -78,7 +80,7 @@ public class PlayerController {
       gameId
     );
 
-    gameService.sendUpdateToPlayers(player.getGame());
+    gameService.sendPayloadToPlayers(player.getGame());
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }

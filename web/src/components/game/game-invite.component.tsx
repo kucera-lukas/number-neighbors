@@ -1,5 +1,5 @@
 import { useAccordionValues } from "../../context/accordion.context";
-import { useGame } from "../../context/game.context";
+import { useGamePayload } from "../../context/game-payload.context";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
 import { Button, CopyButton, Stack, Text } from "@mantine/core";
@@ -8,8 +8,8 @@ import { useHref } from "react-router-dom";
 
 const GameInvite = (): JSX.Element => {
   const [, setAccordionValues] = useAccordionValues();
-  const [game] = useGame();
-  const disabled = game?.players.length === 2;
+  const [gamePayload] = useGamePayload();
+  const disabled = !!(gamePayload?.player && gamePayload.opponent);
   const inviteHref = useHref("invite");
   const inviteLink = `${window.location.protocol}//${window.location.host}${inviteHref}`;
 

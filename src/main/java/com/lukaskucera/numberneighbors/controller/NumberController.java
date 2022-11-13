@@ -80,7 +80,7 @@ public class NumberController {
       newNumbersRequest.third()
     );
 
-    gameService.sendUpdateToPlayers(player.getGame());
+    gameService.sendPayloadToPlayers(player.getGame());
 
     return ResponseEntity.ok(numbers);
   }

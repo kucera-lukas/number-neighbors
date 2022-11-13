@@ -43,7 +43,7 @@ public class ResponseEntity extends BaseEntity {
   public ResponseEntity(ResponseType type, TurnEntity turn) {
     setType(type);
     setTurn(turn);
-    setPlayer(turn.getPlayer().getOtherPlayer());
+    setPlayer(turn.getPlayer().getOpponent());
   }
 
   public ResponseType getType() {

@@ -2,6 +2,7 @@ package com.lukaskucera.numberneighbors.controller;
 
 import com.lukaskucera.numberneighbors.entity.AnswerEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.payload.TurnPayload;
 import com.lukaskucera.numberneighbors.request.NewAnswerRequest;
 import com.lukaskucera.numberneighbors.service.AnswerServiceImpl;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
@@ -70,10 +71,10 @@ public class AnswerController {
     final com.lukaskucera.numberneighbors.entity.ResponseEntity response = responseService.getResponseById(
       responseId
     );
-    final PlayerEntity otherPlayer = response.getPlayer();
-    final PlayerEntity currentPlayer = otherPlayer.getOtherPlayer();
+    final PlayerEntity opponent = response.getPlayer();
+    final PlayerEntity player = opponent.getOpponent();
 
-    playerService.checkPlayerAccess(currentPlayer.getId(), jwtToken);
+    playerService.checkPlayerAccess(player.getId(), jwtToken);
     responseService.checkResponseNeedsAnswer(response);
 
     final AnswerEntity answer = answerService.newAnswer(
@@ -82,9 +83,9 @@ public class AnswerController {
     );
 
     simpMessagingTemplate.convertAndSendToUser(
-      otherPlayer.getSub(),
+      opponent.getSub(),
       "/queue/turns",
-      response.getTurn()
+      TurnPayload.fromTurn(response.getTurn())
     );
 
     return ResponseEntity.ok(answer);

@@ -5,6 +5,7 @@ import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.exception.GameMissingPlayersException;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
 import com.lukaskucera.numberneighbors.exception.GamePlayersNotPickedNumbersException;
+import com.lukaskucera.numberneighbors.payload.GamePayload;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -42,10 +43,8 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public GameEntity newGame(String hostName) {
+  public GameEntity newGame() {
     final GameEntity game = new GameEntity();
-
-    game.addPlayer(new PlayerEntity(hostName, game));
 
     gameRepository.save(game);
 
@@ -106,18 +105,18 @@ public class GameServiceImpl implements GameService {
   }
 
   @Override
-  public void sendUpdateToPlayers(GameEntity game) {
+  public void sendPayloadToPlayers(GameEntity game) {
     for (PlayerEntity player : game.getPlayers()) {
       logger.debug(
-        "Sending game {} update to player {}",
+        "Sending game {} payload to player {}",
         game.getId(),
         player.getId()
       );
 
       simpMessagingTemplate.convertAndSendToUser(
         player.getSub(),
-        "/queue/updates",
-        game
+        "/queue/payload",
+        GamePayload.fromPlayer(player)
       );
     }
   }

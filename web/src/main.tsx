@@ -1,6 +1,6 @@
 import App from "./app";
-import { GameProvider } from "./context/game.context";
-import { PlayerProvider } from "./context/player.context";
+import { GamePayloadProvider } from "./context/game-payload.context";
+import { TurnsProvider } from "./context/turns.context";
 
 import { MantineProvider } from "@mantine/core";
 import * as ReactDOM from "react-dom/client";
@@ -15,10 +15,10 @@ root.render(
     withNormalizeCSS
     theme={{ colorScheme: "dark" }}
   >
-    <GameProvider>
-      <PlayerProvider>
+    <GamePayloadProvider>
+      <TurnsProvider>
         <App />
-      </PlayerProvider>
-    </GameProvider>
+      </TurnsProvider>
+    </GamePayloadProvider>
   </MantineProvider>,
 );

@@ -1,5 +1,6 @@
 package com.lukaskucera.numberneighbors.service;
 
+import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import java.util.Set;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -13,7 +14,7 @@ public interface PlayerService {
 
   Set<PlayerEntity> getPlayersByGameId(Long id);
 
-  PlayerEntity newPlayer(Long gameId, String name);
+  PlayerEntity newPlayer(String name, GameEntity game);
 
   void deletePlayerById(Long id);
 

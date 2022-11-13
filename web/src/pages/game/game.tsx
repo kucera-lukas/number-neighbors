@@ -4,39 +4,29 @@ import GameInfo from "../../components/game/game-info.component";
 import GameInvite from "../../components/game/game-invite.component";
 import Play from "../../components/game/play.component";
 import { SERVER_URI } from "../../config/environment";
-import { useGame } from "../../context/game.context";
-import { usePlayer } from "../../context/player.context";
+import { useGamePayload } from "../../context/game-payload.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import AccordionLayout from "../../layouts/accordion.layout";
 import PageLayout from "../../layouts/page.layout";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import type GameType from "../../types/game.type";
-import type Player from "../../types/player.type";
+import type GamePayload from "../../types/game-payload.type";
 
 const Game = (): JSX.Element => {
   const params = useParams();
   const gameId = params.gameId as string;
   const [token] = useLocalStorageItem<string>("token");
   const [error, setError] = useState<string>();
-  const [game, setGame] = useGame();
-  const [player, setPlayer] = usePlayer();
-  const gameIdMatch = game?.id.toString() === gameId;
-  const playerPartOfGame = game?.players.some(
-    (gamePlayer) => gamePlayer.id === player?.id,
-  );
-
-  const resetError = useCallback(() => {
-    // eslint-disable-next-line unicorn/no-useless-undefined
-    setError(undefined);
-  }, []);
+  const [gamePayload, setGamePayload] = useGamePayload();
+  const gameIdMatch = gamePayload?.id.toString() === gameId;
 
   useEffect(() => {
-    resetError();
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    setError(undefined);
 
-    fetch(`${SERVER_URI}/games/${gameId}`, {
+    fetch(`${SERVER_URI}/games/payload`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -50,9 +40,8 @@ const Game = (): JSX.Element => {
 
         return res.json();
       })
-      .then((res: GameType) => {
-        setGame(res);
-        resetError();
+      .then((res: GamePayload) => {
+        setGamePayload(res);
       })
       .catch((error: Error) => {
         setError(error.message);
@@ -60,44 +49,22 @@ const Game = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId, gameIdMatch, token]);
 
-  useEffect(() => {
-    resetError();
-
-    fetch(`${SERVER_URI}/players/me`, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.status.toLocaleString());
-        }
-
-        return res.json();
-      })
-      .then((res: Player) => {
-        setPlayer(res);
-        resetError();
-      })
-      .catch((error: Error) => {
-        setError(error.message);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerPartOfGame, token]);
+  // we don't want to reset the state of the accordion values
+  // during each re-render
+  const accordionLayout = useMemo(() => {
+    return (
+      <AccordionLayout defaultValues={["game-info"]}>
+        <GameInfo />
+        <GameInvite />
+        <ChooseNumbers />
+        <Play />
+      </AccordionLayout>
+    );
+  }, []);
 
   return (
     <PageLayout title="game">
-      {gameIdMatch && playerPartOfGame && (
-        <AccordionLayout defaultValues={["game-info"]}>
-          <GameInfo />
-          <GameInvite />
-          <ChooseNumbers />
-          <Play />
-        </AccordionLayout>
-      )}
-
+      {gameIdMatch && accordionLayout}
       {error && <ErrorText error={error} />}
     </PageLayout>
   );

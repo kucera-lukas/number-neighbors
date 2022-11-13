@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.enums.PlayerType;
+import com.lukaskucera.numberneighbors.exception.GuestPlayerMissingException;
+import com.lukaskucera.numberneighbors.exception.HostPlayerMissingException;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -165,13 +168,24 @@ public class PlayerEntity extends BaseEntity {
   }
 
   @JsonIgnore
-  public PlayerEntity getOtherPlayer() {
-    return this.isHost() ? this.getGame().getGuest() : this.getGame().getHost();
+  public PlayerEntity getOpponent() {
+    return isHost()
+      ? game
+        .getGuest()
+        .orElseThrow(() -> new GuestPlayerMissingException(game.getId()))
+      : game
+        .getHost()
+        .orElseThrow(() -> new HostPlayerMissingException(game.getId()));
   }
 
   @JsonIgnore
   public Boolean isHost() {
     return type == PlayerType.HOST;
+  }
+
+  @JsonIgnore
+  public Optional<PlayerEntity> getOpponentOptional() {
+    return isHost() ? game.getGuest() : game.getHost();
   }
 
   public GameEntity getGame() {
@@ -185,5 +199,10 @@ public class PlayerEntity extends BaseEntity {
   @JsonIgnore
   public Boolean isGuest() {
     return type == PlayerType.GUEST;
+  }
+
+  @JsonIgnore
+  public boolean isReady() {
+    return numbers.size() == 3;
   }
 }

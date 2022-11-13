@@ -74,19 +74,16 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   @Transactional
-  public PlayerEntity newPlayer(Long gameId, String name) {
-    final GameEntity game = gameRepository
-      .findById(gameId)
-      .orElseThrow(() -> new GameNotFoundException(gameId));
+  public PlayerEntity newPlayer(String name, GameEntity game) {
     final Set<PlayerEntity> players = game.getPlayers();
 
     if (players.size() >= GameServiceImpl.PLAYER_COUNT) {
       logger.info(
         "Can't add player \"{}\" to the game {} as it's already populated",
         name,
-        gameId
+        game.getId()
       );
-      throw new GamePopulatedException(gameId);
+      throw new GamePopulatedException(game.getId());
     }
 
     if (
@@ -96,9 +93,9 @@ public class PlayerServiceImpl implements PlayerService {
       logger.info(
         "Player named \"{}\" already exists in the game {}",
         name,
-        gameId
+        game.getId()
       );
-      throw new PlayerNameAlreadyExistsException(gameId, name);
+      throw new PlayerNameAlreadyExistsException(game.getId(), name);
     }
 
     final PlayerEntity player = new PlayerEntity(name, game);

@@ -1,7 +1,7 @@
 package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.config.JwtConfig;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
@@ -26,16 +26,16 @@ public final class JwtService {
     this.jwtEncoder = jwtEncoder;
   }
 
-  public String generatePlayerToken(PlayerEntity player) {
+  public String generatePlayerToken(PlayerDTO player) {
     return generate(
-      player.getSub(),
+      player.id().toString(),
       Map.of(
         "playerId",
-        player.getId(),
+        player.id(),
         "gameId",
-        player.getGame().getId(),
+        player.gameId(),
         "name",
-        player.getName(),
+        player.name(),
         JwtConfig.AUTHORITIES_CLAIM_NAME,
         JwtConfig.PLAYER_AUTHORITY
       )

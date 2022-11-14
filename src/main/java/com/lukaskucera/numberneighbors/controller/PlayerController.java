@@ -1,15 +1,13 @@
 package com.lukaskucera.numberneighbors.controller;
 
-import com.lukaskucera.numberneighbors.dto.OpponentDTO;
-import com.lukaskucera.numberneighbors.entity.GameEntity;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
+import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
 import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,7 @@ public class PlayerController {
   }
 
   @GetMapping(value = "/players")
-  public ResponseEntity<Set<OpponentDTO>> players(
+  public ResponseEntity<Set<PlayerDTO>> players(
     @RequestParam(name = "game") Long gameId,
     JwtAuthenticationToken jwtToken
   ) {
@@ -57,15 +55,12 @@ public class PlayerController {
       jwtToken.getName()
     );
 
-    gameService.checkGameAccess(gameId, jwtToken);
-
-    return ResponseEntity.ok(
-      playerService
-        .getPlayersByGameId(gameId)
-        .stream()
-        .map(OpponentDTO::fromPlayer)
-        .collect(Collectors.toSet())
+    final Set<PlayerDTO> players = playerService.getPlayersByGameId(
+      AuthDTO.fromJwtToken(jwtToken),
+      gameId
     );
+
+    return ResponseEntity.ok(players);
   }
 
   @PostMapping(value = "/players")
@@ -73,29 +68,26 @@ public class PlayerController {
     @RequestParam(name = "game") Long gameId,
     @Valid @RequestBody NewPlayerRequest newPlayerRequest
   ) {
-    final GameEntity game = gameService.getGameById(gameId);
-    final PlayerEntity player = playerService.newPlayer(
-      newPlayerRequest.name(),
-      game
+    final PlayerDTO player = playerService.newPlayer(
+      gameId,
+      newPlayerRequest.name()
     );
 
-    logger.info("Guest player {} created in game {}", player.getId(), gameId);
+    logger.info("Guest player {} created in game {}", player.id(), gameId);
 
     final String token = jwtService.generatePlayerToken(player);
 
     logger.info(
       "Generated JWT token for guest player {} in game {}",
-      player.getId(),
+      player.id(),
       gameId
     );
-
-    gameService.sendPayloadToPlayers(player.getGame());
 
     return ResponseEntity.ok(new NewPlayerResponse(player, token));
   }
 
   @GetMapping(value = "/players/{id}")
-  public ResponseEntity<PlayerEntity> player(
+  public ResponseEntity<PlayerDTO> player(
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
@@ -105,8 +97,12 @@ public class PlayerController {
       jwtToken.getName()
     );
 
-    playerService.checkPlayerAccess(id, jwtToken);
-    return ResponseEntity.ok(playerService.getPlayerById(id));
+    final PlayerDTO player = playerService.getPlayerById(
+      AuthDTO.fromJwtToken(jwtToken),
+      id
+    );
+
+    return ResponseEntity.ok(player);
   }
 
   @DeleteMapping(value = "/players/{id}")
@@ -115,8 +111,7 @@ public class PlayerController {
     @PathVariable Long id,
     JwtAuthenticationToken jwtToken
   ) {
-    playerService.checkPlayerAccess(id, jwtToken);
-    playerService.deletePlayerById(id);
+    playerService.deletePlayerById(AuthDTO.fromJwtToken(jwtToken), id);
 
     logger.info("Player {} deleted by player {}", id, jwtToken.getName());
   }

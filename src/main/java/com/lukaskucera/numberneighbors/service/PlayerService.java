@@ -1,22 +1,17 @@
 package com.lukaskucera.numberneighbors.service;
 
-import com.lukaskucera.numberneighbors.entity.GameEntity;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
+import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 import java.util.Set;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 public interface PlayerService {
-  Long getPlayerIdFromToken(JwtAuthenticationToken jwtToken);
+  PlayerDTO getPlayerById(AuthDTO auth, Long id);
 
-  PlayerEntity getPlayerById(Long id);
+  Set<PlayerDTO> getPlayersByGameId(AuthDTO auth, Long gameId);
 
-  PlayerEntity getPlayerByJwtToken(JwtAuthenticationToken jwtToken);
+  PlayerDTO newPlayer(Long gameId, String name);
 
-  Set<PlayerEntity> getPlayersByGameId(Long id);
+  void deletePlayerById(AuthDTO auth, Long id);
 
-  PlayerEntity newPlayer(String name, GameEntity game);
-
-  void deletePlayerById(Long id);
-
-  void checkPlayerAccess(Long id, JwtAuthenticationToken jwtToken);
+  void checkPlayerAccess(AuthDTO auth, Long playerId);
 }

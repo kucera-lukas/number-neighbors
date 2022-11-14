@@ -1,8 +1,8 @@
 package com.lukaskucera.numberneighbors.controller;
 
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.dto.GameDTO;
-import com.lukaskucera.numberneighbors.entity.GameEntity;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 import com.lukaskucera.numberneighbors.request.NewGameRequest;
 import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
@@ -46,29 +46,23 @@ public class GameController {
   public ResponseEntity<NewGameResponse> newGame(
     @Valid @RequestBody NewGameRequest newGameRequest
   ) {
-    final GameEntity game = gameService.newGame();
-    final PlayerEntity player = playerService.newPlayer(
-      newGameRequest.hostName(),
-      game
+    final GameDTO game = gameService.newGame();
+    final PlayerDTO player = playerService.newPlayer(
+      game.id(),
+      newGameRequest.hostName()
     );
 
-    logger.info(
-      "Game {} created for host player {}",
-      game.getId(),
-      player.getId()
-    );
+    logger.info("Game {} created for host player {}", game.id(), player.id());
 
     final String token = jwtService.generatePlayerToken(player);
 
     logger.info(
       "Generated JWT token for host player {} in game {}",
-      player.getId(),
-      game.getId()
+      player.id(),
+      game.id()
     );
 
-    return ResponseEntity.ok(
-      new NewGameResponse(GameDTO.fromPlayer(player), token)
-    );
+    return ResponseEntity.ok(new NewGameResponse(game, token));
   }
 
   @GetMapping(value = "/games/{id}")
@@ -78,10 +72,11 @@ public class GameController {
   ) {
     logger.info("Game {} requested by player {}", id, jwtToken.getName());
 
-    gameService.checkGameAccess(id, jwtToken);
+    final GameDTO game = gameService.getGameById(
+      AuthDTO.fromJwtToken(jwtToken),
+      id
+    );
 
-    final PlayerEntity player = playerService.getPlayerByJwtToken(jwtToken);
-
-    return ResponseEntity.ok(GameDTO.fromPlayer(player));
+    return ResponseEntity.ok(game);
   }
 }

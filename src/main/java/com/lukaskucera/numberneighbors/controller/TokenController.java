@@ -17,7 +17,7 @@ public class TokenController {
 
   @GetMapping("/token")
   public ResponseEntity<TokenResponse> token(JwtAuthenticationToken jwtToken) {
-    logger.info("Token info requested by player \"{}\"", jwtToken.getName());
+    logger.info("Token info requested by player {}", jwtToken.getName());
 
     return ResponseEntity.ok(
       new TokenResponse(jwtToken.getToken(), jwtToken.getAuthorities())

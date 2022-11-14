@@ -1,11 +1,9 @@
 package com.lukaskucera.numberneighbors.controller;
 
-import com.lukaskucera.numberneighbors.entity.NumberEntity;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
+import com.lukaskucera.numberneighbors.dto.NumberDTO;
 import com.lukaskucera.numberneighbors.request.NewNumbersRequest;
-import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
-import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.List;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -25,22 +23,14 @@ public class NumberController {
     NumberController.class
   );
 
-  private final GameServiceImpl gameService;
-  private final PlayerServiceImpl playerService;
   private final NumberServiceImpl numberService;
 
-  public NumberController(
-    GameServiceImpl gameService,
-    PlayerServiceImpl playerService,
-    NumberServiceImpl numberService
-  ) {
-    this.gameService = gameService;
-    this.playerService = playerService;
+  public NumberController(NumberServiceImpl numberService) {
     this.numberService = numberService;
   }
 
   @GetMapping(value = "/numbers")
-  public ResponseEntity<List<NumberEntity>> numbers(
+  public ResponseEntity<List<NumberDTO>> numbers(
     @RequestParam(name = "player") Long playerId,
     JwtAuthenticationToken jwtToken
   ) {
@@ -50,37 +40,29 @@ public class NumberController {
       jwtToken.getName()
     );
 
-    playerService.checkPlayerAccess(playerId, jwtToken);
+    final List<NumberDTO> numbers = numberService.getNumbersByPlayerId(
+      AuthDTO.fromJwtToken(jwtToken),
+      playerId
+    );
 
-    return ResponseEntity.ok(numberService.getNumbersByPlayerId(playerId));
+    return ResponseEntity.ok(numbers);
   }
 
   @PostMapping(value = "/numbers")
-  public ResponseEntity<List<NumberEntity>> newNumbers(
+  public ResponseEntity<List<NumberDTO>> newNumbers(
     @RequestParam(name = "player") Long playerId,
     @Valid @RequestBody NewNumbersRequest newNumbersRequest,
     JwtAuthenticationToken jwtToken
   ) {
-    playerService.checkPlayerAccess(playerId, jwtToken);
+    logger.info("Adding new numbers for player {}", playerId);
 
-    numberService.validateNumbers(
+    final List<NumberDTO> numbers = numberService.newNumbers(
+      AuthDTO.fromJwtToken(jwtToken),
+      playerId,
       newNumbersRequest.first(),
       newNumbersRequest.second(),
       newNumbersRequest.third()
     );
-
-    final PlayerEntity player = playerService.getPlayerById(playerId);
-
-    logger.info("Adding new numbers for player {}", player.getId());
-
-    final List<NumberEntity> numbers = numberService.addNumbersToPlayer(
-      player,
-      newNumbersRequest.first(),
-      newNumbersRequest.second(),
-      newNumbersRequest.third()
-    );
-
-    gameService.sendPayloadToPlayers(player.getGame());
 
     return ResponseEntity.ok(numbers);
   }

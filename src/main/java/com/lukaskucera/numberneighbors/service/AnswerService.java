@@ -1,12 +1,12 @@
 package com.lukaskucera.numberneighbors.service;
 
-import com.lukaskucera.numberneighbors.entity.AnswerEntity;
-import com.lukaskucera.numberneighbors.entity.ResponseEntity;
+import com.lukaskucera.numberneighbors.dto.AnswerDTO;
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.enums.AnwserType;
 import java.util.List;
 
 public interface AnswerService {
-  List<AnswerEntity> getAnswersByPlayerId(Long id);
+  List<AnswerDTO> getAnswersByPlayerId(AuthDTO auth, Long playerId);
 
-  AnswerEntity newAnswer(ResponseEntity response, AnwserType type);
+  AnswerDTO newAnswer(AuthDTO auth, Long responseId, AnwserType type);
 }

@@ -1,15 +1,11 @@
 package com.lukaskucera.numberneighbors.service;
 
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
-import com.lukaskucera.numberneighbors.entity.TurnEntity;
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
+import com.lukaskucera.numberneighbors.dto.TurnDTO;
 import java.util.List;
 
 public interface TurnService {
-  TurnEntity getTurnById(Long id);
+  List<TurnDTO> getTurnsByGameId(AuthDTO auth, Long gameId);
 
-  List<TurnEntity> getTurnsByGameId(Long id);
-
-  TurnEntity newTurn(PlayerEntity player, int value);
-
-  void checkTurnNeedsResponse(TurnEntity turn);
+  TurnDTO newTurn(AuthDTO auth, Long gameId, int value);
 }

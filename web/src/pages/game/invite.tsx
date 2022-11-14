@@ -6,10 +6,10 @@ import { Button, Stack, TextInput } from "@mantine/core";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import type PlayerPayload from "../../types/player-payload.type";
+import type UserPayload from "../../types/user-payload.type";
 
 type NewPlayerResponse = {
-  player: PlayerPayload;
+  player: UserPayload;
   token: string;
 };
 

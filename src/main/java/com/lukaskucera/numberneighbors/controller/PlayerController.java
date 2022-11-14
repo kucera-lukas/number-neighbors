@@ -4,7 +4,6 @@ import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 import com.lukaskucera.numberneighbors.request.NewPlayerRequest;
 import com.lukaskucera.numberneighbors.response.NewPlayerResponse;
-import com.lukaskucera.numberneighbors.service.GameServiceImpl;
 import com.lukaskucera.numberneighbors.service.JwtService;
 import com.lukaskucera.numberneighbors.service.PlayerServiceImpl;
 import java.util.Set;
@@ -30,16 +29,13 @@ public class PlayerController {
     PlayerController.class
   );
 
-  private final GameServiceImpl gameService;
   private final PlayerServiceImpl playerService;
   private final JwtService jwtService;
 
   public PlayerController(
-    GameServiceImpl gameService,
     PlayerServiceImpl playerService,
     JwtService jwtService
   ) {
-    this.gameService = gameService;
     this.playerService = playerService;
     this.jwtService = jwtService;
   }

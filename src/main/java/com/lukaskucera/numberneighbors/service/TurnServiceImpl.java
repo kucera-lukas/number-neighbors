@@ -22,22 +22,19 @@ import org.springframework.stereotype.Service;
 public class TurnServiceImpl implements TurnService {
 
   private final GameServiceImpl gameService;
-  private final PlayerServiceImpl playerService;
 
   private final SimpMessagingTemplate simpMessagingTemplate;
 
   private final PlayerRepository playerRepository;
   private final TurnRepository turnRepository;
 
-  TurnServiceImpl(
+  public TurnServiceImpl(
     GameServiceImpl gameService,
-    PlayerServiceImpl playerService,
     SimpMessagingTemplate simpMessagingTemplate,
     PlayerRepository playerRepository,
     TurnRepository turnRepository
   ) {
     this.gameService = gameService;
-    this.playerService = playerService;
     this.simpMessagingTemplate = simpMessagingTemplate;
     this.playerRepository = playerRepository;
     this.turnRepository = turnRepository;

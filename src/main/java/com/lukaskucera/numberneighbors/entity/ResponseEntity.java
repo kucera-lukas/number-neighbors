@@ -1,7 +1,5 @@
 package com.lukaskucera.numberneighbors.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.enums.ResponseType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,17 +23,14 @@ public class ResponseEntity extends BaseEntity {
 
   @OneToOne(mappedBy = "response")
   @Nullable
-  @JsonManagedReference
   private AnswerEntity answer;
 
   @OneToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "turn_id", updatable = false, nullable = false)
-  @JsonBackReference
   private TurnEntity turn;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "player_id", updatable = false, nullable = false)
-  @JsonBackReference
   private PlayerEntity player;
 
   public ResponseEntity() {}

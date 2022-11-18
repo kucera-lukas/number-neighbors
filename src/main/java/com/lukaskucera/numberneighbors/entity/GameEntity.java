@@ -1,7 +1,5 @@
 package com.lukaskucera.numberneighbors.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +22,6 @@ public class GameEntity extends BaseEntity {
     cascade = CascadeType.ALL,
     fetch = FetchType.LAZY
   )
-  @JsonManagedReference
   private final Set<PlayerEntity> players;
 
   @OneToMany(
@@ -33,7 +30,6 @@ public class GameEntity extends BaseEntity {
     fetch = FetchType.LAZY
   )
   @OrderBy(clause = "created ASC")
-  @JsonManagedReference
   private final List<TurnEntity> turns;
 
   public GameEntity() {
@@ -59,7 +55,6 @@ public class GameEntity extends BaseEntity {
     turn.setGame(this);
   }
 
-  @JsonIgnore
   public Optional<PlayerEntity> getPlayerByName(String name) {
     return getPlayer(player -> player.getName().equals(name));
   }
@@ -70,17 +65,14 @@ public class GameEntity extends BaseEntity {
     return players.stream().filter(playerFilter).findFirst();
   }
 
-  @JsonIgnore
   public Optional<PlayerEntity> getHost() {
     return getPlayer(PlayerEntity::isHost);
   }
 
-  @JsonIgnore
   public Optional<PlayerEntity> getGuest() {
     return getPlayer(PlayerEntity::isGuest);
   }
 
-  @JsonIgnore
   public boolean isReady() {
     return (
       players.size() == 2 && players.stream().allMatch(PlayerEntity::isReady)

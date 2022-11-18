@@ -1,8 +1,5 @@
 package com.lukaskucera.numberneighbors.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lukaskucera.numberneighbors.enums.ResponseType;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import javax.persistence.Column;
@@ -26,17 +23,14 @@ public class TurnEntity extends BaseEntity {
 
   @OneToOne(mappedBy = "turn")
   @Nullable
-  @JsonManagedReference
   private ResponseEntity response;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "game_id", updatable = false, nullable = false)
-  @JsonBackReference
   private GameEntity game;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "player_id", updatable = false, nullable = false)
-  @JsonBackReference
   private PlayerEntity player;
 
   public TurnEntity() {}
@@ -88,7 +82,6 @@ public class TurnEntity extends BaseEntity {
     return response == null;
   }
 
-  @JsonIgnore
   public boolean isComplete() {
     if (response == null) {
       return false;

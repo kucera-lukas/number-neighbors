@@ -1,7 +1,5 @@
 package com.lukaskucera.numberneighbors.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lukaskucera.numberneighbors.enums.NumberType;
 import com.lukaskucera.numberneighbors.service.NumberServiceImpl;
 import java.util.ArrayList;
@@ -45,7 +43,6 @@ public class NumberEntity extends BaseEntity {
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "player_id", updatable = false, nullable = false)
-  @JsonBackReference
   private PlayerEntity player;
 
   public NumberEntity() {}
@@ -88,7 +85,6 @@ public class NumberEntity extends BaseEntity {
     this.player = player;
   }
 
-  @JsonIgnore
   public List<Integer> getAvailableNumbers() {
     if (isGuessed) {
       return List.of();

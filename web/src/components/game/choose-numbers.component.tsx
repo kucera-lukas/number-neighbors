@@ -8,7 +8,7 @@ import { useEffect } from "react";
 const ChooseNumbers = (): JSX.Element => {
   const [, setAccordionValues] = useAccordionValues();
   const [gamePayload] = useGamePayload();
-  const disabled = gamePayload?.player?.numbers.length === 3;
+  const disabled = gamePayload?.user?.numbers.length === 3;
 
   useEffect(() => {
     if (disabled) {

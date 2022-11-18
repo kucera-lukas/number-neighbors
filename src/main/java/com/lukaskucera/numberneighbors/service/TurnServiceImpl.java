@@ -1,44 +1,90 @@
 package com.lukaskucera.numberneighbors.service;
 
+import com.lukaskucera.numberneighbors.dto.AuthDTO;
+import com.lukaskucera.numberneighbors.dto.TurnDTO;
+import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.NumberEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
+import com.lukaskucera.numberneighbors.exception.GameNotReadyException;
+import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.exception.PlayerNotOnTurnException;
-import com.lukaskucera.numberneighbors.exception.ResponseAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.TurnNotCompletedException;
-import com.lukaskucera.numberneighbors.exception.TurnNotFoundException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresAvailableNumberException;
 import com.lukaskucera.numberneighbors.exception.TurnRequiresChosenNumberException;
+import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import com.lukaskucera.numberneighbors.repository.TurnRepository;
 import java.util.List;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TurnServiceImpl implements TurnService {
 
+  private final GameServiceImpl gameService;
+
+  private final SimpMessagingTemplate simpMessagingTemplate;
+
+  private final PlayerRepository playerRepository;
   private final TurnRepository turnRepository;
 
-  TurnServiceImpl(TurnRepository turnRepository) {
+  public TurnServiceImpl(
+    GameServiceImpl gameService,
+    SimpMessagingTemplate simpMessagingTemplate,
+    PlayerRepository playerRepository,
+    TurnRepository turnRepository
+  ) {
+    this.gameService = gameService;
+    this.simpMessagingTemplate = simpMessagingTemplate;
+    this.playerRepository = playerRepository;
     this.turnRepository = turnRepository;
   }
 
   @Override
-  public TurnEntity getTurnById(Long id) {
+  public List<TurnDTO> getTurnsByGameId(AuthDTO auth, Long gameId) {
+    gameService.checkGameAccess(auth, gameId);
+
     return turnRepository
-      .findById(id)
-      .orElseThrow(() -> new TurnNotFoundException(id));
+      .findTurnEntitiesByGameId(auth.gameId())
+      .stream()
+      .map(TurnDTO::fromTurn)
+      .toList();
   }
 
   @Override
-  public List<TurnEntity> getTurnsByGameId(Long id) {
-    return turnRepository.findTurnEntitiesByGameId(id);
+  public TurnDTO newTurn(AuthDTO auth, Long gameId, int value) {
+    gameService.checkGameAccess(auth, gameId);
+
+    final PlayerEntity player = playerRepository
+      .findById(auth.playerId())
+      .orElseThrow(() -> new PlayerNotFoundException(auth.playerId()));
+
+    checkGameState(player, value);
+
+    final TurnEntity turn = createTurn(value, player);
+    final TurnDTO turnDTO = TurnDTO.fromTurn(turn);
+
+    simpMessagingTemplate.convertAndSendToUser(
+      player.getOpponent().getSub(),
+      "/queue/turns",
+      turnDTO
+    );
+
+    return turnDTO;
   }
 
-  @Override
-  public TurnEntity newTurn(PlayerEntity player, int value) {
+  public void checkGameState(PlayerEntity player, int value) {
+    final GameEntity game = player.getGame();
+
+    if (!game.isReady()) {
+      throw new GameNotReadyException(game.getId());
+    }
+
     checkGameTurns(player);
     checkNumbers(player, value);
+  }
 
+  public TurnEntity createTurn(int value, PlayerEntity player) {
     final TurnEntity turn = new TurnEntity(value, player);
 
     player.addTurn(turn);
@@ -47,13 +93,6 @@ public class TurnServiceImpl implements TurnService {
     turnRepository.save(turn);
 
     return turn;
-  }
-
-  @Override
-  public void checkTurnNeedsResponse(TurnEntity turn) {
-    if (turn.getResponse() != null) {
-      throw new ResponseAlreadyExistsException(turn.getId());
-    }
   }
 
   public void checkGameTurns(PlayerEntity player) {

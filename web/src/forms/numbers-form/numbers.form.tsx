@@ -17,12 +17,12 @@ const NumbersForm = (): JSX.Element => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [token] = useLocalStorageItem<string>("token");
-  const player = gamePayload?.player;
-  const disabled = player?.numbers.length === 3 || loading;
+  const user = gamePayload?.user;
+  const disabled = user?.numbers.length === 3 || loading;
 
   const onSubmit = useCallback(
     (values: NumbersFormValues) => {
-      if (!player) {
+      if (!user) {
         return;
       }
 
@@ -30,7 +30,7 @@ const NumbersForm = (): JSX.Element => {
       setError(undefined);
       setLoading(true);
 
-      fetch(`${SERVER_URI}/numbers?player=${player.id}`, {
+      fetch(`${SERVER_URI}/numbers?player=${user.id}`, {
         method: "POST",
         body: JSON.stringify(values),
         headers: {
@@ -49,7 +49,7 @@ const NumbersForm = (): JSX.Element => {
 
       setLoading(false);
     },
-    [player, token],
+    [user, token],
   );
 
   return (

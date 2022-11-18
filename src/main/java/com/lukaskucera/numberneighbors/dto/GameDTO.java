@@ -1,22 +1,13 @@
 package com.lukaskucera.numberneighbors.dto;
 
 import com.lukaskucera.numberneighbors.entity.GameEntity;
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
-import java.util.Optional;
+import java.util.List;
 
-public record GameDTO(
-  Long id,
-  Optional<PlayerDTO> player,
-  Optional<OpponentDTO> opponent,
-  boolean ready
-) {
-  public static GameDTO fromPlayer(PlayerEntity player) {
-    final GameEntity game = player.getGame();
-
+public record GameDTO(Long id, List<PlayerDTO> players, boolean ready) {
+  public static GameDTO fromGame(GameEntity game) {
     return new GameDTO(
       game.getId(),
-      Optional.of(PlayerDTO.fromPlayer(player)),
-      player.getOpponentOptional().map(OpponentDTO::fromPlayer),
+      game.getPlayers().stream().map(PlayerDTO::fromPlayer).toList(),
       game.isReady()
     );
   }

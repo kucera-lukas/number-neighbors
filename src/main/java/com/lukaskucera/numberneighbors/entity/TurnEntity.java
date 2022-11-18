@@ -84,6 +84,10 @@ public class TurnEntity extends BaseEntity {
     this.player = player;
   }
 
+  public boolean needsResponse() {
+    return response == null;
+  }
+
   @JsonIgnore
   public boolean isComplete() {
     if (response == null) {

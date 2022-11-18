@@ -1,5 +1,5 @@
 package com.lukaskucera.numberneighbors.response;
 
-import com.lukaskucera.numberneighbors.entity.PlayerEntity;
+import com.lukaskucera.numberneighbors.dto.PlayerDTO;
 
-public record NewPlayerResponse(PlayerEntity player, String token) {}
+public record NewPlayerResponse(PlayerDTO player, String token) {}

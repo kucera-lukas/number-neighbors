@@ -2,6 +2,7 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.dto.PlayerDTO;
+import com.lukaskucera.numberneighbors.dto.UserGameDTO;
 import com.lukaskucera.numberneighbors.entity.GameEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.exception.GameNotFoundException;
@@ -10,6 +11,7 @@ import com.lukaskucera.numberneighbors.exception.PlayerNameAlreadyExistsExceptio
 import com.lukaskucera.numberneighbors.exception.PlayerNotFoundException;
 import com.lukaskucera.numberneighbors.repository.GameRepository;
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -45,8 +47,7 @@ public class PlayerServiceImpl implements PlayerService {
   public PlayerDTO getPlayerById(AuthDTO auth, Long id) {
     checkPlayerAccess(auth, id);
 
-    return playerRepository
-      .findById(id)
+    return getPlayerEntity(id)
       .map(PlayerDTO::fromPlayer)
       .orElseThrow(() -> new PlayerNotFoundException(id));
   }
@@ -60,6 +61,15 @@ public class PlayerServiceImpl implements PlayerService {
       .stream()
       .map(PlayerDTO::fromPlayer)
       .collect(Collectors.toSet());
+  }
+
+  @Override
+  public UserGameDTO getPlayerUserGameByGameId(AuthDTO auth, Long gameId) {
+    gameService.checkGameAccess(auth, gameId);
+
+    return getPlayerEntity(auth.playerId())
+      .map(UserGameDTO::fromPlayer)
+      .orElseThrow(() -> new PlayerNotFoundException(auth.playerId()));
   }
 
   @Override
@@ -136,5 +146,9 @@ public class PlayerServiceImpl implements PlayerService {
 
       throw new AccessDeniedException("Access denied to player " + playerId);
     }
+  }
+
+  private Optional<PlayerEntity> getPlayerEntity(Long id) {
+    return playerRepository.findById(id);
   }
 }

@@ -22,7 +22,7 @@ const Game = (): JSX.Element => {
     // eslint-disable-next-line unicorn/no-useless-undefined
     setError(undefined);
 
-    fetch(`${SERVER_URI}/games/${gameId}`, {
+    fetch(`${SERVER_URI}/games/${gameId}/payload`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -38,6 +38,8 @@ const Game = (): JSX.Element => {
       })
       .then((res: GamePayload) => {
         setGamePayload(res);
+        // eslint-disable-next-line unicorn/no-useless-undefined
+        setError(undefined);
       })
       .catch((error: Error) => {
         setError(error.message);

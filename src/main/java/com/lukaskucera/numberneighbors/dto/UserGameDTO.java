@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public record UserGameDTO(
   Long id,
-  Optional<UserDTO> player,
+  UserDTO user,
   Optional<PlayerDTO> opponent,
   boolean ready
 ) {
@@ -15,7 +15,7 @@ public record UserGameDTO(
 
     return new UserGameDTO(
       game.getId(),
-      Optional.of(UserDTO.fromPlayer(player)),
+      UserDTO.fromPlayer(player),
       player.getOpponentOptional().map(PlayerDTO::fromPlayer),
       game.isReady()
     );

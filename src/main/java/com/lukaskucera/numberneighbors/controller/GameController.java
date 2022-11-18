@@ -3,6 +3,7 @@ package com.lukaskucera.numberneighbors.controller;
 import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.dto.GameDTO;
 import com.lukaskucera.numberneighbors.dto.PlayerDTO;
+import com.lukaskucera.numberneighbors.dto.UserGameDTO;
 import com.lukaskucera.numberneighbors.request.NewGameRequest;
 import com.lukaskucera.numberneighbors.response.NewGameResponse;
 import com.lukaskucera.numberneighbors.service.GameService;
@@ -78,5 +79,24 @@ public class GameController {
     );
 
     return ResponseEntity.ok(game);
+  }
+
+  @GetMapping(value = "/games/{id}/payload")
+  public ResponseEntity<UserGameDTO> gamePayload(
+    @PathVariable Long id,
+    JwtAuthenticationToken jwtToken
+  ) {
+    logger.info(
+      "Game payload {} requested by player {}",
+      id,
+      jwtToken.getName()
+    );
+
+    final UserGameDTO userGame = playerService.getPlayerUserGameByGameId(
+      AuthDTO.fromJwtToken(jwtToken),
+      id
+    );
+
+    return ResponseEntity.ok(userGame);
   }
 }

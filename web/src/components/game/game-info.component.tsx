@@ -20,7 +20,7 @@ const GameInfo = (): JSX.Element => {
           </List.Item>
           <List.Item>
             <Text size="sm">
-              <>Player ID: {gamePayload?.player?.id}</>
+              <>Player ID: {gamePayload?.user?.id}</>
             </Text>
           </List.Item>
           <List.Item>

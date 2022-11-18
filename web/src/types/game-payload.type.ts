@@ -4,7 +4,7 @@ import type UserPayload from "./user-payload.type";
 
 interface GamePayload extends Payload {
   ready: boolean;
-  player?: UserPayload;
+  user: UserPayload;
   opponent?: PlayerPayload;
 }
 

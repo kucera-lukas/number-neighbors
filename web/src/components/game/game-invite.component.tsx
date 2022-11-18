@@ -9,7 +9,7 @@ import { useHref } from "react-router-dom";
 const GameInvite = (): JSX.Element => {
   const [, setAccordionValues] = useAccordionValues();
   const [gamePayload] = useGamePayload();
-  const disabled = !!(gamePayload?.player && gamePayload.opponent);
+  const disabled = !!(gamePayload?.user && gamePayload.opponent);
   const inviteHref = useHref("invite");
   const inviteLink = `${window.location.protocol}//${window.location.host}${inviteHref}`;
 

@@ -21,7 +21,12 @@ resource "aws_instance" "linux-server" {
   associate_public_ip_address = var.linux_associate_public_ip_address
   source_dest_check           = false
   key_name                    = aws_key_pair.key_pair.key_name
-  user_data                   = file("user_data/user_data.tpl")
+  user_data                   = templatefile(
+                                    "${path.module}/user_data/user_data.bash.tftpl",
+                                    {
+                                        EC2_USER = var.linux_ec2_user
+                                    }
+                                )
   user_data_replace_on_change = true
 
   # root disk

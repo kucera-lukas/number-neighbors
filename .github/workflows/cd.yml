@@ -1,0 +1,69 @@
+on:
+  push:
+    branches: [main, feat/aws-ec2-terraform]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/kucera-lukas/number-neighbors
+
+jobs:
+  build-and-push-image:
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push to GitHub Container Registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+
+  deploy:
+    needs: build-and-push-image
+
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+      packages: read
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Deploy to Amazon EC2 via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        env:
+          SHA: ${{ github.sha }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSHKEY }}
+          envs: EC2_USER,SHA,IMAGE_NAME
+          script_stop: true
+          script: |
+            SHA=$SHA \
+            IMAGE_NAME=$IMAGE_NAME \
+            bash number-neighbors/deploy.sh

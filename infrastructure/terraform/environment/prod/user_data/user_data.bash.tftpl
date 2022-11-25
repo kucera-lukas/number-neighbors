@@ -32,6 +32,6 @@ docker run \
     --env DATABASE_URL
     --net host \
     --name number-neighbors \
-    $IMAGE_NAME:sha-$SHA
+    \$IMAGE_NAME:sha-\$SHA
 EOF
 chmod +x /home/"${EC2_USER}"/number-neighbors/deploy.sh

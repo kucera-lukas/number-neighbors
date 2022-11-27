@@ -26,6 +26,8 @@ mkdir /home/"${EC2_USER}"/number-neighbors
 cat <<EOF > /home/"${EC2_USER}"/number-neighbors/deploy.sh
 #!/bin/bash
 
+echo \$DOCKER_PASSWORD | docker login \$DOCKER_REGISTRY -u \$DOCKER_USERNAME --password-stdin
+
 docker run \\
     --detach \\
     --env "SPRING_PROFILES_ACTIVE" \\

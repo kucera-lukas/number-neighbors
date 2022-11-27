@@ -69,4 +69,9 @@ jobs:
           envs: DOCKER_REGISTRY,DOCKER_USERNAME,DOCKER_PASSWORD,SHA,IMAGE_NAME
           script_stop: true
           script: |
+            export DOCKER_REGISTRY=$DOCKER_REGISTRY
+            export DOCKER_USERNAME=$DOCKER_USERNAME
+            export DOCKER_PASSWORD=$DOCKER_PASSWORD
+            export SHA=$SHA
+            export IMAGE_NAME=$IMAGE_NAME
             bash number-neighbors/deploy.sh

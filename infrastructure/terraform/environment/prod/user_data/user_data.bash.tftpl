@@ -18,12 +18,16 @@ systemctl enable postgresql
 su - postgres -c "createdb number-neighbors"
 
 # environment
-echo "#!/bin/sh" | tee -a /etc/profile.d/app_setup.sh
-echo "export SPRING_PROFILES_ACTIVE=prod" | tee -a /etc/profile.d/app_setup.sh
-echo "export CLIENT_URI=https://numberneighbors.lukaskucera.com/" | tee -a /etc/profile.d/app_setup.sh
-echo "export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors" | tee -a /etc/profile.d/app_setup.sh
-echo "export POSTGRES_USER=postgres" | tee -a /etc/profile.d/app_setup.sh
-echo "export POSTGRES_PASSWORD=postgres" | tee -a /etc/profile.d/app_setup.sh
+cat <<EOF > /etc/profile.d/app_setup.sh
+#!/bin/sh
+
+export SPRING_PROFILES_ACTIVE=prod
+export CLIENT_URI=https://numberneighbors.lukaskucera.com/
+export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
+EOF
+chmod +x /etc/profile.d/app_setup.sh
 
 # deploy script
 mkdir /home/"${EC2_USER}"/number-neighbors

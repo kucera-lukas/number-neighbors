@@ -14,6 +14,7 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
+      CLIENT_URI: "http://127.0.0.1:5173"
       POSTGRES_HOSTNAME: postgres
       POSTGRES_PORT: 5432
       <<: *postgres-environment

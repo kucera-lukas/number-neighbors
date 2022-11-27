@@ -26,12 +26,12 @@ mkdir /home/"${EC2_USER}"/number-neighbors
 cat <<EOF > /home/"${EC2_USER}"/number-neighbors/deploy.sh
 #!/bin/bash
 
-docker run \
-    --detach \
-    --env SPRING_PROFILES_ACTIVE
-    --env DATABASE_URL
-    --net host \
-    --name number-neighbors \
+docker run \\
+    --detach \\
+    --env "SPRING_PROFILES_ACTIVE" \\
+    --env "DATABASE_URL" \\
+    --net host \\
+    --name number-neighbors \\
     \$IMAGE_NAME:sha-\$SHA
 EOF
 chmod +x /home/"${EC2_USER}"/number-neighbors/deploy.sh

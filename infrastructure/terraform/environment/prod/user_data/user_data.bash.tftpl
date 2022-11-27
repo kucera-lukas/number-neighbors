@@ -32,6 +32,9 @@ cat <<EOF > /home/"${EC2_USER}"/number-neighbors/deploy.sh
 
 echo \$DOCKER_PASSWORD | docker login \$DOCKER_REGISTRY -u \$DOCKER_USERNAME --password-stdin
 
+docker stop number-neighbors 2> /dev/null || true
+docker rm -f number-neighbors 2> /dev/null || true
+
 docker run \\
     --detach \\
     --env "SPRING_PROFILES_ACTIVE" \\

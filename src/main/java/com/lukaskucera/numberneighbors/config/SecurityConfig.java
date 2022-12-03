@@ -21,8 +21,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
   @SuppressWarnings("NullAway.Init")
-  @Value("${client.uri}")
-  private String clientUri;
+  @Value("${client.url}")
+  private String clientUrl;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -61,7 +61,7 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.addAllowedOrigin(clientUri);
+    configuration.addAllowedOrigin(clientUrl);
     configuration.addAllowedMethod(CorsConfiguration.ALL);
     configuration.addAllowedHeader(CorsConfiguration.ALL);
     configuration.setAllowCredentials(true);

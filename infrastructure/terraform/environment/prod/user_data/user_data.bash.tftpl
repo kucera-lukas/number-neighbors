@@ -64,7 +64,7 @@ cat <<EOF > /etc/profile.d/app_setup.sh
 #!/bin/sh
 
 export SPRING_PROFILES_ACTIVE=prod
-export CLIENT_URI=https://numberneighbors.lukaskucera.com/
+export CLIENT_URL="${CLIENT_URL}"
 export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors?sslmode=disable
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
@@ -84,7 +84,7 @@ docker rm -f number-neighbors 2> /dev/null || true
 docker run \\
     --detach \\
     --env "SPRING_PROFILES_ACTIVE" \\
-    --env "CLIENT_URI" \\
+    --env "CLIENT_URL" \\
     --env "DATABASE_URL" \\
     --env "POSTGRES_USER" \\
     --env "POSTGRES_PASSWORD" \\

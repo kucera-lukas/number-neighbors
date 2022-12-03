@@ -26,4 +26,4 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 client:
-  uri: ${env.CLIENT_URI}
+  url: ${env.CLIENT_URL}

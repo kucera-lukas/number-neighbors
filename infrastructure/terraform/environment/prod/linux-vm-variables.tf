@@ -42,3 +42,9 @@ variable "linux_certbot_email" {
   description = "Email used for registration and recovery contact of letsencrypt/certbot"
   default     = "lukas.kucera.g@gmail.com"
 }
+
+variable "linux_client_url" {
+  type        = string
+  description = "Uniform Resource Locator of the client website"
+  default     = "https://numberneighbors.lukaskucera.com/"
+}

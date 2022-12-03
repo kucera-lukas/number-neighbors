@@ -1,6 +1,10 @@
 name: Continuous Integration
 
-on: [push]
+on:
+  push:
+    branches: [main]
+
+  pull_request:
 
 jobs:
   java:
@@ -9,9 +13,6 @@ jobs:
 
     permissions:
       contents: read
-      # make sure that we can write SpotBugs report,
-      # for example the Dependabot token is read-only by default.
-      checks: write
 
     strategy:
       matrix:
@@ -33,6 +34,60 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean install --batch-mode --update-snapshots --show-version -DskipTests=true
+
+  terraform:
+    name: terraform
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        terraform: [1.3.6]
+
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform ${{ matrix.terraform }}
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: $ {{ matrix.terraform }}
+
+      - name: TFLint cache plugin directory
+        uses: actions/cache@v2
+        with:
+          path: ~/.tflint.d/plugins
+          key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v2
+        with:
+          tflint_version: latest
+
+      - name: Terraform fmt
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        run: terraform validate -no-color
+
+      - name: Init TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint -f compact
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-pr-commenter-action@latest
+        with:
+          github_token: ${{ github.token }}
 
   web:
     name: web

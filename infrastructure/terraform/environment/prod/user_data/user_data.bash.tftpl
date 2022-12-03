@@ -23,7 +23,7 @@ cat <<EOF > /etc/profile.d/app_setup.sh
 
 export SPRING_PROFILES_ACTIVE=prod
 export CLIENT_URI=https://numberneighbors.lukaskucera.com/
-export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors
+export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors?sslmode=disable
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 EOF

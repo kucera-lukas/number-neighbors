@@ -30,3 +30,15 @@ variable "linux_ec2_user" {
   description = "Linux system user account name"
   default     = "ec2-user"
 }
+
+variable "linux_domain" {
+  type        = string
+  description = "Server domain name"
+  default     = "api.numberneighbors.lukaskucera.com"
+}
+
+variable "linux_certbot_email" {
+  type        = string
+  description = "Email used for registration and recovery contact of letsencrypt/certbot"
+  default     = "lukas.kucera.g@gmail.com"
+}

@@ -24,7 +24,9 @@ resource "aws_instance" "linux-server" {
   user_data                   = templatefile(
                                     "${path.module}/user_data/user_data.bash.tftpl",
                                     {
-                                        EC2_USER = var.linux_ec2_user
+                                        EC2_USER = var.linux_ec2_user,
+                                        DOMAIN = var.linux_domain,
+                                        CERTBOT_EMAIL = var.linux_certbot_email,
                                     }
                                 )
   user_data_replace_on_change = true
@@ -50,8 +52,16 @@ resource "aws_eip_association" "linux-eip-association" {
 # Define the security group for the Linux server
 resource "aws_security_group" "aws-linux-sg" {
   name        = "${lower(var.app_name)}-${var.app_environment}-linux-sg"
-  description = "Allow incoming HTTPS and SSH connections"
+  description = "Allow incoming HTTP, HTTPS and SSH connections"
   vpc_id      = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow incoming HTTP connections"
+  }
 
   ingress {
     from_port   = 443

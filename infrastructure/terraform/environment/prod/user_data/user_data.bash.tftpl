@@ -17,6 +17,48 @@ systemctl start postgresql
 systemctl enable postgresql
 su - postgres -c "createdb number-neighbors"
 
+# nginx
+amazon-linux-extras install -y nginx1
+systemctl start nginx
+systemctl enable nginx
+
+# Amazon Linux is based on RedHat/CentOS/Fedora so the default installation of
+# nginx doesn't have a sites-available or a sites-enabled directory
+echo 'include /etc/nginx/sites-enabled/*;' | tee /etc/nginx/conf.d/sites-enabled.conf
+mkdir -p /etc/nginx/sites-available
+mkdir -p /etc/nginx/sites-enabled
+
+# nginx server block
+cat <<EOF > /etc/nginx/sites-available/"${DOMAIN}"
+server {
+    server_name "${DOMAIN}" "www.${DOMAIN}";
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+  }
+}
+EOF
+ln -sf /etc/nginx/sites-available/"${DOMAIN}" /etc/nginx/sites-enabled/
+nginx -t
+
+# certbot
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum-config-manager --enable epel
+yum install -y certbot python-certbot-nginx
+certbot run -n --nginx --agree-tos -d "${DOMAIN}" -d www."${DOMAIN}" -m "${CERTBOT_EMAIL}" --redirect
+su - "${EC2_USER}" -c '(crontab -l ; echo "0 12 * * * certbot renew --quiet") | crontab -'
+systemctl restart nginx
+
 # environment
 cat <<EOF > /etc/profile.d/app_setup.sh
 #!/bin/sh

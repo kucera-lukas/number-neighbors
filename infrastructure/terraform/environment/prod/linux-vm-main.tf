@@ -33,7 +33,8 @@ resource "aws_instance" "linux-server" {
   user_data_replace_on_change = true
 
   metadata_options {
-    http_tokens = "required"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 
   # root disk

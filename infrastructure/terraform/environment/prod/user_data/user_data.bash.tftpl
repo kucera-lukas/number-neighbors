@@ -46,6 +46,8 @@ docker run \\
     --env "DATABASE_URL" \\
     --env "POSTGRES_USER" \\
     --env "POSTGRES_PASSWORD" \\
+    --env "PRIVATE_KEY" \\
+    --env "PUBLIC_KEY" \\
     --net host \\
     --name number-neighbors \\
     \$IMAGE_NAME:sha-\$SHA

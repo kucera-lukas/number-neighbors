@@ -62,11 +62,13 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ github.sha }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSHKEY }}
-          envs: DOCKER_REGISTRY,DOCKER_USERNAME,DOCKER_PASSWORD,SHA,IMAGE_NAME
+          envs: DOCKER_REGISTRY,DOCKER_USERNAME,DOCKER_PASSWORD,SHA,IMAGE_NAME,PRIVATE_KEY,PUBLIC_KEY
           script_stop: true
           script: |
             export DOCKER_REGISTRY=$DOCKER_REGISTRY
@@ -74,4 +76,6 @@ jobs:
             export DOCKER_PASSWORD=$DOCKER_PASSWORD
             export SHA=$SHA
             export IMAGE_NAME=$IMAGE_NAME
+            export PRIVATE_KEY=$PRIVATE_KEY
+            export PUBLIC_KEY=$PUBLIC_KEY
             bash number-neighbors/deploy.sh

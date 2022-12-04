@@ -1,8 +1,7 @@
-################################
-## AWS Provider Module - Main ##
-################################
+############################
+## Provider Module - Main ##
+############################
 
-# AWS Provider
 terraform {
   required_version = "1.3.6"
 

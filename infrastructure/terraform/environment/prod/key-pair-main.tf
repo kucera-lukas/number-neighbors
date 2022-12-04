@@ -2,7 +2,7 @@
 ## Key Pair - Main ##
 #####################
 
-# Generates a secure private key and encodes it as PEM
+# Generate a secure private key and encode it as PEM
 resource "tls_private_key" "key_pair" {
   algorithm = "RSA"
   rsa_bits  = 4096

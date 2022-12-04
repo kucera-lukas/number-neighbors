@@ -24,10 +24,13 @@ resource "aws_instance" "linux-server" {
   user_data = templatefile(
     "${path.module}/user_data/user_data.bash.tftpl",
     {
-      EC2_USER      = var.linux_ec2_user,
-      DOMAIN        = var.linux_domain,
-      CERTBOT_EMAIL = var.linux_certbot_email,
-      CLIENT_URL    = var.linux_client_url,
+      EC2_USER          = var.linux_ec2_user,
+      DATABASE_NAME     = var.linux_database_name,
+      POSTGRES_USER     = var.linux_postgres_user,
+      POSTGRES_PASSWORD = var.linux_postgres_password,
+      DOMAIN            = var.linux_domain,
+      CERTBOT_EMAIL     = var.linux_certbot_email,
+      CLIENT_URL        = var.linux_client_url,
     }
   )
   user_data_replace_on_change = true

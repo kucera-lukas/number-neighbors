@@ -31,6 +31,24 @@ variable "linux_ec2_user" {
   default     = "ec2-user"
 }
 
+variable "linux_database_name" {
+  type        = string
+  description = "Name of the PostgreSQL database"
+  default     = "numberneighbors"
+}
+
+variable "linux_postgres_user" {
+  type        = string
+  description = "Username of the PostgreSQL role"
+  default     = "numberneighborsuser"
+}
+
+variable "linux_postgres_password" {
+  type        = string
+  description = "Password of the PostgreSQL role"
+  default     = "numberneighborspassword"
+}
+
 variable "linux_domain" {
   type        = string
   description = "Server domain name"

@@ -15,7 +15,12 @@ yum install postgresql postgresql-server -y
 postgresql-setup --initdb --unit postgresql
 systemctl start postgresql
 systemctl enable postgresql
-su - postgres -c "createdb number-neighbors"
+su - postgres -c "createdb ${DATABASE_NAME}"
+su - postgres -c "psql -c \"CREATE USER ${POSTGRES_USER} WITH ENCRYPTED PASSWORD '${POSTGRES_PASSWORD}'\";"
+su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${DATABASE_NAME} TO ${POSTGRES_USER}\";"
+sed -ri '/local[[:space:]]+all[[:space:]]+all[[:space:]]+peer/s/peer/scram-sha-256/' /var/lib/pgsql/data/pg_hba.conf
+sed -ri '/host[[:space:]]+all[[:space:]]+all[[:space:]]+127.0.0.1\/32[[:space:]]+ident/s/ident/scram-sha-256/' /var/lib/pgsql/data/pg_hba.conf
+service postgresql restart
 
 # nginx
 amazon-linux-extras install -y nginx1
@@ -65,9 +70,9 @@ cat <<EOF > /etc/profile.d/app_setup.sh
 
 export SPRING_PROFILES_ACTIVE=prod
 export CLIENT_URL="${CLIENT_URL}"
-export DATABASE_URL=jdbc:postgresql://localhost:5432/number-neighbors?sslmode=disable
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
+export DATABASE_URL=jdbc:postgresql://127.0.0.1:5432/"${DATABASE_NAME}"?sslmode=disable
+export POSTGRES_USER="${POSTGRES_USER}"
+export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
 EOF
 chmod +x /etc/profile.d/app_setup.sh
 

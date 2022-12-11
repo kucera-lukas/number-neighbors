@@ -67,23 +67,13 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>spring-cloud-gcp-starter-secretmanager</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>spring-cloud-gcp-starter-sql-postgresql</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
             <groupId>me.paulschwarz</groupId>
             <artifactId>spring-dotenv</artifactId>
             <version>2.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs</artifactId>
+            <artifactId>spotbugs-annotations</artifactId>
             <version>4.7.3</version>
         </dependency>
     </dependencies>
@@ -93,11 +83,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.7.3.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

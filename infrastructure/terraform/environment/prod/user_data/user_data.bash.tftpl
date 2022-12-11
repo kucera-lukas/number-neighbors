@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# packages
+yum update -y
+
+# docker
+amazon-linux-extras install docker
+systemctl start docker.service
+systemctl enable docker.service
+usermod -aG docker "${EC2_USER}"
+
+# postgres
+amazon-linux-extras install postgresql14
+yum install postgresql postgresql-server -y
+postgresql-setup --initdb --unit postgresql
+systemctl start postgresql
+systemctl enable postgresql
+su - postgres -c "createdb ${DATABASE_NAME}"
+su - postgres -c "psql -c \"CREATE USER ${POSTGRES_USER} WITH ENCRYPTED PASSWORD '${POSTGRES_PASSWORD}'\";"
+su - postgres -c "psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${DATABASE_NAME} TO ${POSTGRES_USER}\";"
+sed -ri '/local[[:space:]]+all[[:space:]]+all[[:space:]]+peer/s/peer/scram-sha-256/' /var/lib/pgsql/data/pg_hba.conf
+sed -ri '/host[[:space:]]+all[[:space:]]+all[[:space:]]+127.0.0.1\/32[[:space:]]+ident/s/ident/scram-sha-256/' /var/lib/pgsql/data/pg_hba.conf
+service postgresql restart
+
+# nginx
+amazon-linux-extras install -y nginx1
+systemctl start nginx
+systemctl enable nginx
+
+# Amazon Linux is based on RedHat/CentOS/Fedora so the default installation of
+# nginx doesn't have a sites-available or a sites-enabled directory
+echo 'include /etc/nginx/sites-enabled/*;' | tee /etc/nginx/conf.d/sites-enabled.conf
+mkdir -p /etc/nginx/sites-available
+mkdir -p /etc/nginx/sites-enabled
+
+# nginx server block
+cat <<EOF > /etc/nginx/sites-available/"${DOMAIN}"
+server {
+    server_name "${DOMAIN}" "www.${DOMAIN}";
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+  }
+}
+EOF
+ln -sf /etc/nginx/sites-available/"${DOMAIN}" /etc/nginx/sites-enabled/
+nginx -t
+
+# certbot
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum-config-manager --enable epel
+yum install -y certbot python-certbot-nginx
+certbot run -n --nginx --agree-tos -d "${DOMAIN}" -d www."${DOMAIN}" -m "${CERTBOT_EMAIL}" --redirect
+su - "${EC2_USER}" -c '(crontab -l ; echo "0 12 * * * certbot renew --quiet") | crontab -'
+systemctl restart nginx
+
+# environment
+cat <<EOF > /etc/profile.d/app_setup.sh
+#!/bin/sh
+
+export SPRING_PROFILES_ACTIVE=prod
+export CLIENT_URL="${CLIENT_URL}"
+export DATABASE_URL=jdbc:postgresql://127.0.0.1:5432/"${DATABASE_NAME}"?sslmode=disable
+export POSTGRES_USER="${POSTGRES_USER}"
+export POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+EOF
+chmod +x /etc/profile.d/app_setup.sh
+
+# deploy script
+mkdir /home/"${EC2_USER}"/number-neighbors
+cat <<EOF > /home/"${EC2_USER}"/number-neighbors/deploy.sh
+#!/bin/bash
+
+echo \$DOCKER_PASSWORD | docker login \$DOCKER_REGISTRY -u \$DOCKER_USERNAME --password-stdin
+
+docker stop number-neighbors 2> /dev/null || true
+docker rm -f number-neighbors 2> /dev/null || true
+
+docker run \\
+    --detach \\
+    --env "SPRING_PROFILES_ACTIVE" \\
+    --env "CLIENT_URL" \\
+    --env "DATABASE_URL" \\
+    --env "POSTGRES_USER" \\
+    --env "POSTGRES_PASSWORD" \\
+    --env "PRIVATE_KEY" \\
+    --env "PUBLIC_KEY" \\
+    --net host \\
+    --name number-neighbors \\
+    \$IMAGE_NAME:sha-\$SHA
+EOF
+chmod +x /home/"${EC2_USER}"/number-neighbors/deploy.sh

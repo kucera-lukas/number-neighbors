@@ -1,27 +1,9 @@
 spring:
-  cloud:
-    gcp:
-      core:
-        enabled: false
-      sql:
-        enabled: false
-      secretmanager:
-        enabled: false
-
   datasource:
     url: jdbc:postgresql://${env.POSTGRES_HOSTNAME}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}?sslmode=disable
-    username: ${env.POSTGRES_USER}
-    password: ${env.POSTGRES_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
 
 jwt:
   private:
     key: rsakey.pem
   public:
     key: rsapubkey.pem
-
-client:
-  uri: ${env.CLIENT_URI}

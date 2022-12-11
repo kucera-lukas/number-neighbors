@@ -92,6 +92,15 @@ resource "aws_security_group" "aws-linux-sg" {
     description = "Allow incoming SSH connections (Linux)"
   }
 
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    #tfsec:ignore:aws-ec2-no-public-egress-sgr
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow outgoing traffic"
+  }
+
   tags = {
     Name        = "${lower(var.app_name)}-${var.app_environment}-linux-sg"
     Environment = var.app_environment

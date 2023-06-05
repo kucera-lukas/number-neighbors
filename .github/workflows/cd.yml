@@ -2,7 +2,9 @@ name: Continuous Deployment
 
 on:
   push:
-    branches: [main, feat/aws-ec2-terraform]
+    branches: [main]
+
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io

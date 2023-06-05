@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${env.POSTGRES_HOSTNAME}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}?sslmode=disable
+    url: jdbc:postgresql://${POSTGRES_HOSTNAME}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
 
 jwt:
   private:

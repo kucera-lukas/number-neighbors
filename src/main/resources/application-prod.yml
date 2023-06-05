@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: ${env.DATABASE_URL}
+    url: ${DATABASE_URL}
 
 jwt:
   private:
-    key: ${env.PRIVATE_KEY}
+    key: ${PRIVATE_KEY}
   public:
-    key: ${env.PUBLIC_KEY}
+    key: ${PUBLIC_KEY}

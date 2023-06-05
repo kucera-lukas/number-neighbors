@@ -13,7 +13,7 @@ root.render(
   <MantineProvider
     withGlobalStyles
     withNormalizeCSS
-    theme={{ colorScheme: "dark" }}
+    theme={{ colorScheme: "light" }}
   >
     <GamePayloadProvider>
       <TurnsProvider>

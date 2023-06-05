@@ -21,6 +21,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
   @SuppressWarnings("NullAway.Init")
+  @Value("${spring.profiles.active:}")
+  private String activeProfile;
+
+  @SuppressWarnings("NullAway.Init")
   @Value("${client.url}")
   private String clientUrl;
 
@@ -61,7 +65,12 @@ public class SecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     final CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.addAllowedOrigin(clientUrl);
+    if (activeProfile.contains("dev")) {
+      configuration.addAllowedOriginPattern(CorsConfiguration.ALL);
+    } else {
+      configuration.addAllowedOrigin(clientUrl);
+    }
+
     configuration.addAllowedMethod(CorsConfiguration.ALL);
     configuration.addAllowedHeader(CorsConfiguration.ALL);
     configuration.setAllowCredentials(true);

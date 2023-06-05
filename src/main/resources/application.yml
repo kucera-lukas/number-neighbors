@@ -1,10 +1,10 @@
 server:
-  port: ${env.PORT:8080}
+  port: ${PORT:8080}
 
 spring:
   datasource:
-    username: ${env.POSTGRES_USER}
-    password: ${env.POSTGRES_PASSWORD}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   sql:
     init:
@@ -12,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: ${env.DDL_AUTO:update}
+      ddl-auto: ${DDL_AUTO:update}
 
     properties:
       hibernate:
@@ -26,4 +26,4 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 client:
-  url: ${env.CLIENT_URL}
+  url: ${CLIENT_URL}

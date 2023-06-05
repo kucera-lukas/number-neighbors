@@ -1,10 +1,10 @@
+import OpponentNumbers from "../../components/play/opponent-numbers.component";
+import UserNumbers from "../../components/play/user-numbers.component";
 import { useGamePayload } from "../../context/game-payload.context";
 import { useTurns } from "../../context/turns.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import useStompClient from "../../hooks/stomp-client.hook";
-import AccordionItemLayout from "../../layouts/accordion-item.layout";
-
-import { List } from "@mantine/core";
+import PageLayout from "../../layouts/page.layout";
 
 import type GamePayload from "../../types/game-payload.type";
 import type TurnPayload from "../../types/turn-payload.type";
@@ -16,9 +16,9 @@ const TURNS_DESTINATION = "/user/queue/turns";
 
 const Play = (): JSX.Element => {
   const [gamePayload, setGamePayload] = useGamePayload();
-  const [turns, setTurns] = useTurns();
+  const [, setTurns] = useTurns();
   const [token] = useLocalStorageItem<string>("token");
-  const disabled = !gamePayload?.ready;
+  const enabled = gamePayload?.ready;
 
   const onPayload = (message: IMessage) =>
     setGamePayload(JSON.parse(message.body) as GamePayload);
@@ -45,19 +45,14 @@ const Play = (): JSX.Element => {
   });
 
   return (
-    <AccordionItemLayout
-      title="Play"
-      value="play"
-      disabled={disabled}
-    >
-      <List>
-        {turns?.map((turn) => (
-          <List.Item key={turn.id.toString()}>
-            <>Turn: {turn.id}</>
-          </List.Item>
-        ))}
-      </List>
-    </AccordionItemLayout>
+    <PageLayout title="play">
+      {enabled && (
+        <>
+          <UserNumbers />
+          <OpponentNumbers />
+        </>
+      )}
+    </PageLayout>
   );
 };
 

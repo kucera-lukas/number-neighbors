@@ -22,9 +22,7 @@ const Invite = (): JSX.Element => {
   const [error, setError] = useState<string>();
 
   const onJoin = useCallback(() => {
-    if (!name) {
-      setError("Name is required");
-    } else {
+    if (name) {
       setLoading(true);
       // eslint-disable-next-line unicorn/no-useless-undefined
       setError(undefined);
@@ -49,6 +47,8 @@ const Invite = (): JSX.Element => {
           setError(error.message);
           setLoading(false);
         });
+    } else {
+      setError("Name is required");
     }
   }, [gameId, name, navigate]);
 

@@ -1,10 +1,9 @@
 import type Payload from "./payload.type";
 import type PlayerPayload from "./player-payload.type";
-import type UserPayload from "./user-payload.type";
 
 interface GamePayload extends Payload {
   ready: boolean;
-  user: UserPayload;
+  user: PlayerPayload;
   opponent?: PlayerPayload;
 }
 

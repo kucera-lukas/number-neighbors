@@ -1,7 +1,7 @@
 import ChooseNumbers from "./choose-numbers.component";
 import GameInfo from "./game-info.component";
 import GameInvite from "./game-invite.component";
-import Play from "./play.component";
+import GamePlay from "./game-play.component";
 
 import AccordionLayout from "../../layouts/accordion.layout";
 
@@ -14,7 +14,7 @@ const GameAccordion = memo(() => {
       <GameInfo />
       <GameInvite />
       <ChooseNumbers />
-      <Play />
+      <GamePlay />
     </AccordionLayout>
   );
 });

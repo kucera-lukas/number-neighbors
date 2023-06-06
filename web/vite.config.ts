@@ -9,7 +9,7 @@ export default defineConfig({
     checker({
       typescript: true,
       eslint: {
-        lintCommand: 'eslint "./src/**/*.{ts,tsx}" --fix',
+        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
       },
     }),
   ],

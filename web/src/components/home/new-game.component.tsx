@@ -21,9 +21,7 @@ const NewGame = (): JSX.Element => {
   const [error, setError] = useState<string>();
 
   const onCreate = useCallback(() => {
-    if (!name) {
-      setError("Player name is required");
-    } else {
+    if (name) {
       setLoading(true);
       // eslint-disable-next-line unicorn/no-useless-undefined
       setError(undefined);
@@ -48,6 +46,8 @@ const NewGame = (): JSX.Element => {
           setError(error.message);
           setLoading(false);
         });
+    } else {
+      setError("Player name is required");
     }
   }, [name, navigate, setToken]);
 

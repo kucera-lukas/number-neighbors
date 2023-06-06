@@ -2,6 +2,7 @@ import ROUTES from "./routes";
 
 import Game from "../pages/game/game";
 import Invite from "../pages/game/invite";
+import Play from "../pages/game/play";
 import Home from "../pages/home";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -19,6 +20,10 @@ const Router = (): JSX.Element => {
     {
       path: ROUTES.INVITE,
       element: <Invite />,
+    },
+    {
+      path: ROUTES.PLAY,
+      element: <Play />,
     },
   ]);
 

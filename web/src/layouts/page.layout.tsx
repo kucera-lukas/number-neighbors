@@ -1,6 +1,7 @@
 import { SERVER_URI } from "../config/environment";
 import { useGamePayload } from "../context/game-payload.context";
 import useLocalStorageItem from "../hooks/localstorage.hook";
+import useStompClient from "../hooks/stomp-client.hook";
 
 import { Center, Stack, Title, UnstyledButton } from "@mantine/core";
 import { useEffect } from "react";
@@ -21,6 +22,12 @@ const PageLayout = ({ children, title }: PageLayoutProps): JSX.Element => {
   const [, setGamePayload] = useGamePayload();
   const gameId = params.gameId;
   const [token] = useLocalStorageItem<string>("token");
+
+  useStompClient();
+
+  useEffect(() => {
+    document.title = `${BASE_TITLE} | ${title}`;
+  }, [title]);
 
   useEffect(() => {
     if (!gameId || !token) {
@@ -43,10 +50,6 @@ const PageLayout = ({ children, title }: PageLayoutProps): JSX.Element => {
         setGamePayload(res);
       });
   }, [gameId, token, setGamePayload]);
-
-  useEffect(() => {
-    document.title = `${BASE_TITLE} | ${title}`;
-  }, [title]);
 
   return (
     <Center>

@@ -1,6 +1,7 @@
 import NumberGrid from "./number-grid.component";
 
 import { useGamePayload } from "../../context/game-payload.context";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import NumberSelectionType from "../../types/number-selection.enum";
 import { classifyUserNumbers, toDiv } from "../../utils/number.utils";
 
@@ -46,9 +47,14 @@ const UserNumbers = (): JSX.Element => {
   );
 
   return (
-    <NumberGrid cols={8}>
-      {themedNumbers.map((number, i) => toDiv(number, i))}
-    </NumberGrid>
+    <AccordionItemLayout
+      title="My numbers"
+      value="user-numbers"
+    >
+      <NumberGrid cols={8}>
+        {themedNumbers.map((number, i) => toDiv(number, i))}
+      </NumberGrid>
+    </AccordionItemLayout>
   );
 };
 

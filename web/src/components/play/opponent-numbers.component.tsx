@@ -1,6 +1,7 @@
 import NumberGrid from "./number-grid.component";
 
 import { useGamePayload } from "../../context/game-payload.context";
+import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import { classifyOpponentNumbers, toDiv } from "../../utils/number.utils";
 
 import { useEffect, useState } from "react";
@@ -32,9 +33,14 @@ const OpponentNumbers = (): JSX.Element => {
   );
 
   return (
-    <NumberGrid cols={3}>
-      {themedNumbers.map((number, i) => toDiv(number, i))}
-    </NumberGrid>
+    <AccordionItemLayout
+      title="Opponent numbers"
+      value="opponent-numbers"
+    >
+      <NumberGrid cols={3}>
+        {themedNumbers.map((number, i) => toDiv(number, i))}
+      </NumberGrid>
+    </AccordionItemLayout>
   );
 };
 

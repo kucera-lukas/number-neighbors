@@ -33,7 +33,7 @@ const JoinGame = (): JSX.Element => {
           label="Game identifier"
           withAsterisk
           value={gameID}
-          onChange={(value) => setGameID(value)}
+          onChange={(value) => value !== "" && setGameID(value)}
           min={0}
           hideControls
           error={error}

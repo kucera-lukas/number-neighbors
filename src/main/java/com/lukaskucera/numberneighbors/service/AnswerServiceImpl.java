@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnswerServiceImpl implements AnswerService {
 
+  GameServiceImpl gameService;
   PlayerServiceImpl playerService;
   TurnServiceImpl turnService;
   ResponseServiceImpl responseService;
@@ -30,6 +31,7 @@ public class AnswerServiceImpl implements AnswerService {
   AnswerRepository answerRepository;
 
   public AnswerServiceImpl(
+    GameServiceImpl gameService,
     PlayerServiceImpl playerService,
     TurnServiceImpl turnService,
     ResponseServiceImpl responseService,
@@ -37,6 +39,7 @@ public class AnswerServiceImpl implements AnswerService {
     ResponseRepository responseRepository,
     AnswerRepository answerRepository
   ) {
+    this.gameService = gameService;
     this.playerService = playerService;
     this.turnService = turnService;
     this.responseService = responseService;
@@ -71,6 +74,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     final AnswerEntity answer = createAnswer(type, response);
 
+    gameService.sendPayloadToPlayers(player.getGame());
     turnService.sendTurnToPlayers(answer.getResponse().getTurn());
 
     return AnswerDTO.fromAnswer(answer);

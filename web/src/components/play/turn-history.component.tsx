@@ -18,7 +18,7 @@ const TurnHistory = (): JSX.Element => {
         size="xs"
       >
         <ScrollArea.Autosize
-          maxHeight={100}
+          h={100}
           type="auto"
           offsetScrollbars
         >

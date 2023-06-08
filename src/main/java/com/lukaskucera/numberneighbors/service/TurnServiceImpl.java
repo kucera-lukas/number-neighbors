@@ -15,11 +15,17 @@ import com.lukaskucera.numberneighbors.exception.TurnRequiresChosenNumberExcepti
 import com.lukaskucera.numberneighbors.repository.PlayerRepository;
 import com.lukaskucera.numberneighbors.repository.TurnRepository;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TurnServiceImpl implements TurnService {
+
+  private static final Logger logger = LoggerFactory.getLogger(
+    TurnServiceImpl.class
+  );
 
   private final GameServiceImpl gameService;
 
@@ -64,13 +70,26 @@ public class TurnServiceImpl implements TurnService {
     final TurnEntity turn = createTurn(value, player);
     final TurnDTO turnDTO = TurnDTO.fromTurn(turn);
 
-    simpMessagingTemplate.convertAndSendToUser(
-      player.getOpponent().getSub(),
-      "/queue/turns",
-      turnDTO
-    );
+    sendTurnToPlayers(turn);
 
     return turnDTO;
+  }
+
+  @Override
+  public void sendTurnToPlayers(TurnEntity turn) {
+    for (PlayerEntity player : turn.getGame().getPlayers()) {
+      logger.info(
+        "Sending turn {} payload to player {}",
+        turn.getId(),
+        player.getId()
+      );
+
+      simpMessagingTemplate.convertAndSendToUser(
+        player.getSub(),
+        "/queue/turns",
+        TurnDTO.fromTurn(turn)
+      );
+    }
   }
 
   public void checkGameState(PlayerEntity player, int value) {

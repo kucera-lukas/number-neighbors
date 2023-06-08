@@ -4,8 +4,8 @@ import type TurnPayload from "../types/turn-payload.type";
 import type { PropsWithChildren, Dispatch, SetStateAction } from "react";
 
 export type TurnsPayload = readonly [
-  TurnPayload[] | undefined,
-  Dispatch<SetStateAction<TurnPayload[] | undefined>>,
+  TurnPayload[],
+  Dispatch<SetStateAction<TurnPayload[]>>,
 ];
 
 export const TurnsContext = createContext<TurnsPayload | undefined>(undefined);
@@ -15,7 +15,7 @@ export type TurnsProviderProps = PropsWithChildren<Record<never, never>>;
 export const TurnsProvider = ({
   children,
 }: TurnsProviderProps): JSX.Element => {
-  const [turns, setTurns] = useState<TurnPayload[]>();
+  const [turns, setTurns] = useState<TurnPayload[]>([]);
 
   return (
     <TurnsContext.Provider value={[turns, setTurns]}>

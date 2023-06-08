@@ -23,8 +23,9 @@ const useStompClient = (): Client | undefined => {
   const [client, setClient] = useState<Client>();
 
   const onPayload = useCallback(
-    (message: IMessage) =>
-      setGamePayload(JSON.parse(message.body) as GamePayload),
+    (message: IMessage) => {
+      setGamePayload(JSON.parse(message.body) as GamePayload);
+    },
     [setGamePayload],
   );
 
@@ -33,15 +34,15 @@ const useStompClient = (): Client | undefined => {
       const turn = JSON.parse(message.body) as TurnPayload;
 
       setTurns((turns) => {
-        if (turns === undefined) {
-          turns = [turn];
-        } else if (turn.id === turns.at(-1)?.id) {
-          turns[turns.length - 1] = turn;
+        const newTurns = [...turns];
+
+        if (turn.id === newTurns.at(-1)?.id) {
+          newTurns[newTurns.length - 1] = turn;
         } else {
-          turns.push(turn);
+          newTurns.push(turn);
         }
 
-        return turns;
+        return newTurns;
       });
     },
     [setTurns],

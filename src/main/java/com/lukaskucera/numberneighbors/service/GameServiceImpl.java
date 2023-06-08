@@ -67,7 +67,7 @@ public class GameServiceImpl implements GameService {
   @Override
   public void sendPayloadToPlayers(GameEntity game) {
     for (PlayerEntity player : game.getPlayers()) {
-      logger.debug(
+      logger.info(
         "Sending game {} payload to player {}",
         game.getId(),
         player.getId()

@@ -6,12 +6,14 @@ import java.util.Optional;
 
 public record ResponseDTO(
   Long id,
+  Long playerId,
   ResponseType type,
   Optional<AnswerDTO> answer
 ) {
   public static ResponseDTO fromResponse(ResponseEntity response) {
     return new ResponseDTO(
       response.getId(),
+      response.getPlayer().getId(),
       response.getType(),
       Optional.ofNullable(response.getAnswer()).map(AnswerDTO::fromAnswer)
     );

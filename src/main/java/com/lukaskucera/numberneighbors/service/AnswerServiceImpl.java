@@ -2,13 +2,12 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.dto.AnswerDTO;
 import com.lukaskucera.numberneighbors.dto.AuthDTO;
-import com.lukaskucera.numberneighbors.dto.TurnDTO;
 import com.lukaskucera.numberneighbors.entity.AnswerEntity;
 import com.lukaskucera.numberneighbors.entity.NumberEntity;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.ResponseEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
-import com.lukaskucera.numberneighbors.enums.AnwserType;
+import com.lukaskucera.numberneighbors.enums.AnswerType;
 import com.lukaskucera.numberneighbors.exception.AnswerRequiresYesException;
 import com.lukaskucera.numberneighbors.exception.NumberNotFoundException;
 import com.lukaskucera.numberneighbors.exception.ResponseNotFoundException;
@@ -17,16 +16,14 @@ import com.lukaskucera.numberneighbors.repository.NumberRepository;
 import com.lukaskucera.numberneighbors.repository.ResponseRepository;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
 
   PlayerServiceImpl playerService;
+  TurnServiceImpl turnService;
   ResponseServiceImpl responseService;
-
-  SimpMessagingTemplate simpMessagingTemplate;
 
   NumberRepository numberRepository;
   ResponseRepository responseRepository;
@@ -34,15 +31,15 @@ public class AnswerServiceImpl implements AnswerService {
 
   public AnswerServiceImpl(
     PlayerServiceImpl playerService,
+    TurnServiceImpl turnService,
     ResponseServiceImpl responseService,
-    SimpMessagingTemplate simpMessagingTemplate,
     NumberRepository numberRepository,
     ResponseRepository responseRepository,
     AnswerRepository answerRepository
   ) {
     this.playerService = playerService;
+    this.turnService = turnService;
     this.responseService = responseService;
-    this.simpMessagingTemplate = simpMessagingTemplate;
     this.numberRepository = numberRepository;
     this.responseRepository = responseRepository;
     this.answerRepository = answerRepository;
@@ -60,7 +57,7 @@ public class AnswerServiceImpl implements AnswerService {
   }
 
   @Override
-  public AnswerDTO newAnswer(AuthDTO auth, Long responseId, AnwserType type) {
+  public AnswerDTO newAnswer(AuthDTO auth, Long responseId, AnswerType type) {
     final ResponseEntity response = responseRepository
       .findById(responseId)
       .orElseThrow(() -> new ResponseNotFoundException(responseId));
@@ -74,16 +71,12 @@ public class AnswerServiceImpl implements AnswerService {
 
     final AnswerEntity answer = createAnswer(type, response);
 
-    simpMessagingTemplate.convertAndSendToUser(
-      opponent.getSub(),
-      "/queue/turns",
-      TurnDTO.fromTurn(response.getTurn())
-    );
+    turnService.sendTurnToPlayers(answer.getResponse().getTurn());
 
     return AnswerDTO.fromAnswer(answer);
   }
 
-  void checkAnswerType(AnwserType type, ResponseEntity response) {
+  void checkAnswerType(AnswerType type, ResponseEntity response) {
     final TurnEntity turn = response.getTurn();
     final int turnValue = turn.getValue();
     final PlayerEntity player = turn.getPlayer();
@@ -93,7 +86,7 @@ public class AnswerServiceImpl implements AnswerService {
       player.getId()
     );
 
-    if (type == AnwserType.YES) {
+    if (type == AnswerType.YES) {
       final NumberEntity number = turnNumber.orElseThrow(() ->
         new NumberNotFoundException(turnValue, player.getId())
       );
@@ -108,7 +101,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
   }
 
-  public AnswerEntity createAnswer(AnwserType type, ResponseEntity response) {
+  public AnswerEntity createAnswer(AnswerType type, ResponseEntity response) {
     final AnswerEntity answer = new AnswerEntity(type, response);
 
     response.setAnswer(answer);

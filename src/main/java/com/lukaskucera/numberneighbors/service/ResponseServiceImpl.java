@@ -2,7 +2,6 @@ package com.lukaskucera.numberneighbors.service;
 
 import com.lukaskucera.numberneighbors.dto.AuthDTO;
 import com.lukaskucera.numberneighbors.dto.ResponseDTO;
-import com.lukaskucera.numberneighbors.dto.TurnDTO;
 import com.lukaskucera.numberneighbors.entity.PlayerEntity;
 import com.lukaskucera.numberneighbors.entity.ResponseEntity;
 import com.lukaskucera.numberneighbors.entity.TurnEntity;
@@ -22,20 +21,19 @@ import org.springframework.stereotype.Service;
 public class ResponseServiceImpl implements ResponseService {
 
   private final PlayerServiceImpl playerService;
-
-  private final SimpMessagingTemplate simpMessagingTemplate;
+  private final TurnServiceImpl turnService;
 
   private final TurnRepository turnRepository;
   private final ResponseRepository responseRepository;
 
   public ResponseServiceImpl(
     PlayerServiceImpl playerService,
-    SimpMessagingTemplate simpMessagingTemplate,
+    TurnServiceImpl turnService,
     TurnRepository turnRepository,
     ResponseRepository responseRepository
   ) {
     this.playerService = playerService;
-    this.simpMessagingTemplate = simpMessagingTemplate;
+    this.turnService = turnService;
     this.turnRepository = turnRepository;
     this.responseRepository = responseRepository;
   }
@@ -63,7 +61,6 @@ public class ResponseServiceImpl implements ResponseService {
     final TurnEntity turn = turnRepository
       .findById(turnId)
       .orElseThrow(() -> new TurnNotFoundException(turnId));
-    final PlayerEntity opponent = turn.getPlayer();
     final PlayerEntity player = turn.getPlayer().getOpponent();
 
     playerService.checkPlayerAccess(auth, player.getId());
@@ -74,11 +71,7 @@ public class ResponseServiceImpl implements ResponseService {
 
     final ResponseEntity response = createResponse(type, turn);
 
-    simpMessagingTemplate.convertAndSendToUser(
-      opponent.getSub(),
-      "/queue/turns",
-      TurnDTO.fromTurn(turn)
-    );
+    turnService.sendTurnToPlayers(turn);
 
     return ResponseDTO.fromResponse(response);
   }

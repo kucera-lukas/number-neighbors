@@ -12,7 +12,7 @@ const Turns = (): JSX.Element => {
       value="turns"
     >
       <List>
-        {turns?.map((turn) => (
+        {turns.map((turn) => (
           <List.Item key={turn.id.toString()}>{JSON.stringify(turn)}</List.Item>
         ))}
       </List>

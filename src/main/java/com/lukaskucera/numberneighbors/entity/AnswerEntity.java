@@ -1,6 +1,6 @@
 package com.lukaskucera.numberneighbors.entity;
 
-import com.lukaskucera.numberneighbors.enums.AnwserType;
+import com.lukaskucera.numberneighbors.enums.AnswerType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,7 +18,7 @@ public class AnswerEntity extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "type", updatable = false, nullable = false)
-  private AnwserType type;
+  private AnswerType type;
 
   @OneToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "response_id", updatable = false, nullable = false)
@@ -30,17 +30,17 @@ public class AnswerEntity extends BaseEntity {
 
   public AnswerEntity() {}
 
-  public AnswerEntity(AnwserType type, ResponseEntity response) {
+  public AnswerEntity(AnswerType type, ResponseEntity response) {
     setType(type);
     setResponse(response);
     setPlayer(response.getPlayer().getOpponent());
   }
 
-  public AnwserType getType() {
+  public AnswerType getType() {
     return type;
   }
 
-  public void setType(AnwserType type) {
+  public void setType(AnswerType type) {
     this.type = type;
   }
 

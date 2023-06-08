@@ -1,5 +1,5 @@
 import OpponentNumbers from "./opponent-numbers.component";
-import Turns from "./turns.component";
+import TurnHistory from "./turn-history.component";
 import UserNumbers from "./user-numbers.component";
 
 import AccordionLayout from "../../layouts/accordion.layout";
@@ -11,7 +11,7 @@ const PlayAccordion = memo(() => (
   <AccordionLayout defaultValues={["user-numbers", "opponent-numbers"]}>
     <UserNumbers />
     <OpponentNumbers />
-    <Turns />
+    <TurnHistory />
   </AccordionLayout>
 ));
 

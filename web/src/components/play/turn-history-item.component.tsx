@@ -16,19 +16,21 @@ const createValueText = (
   color: MantineColor,
   comma: boolean,
 ): JSX.Element => {
-  return value === undefined ? (
-    <></>
-  ) : (
-    <>
-      {comma && <Text span>, </Text>}
-      {name}:{" "}
-      <Text
-        span
-        c={color}
-      >
-        {value}
-      </Text>
-    </>
+  return (
+    <span key={name}>
+      {value !== undefined && (
+        <>
+          {comma && <Text span>, </Text>}
+          {name}:{" "}
+          <Text
+            span
+            c={color}
+          >
+            {value}
+          </Text>
+        </>
+      )}
+    </span>
   );
 };
 

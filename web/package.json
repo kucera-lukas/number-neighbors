@@ -13,9 +13,9 @@
     "fmt:check": "prettier --check ."
   },
   "dependencies": {
-    "@mantine/core": "^5.9.3",
+    "@mantine/core": "^6.0.13",
     "@mantine/form": "^6.0.13",
-    "@mantine/hooks": "^5.5.4",
+    "@mantine/hooks": "^6.0.13",
     "@stomp/stompjs": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

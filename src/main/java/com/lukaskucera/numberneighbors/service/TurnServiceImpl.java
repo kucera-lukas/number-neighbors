@@ -70,6 +70,7 @@ public class TurnServiceImpl implements TurnService {
     final TurnEntity turn = createTurn(value, player);
     final TurnDTO turnDTO = TurnDTO.fromTurn(turn);
 
+    gameService.sendPayloadToPlayers(player.getGame());
     sendTurnToPlayers(turn);
 
     return turnDTO;

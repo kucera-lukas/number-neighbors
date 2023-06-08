@@ -80,7 +80,7 @@ export const classifyOpponentNumbers = (
 export const toDiv = (number: ThemedNumber, key: number): JSX.Element => {
   return (
     <div
-      style={{ backgroundColor: number.backgroundColor }}
+      style={{ backgroundColor: number.backgroundColor, borderRadius: "3px" }}
       key={key}
     >
       <div style={{ color: number.color, textAlign: "center" }}>

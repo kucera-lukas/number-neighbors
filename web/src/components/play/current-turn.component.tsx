@@ -45,12 +45,10 @@ const isTurnOwner = (
   );
 };
 
-const CurrentTurn = ({
-  turnIndex,
-  setTurnIndex,
-}: CurrentTurnProps): JSX.Element => {
+const CurrentTurn = (): JSX.Element => {
   const [gamePayload] = useGamePayload();
   const [turns] = useTurns();
+  const [turnIndex, setTurnIndex] = useState<number>(turns.length - 1);
   const currentTurn = turns.at(turnIndex);
   const previousTurn = turns.at(turnIndex - 1);
   const turnOwner = isTurnOwner(gamePayload, currentTurn, previousTurn);

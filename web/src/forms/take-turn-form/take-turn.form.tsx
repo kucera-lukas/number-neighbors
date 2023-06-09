@@ -63,6 +63,7 @@ const TakeTurnForm = (): JSX.Element => {
 
         <Button
           type="submit"
+          size="xs"
           disabled={loading}
           style={{ alignSelf: "flex-end" }}
         >

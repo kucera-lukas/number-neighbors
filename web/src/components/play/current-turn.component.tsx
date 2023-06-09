@@ -1,5 +1,6 @@
 import { useGamePayload } from "../../context/game-payload.context";
 import { useTurns } from "../../context/turns.context";
+import RespondForm from "../../forms/respond-form/respond.form";
 import TakeTurnForm from "../../forms/take-turn-form/take-turn.form";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import PlayerType from "../../types/player-type.enum";
@@ -85,7 +86,9 @@ const CurrentTurn = ({
           {turnOwner && !currentTurn && <TakeTurnForm />}
         </Stepper.Step>
         <Stepper.Step {...respondStepProps(currentTurn, turnOwner)}>
-          <div>take turn content</div>
+          {!turnOwner && currentTurn && !currentTurn.response && (
+            <RespondForm currentTurn={currentTurn} />
+          )}
         </Stepper.Step>
         {currentTurn?.response?.type === ResponseType.GUESS && (
           <Stepper.Step {...answerStepProps(currentTurn, turnOwner)}>

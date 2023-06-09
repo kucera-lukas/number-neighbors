@@ -1,5 +1,6 @@
 import { useGamePayload } from "../../context/game-payload.context";
 import { useTurns } from "../../context/turns.context";
+import AnswerForm from "../../forms/answer-form/answer.form";
 import RespondForm from "../../forms/respond-form/respond.form";
 import TakeTurnForm from "../../forms/take-turn-form/take-turn.form";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
@@ -83,16 +84,16 @@ const CurrentTurn = ({
         color="green"
       >
         <Stepper.Step {...takeTurnStepProps(currentTurn, turnOwner)}>
-          {turnOwner && !currentTurn && <TakeTurnForm />}
+          {turnOwner && <TakeTurnForm />}
         </Stepper.Step>
         <Stepper.Step {...respondStepProps(currentTurn, turnOwner)}>
-          {!turnOwner && currentTurn && !currentTurn.response && (
+          {!turnOwner && currentTurn && (
             <RespondForm currentTurn={currentTurn} />
           )}
         </Stepper.Step>
         {currentTurn?.response?.type === ResponseType.GUESS && (
           <Stepper.Step {...answerStepProps(currentTurn, turnOwner)}>
-            <div>take turn content</div>
+            {turnOwner && <AnswerForm currentResponse={currentTurn.response} />}
           </Stepper.Step>
         )}
 

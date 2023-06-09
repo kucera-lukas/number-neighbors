@@ -8,7 +8,6 @@ export const takeTurnStepProps = (
   return {
     label: "Take turn",
     allowStepSelect: false,
-    iconSize: 30,
     description: currentTurn
       ? turnOwner
         ? "Number selected"
@@ -16,7 +15,7 @@ export const takeTurnStepProps = (
       : turnOwner
       ? "Select your number"
       : "Opponent is selecting number",
-    loading: !currentTurn,
+    loading: !turnOwner && !currentTurn,
   };
 };
 
@@ -57,7 +56,7 @@ export const answerStepProps = (
         ? "Answer to the response"
         : "Opponent is answering to the response"
       : "Waiting for previous step",
-    // response to current turn must be waiting for an answer
+    // response to the current turn must be waiting for an answer
     loading:
       !currentTurn?.complete &&
       currentTurn?.response &&

@@ -1,6 +1,7 @@
 import { SERVER_URI } from "../../config/environment";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
+import { handleError } from "../../utils/error.utils";
 
 import { TextInput, Button, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
@@ -33,7 +34,7 @@ const NewGame = (): JSX.Element => {
       })
         .then((res) => {
           if (!res.ok) {
-            throw new Error(res.status.toLocaleString());
+            return handleError(res);
           }
           return res.json();
         })

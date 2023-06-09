@@ -1,6 +1,7 @@
 import { SERVER_URI } from "../../config/environment";
 import PageLayout from "../../layouts/page.layout";
 import LocalStorageService from "../../services/local-storage.service";
+import { handleError } from "../../utils/error.utils";
 
 import { Button, Stack, TextInput } from "@mantine/core";
 import { useCallback, useState } from "react";
@@ -34,7 +35,7 @@ const Invite = (): JSX.Element => {
       })
         .then((res) => {
           if (!res.ok) {
-            throw new Error(res.status.toLocaleString());
+            return handleError(res);
           }
           return res.json();
         })

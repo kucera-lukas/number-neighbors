@@ -4,6 +4,7 @@ import AnswerInput from "./answer.input";
 import ErrorText from "../../components/errors/error.text";
 import { SERVER_URI } from "../../config/environment";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
+import { handleError } from "../../utils/error.utils";
 
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
@@ -34,9 +35,7 @@ const AnswerForm = ({ currentResponse }: AnswerFormProps): JSX.Element => {
       })
         .then((res) => {
           if (!res.ok) {
-            return res.text().then((text) => {
-              throw new Error(text);
-            });
+            return handleError(res);
           }
         })
         .catch((error: Error) => {

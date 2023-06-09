@@ -40,9 +40,8 @@ const RespondForm = ({ currentTurn }: RespondFormProps): JSX.Element => {
         })
         .catch((error: Error) => {
           setError(error.message);
-        });
-
-      setLoading(false);
+        })
+        .finally(() => setLoading(false));
     },
     [currentTurn.id, token, setLoading, setError],
   );

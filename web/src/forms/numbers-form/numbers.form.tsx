@@ -46,9 +46,8 @@ const NumbersForm = (): JSX.Element => {
         })
         .catch((error: Error) => {
           setError(error.message);
-        });
-
-      setLoading(false);
+        })
+        .finally(() => setLoading(false));
     },
     [user, token],
   );

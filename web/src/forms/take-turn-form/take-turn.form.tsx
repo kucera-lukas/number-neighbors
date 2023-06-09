@@ -38,9 +38,8 @@ const TakeTurnForm = (): JSX.Element => {
           })
           .catch((error: Error) => {
             setError(error.message);
-          });
-
-        setLoading(false);
+          })
+          .finally(() => setLoading(false));
       } else {
         setError("Invalid game");
       }

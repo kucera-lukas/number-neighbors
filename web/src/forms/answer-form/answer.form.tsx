@@ -40,9 +40,8 @@ const AnswerForm = ({ currentResponse }: AnswerFormProps): JSX.Element => {
         })
         .catch((error: Error) => {
           setError(error.message);
-        });
-
-      setLoading(false);
+        })
+        .finally(() => setLoading(false));
     },
     [currentResponse.id, token, setLoading, setError],
   );

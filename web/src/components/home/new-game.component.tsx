@@ -45,8 +45,8 @@ const NewGame = (): JSX.Element => {
         })
         .catch((error: Error) => {
           setError(error.message);
-          setLoading(false);
-        });
+        })
+        .finally(() => setLoading(false));
     } else {
       setError("Player name is required");
     }

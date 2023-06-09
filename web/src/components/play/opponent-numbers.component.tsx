@@ -1,9 +1,8 @@
-import NumberGrid from "./number-grid.component";
-
 import { useGamePayload } from "../../context/game-payload.context";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
-import { classifyOpponentNumbers, toDiv } from "../../utils/number.utils";
+import { classifyOpponentNumbers, toBadge } from "../../utils/number.utils";
 
+import { Group } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import type { ClassifiedOpponentNumber } from "../../types/classified-number.type";
@@ -12,8 +11,9 @@ import type ThemedNumber from "../../types/themed-number.type";
 const toThemed = (number: ClassifiedOpponentNumber): ThemedNumber => {
   return {
     value: number.value,
-    color: "blue",
-    backgroundColor: "cyan",
+    color: number.guessed ? "yellow.5" : "orange.5",
+    border: number.guessed ? "2px solid #f59f00" : "2px solid #f76707",
+    size: "lg",
   };
 };
 
@@ -37,9 +37,12 @@ const OpponentNumbers = (): JSX.Element => {
       title="Opponent numbers"
       value="opponent-numbers"
     >
-      <NumberGrid cols={3}>
-        {themedNumbers.map((number, i) => toDiv(number, i))}
-      </NumberGrid>
+      <Group
+        spacing="xl"
+        position="center"
+      >
+        {themedNumbers.map((number, i) => toBadge(number, i))}
+      </Group>
     </AccordionItemLayout>
   );
 };

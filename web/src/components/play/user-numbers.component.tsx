@@ -1,25 +1,27 @@
-import NumberGrid from "./number-grid.component";
-
 import { useGamePayload } from "../../context/game-payload.context";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 import NumberSelectionType from "../../types/number-selection.enum";
-import { classifyUserNumbers, toDiv } from "../../utils/number.utils";
+import { classifyUserNumbers, toBadge } from "../../utils/number.utils";
 
+import { SimpleGrid } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import type { ClassifiedUserNumber } from "../../types/classified-number.type";
 import type ThemedNumber from "../../types/themed-number.type";
 
 const COLOR_MAPPING = {
-  [NumberSelectionType.CHOSEN]: { color: "red", backgroundColor: "orange" },
-  [NumberSelectionType.GUESSED]: { color: "navy", backgroundColor: "blue" },
+  [NumberSelectionType.CHOSEN]: {
+    color: "blue.5",
+    border: "2px solid #1971c2",
+  },
+  [NumberSelectionType.GUESSED]: { color: "red.5", border: "2px solid red" },
   [NumberSelectionType.REACHABLE]: {
-    color: "orange",
-    backgroundColor: "yellow",
+    color: "blue.3",
+    border: "2px solid #339af0",
   },
   [NumberSelectionType.UNREACHABLE]: {
-    color: "black",
-    backgroundColor: "gray",
+    color: "gray",
+    border: "2px solid #495057",
   },
 };
 
@@ -29,7 +31,8 @@ const toThemed = (number: ClassifiedUserNumber): ThemedNumber => {
   return {
     value: number.value,
     color: color.color,
-    backgroundColor: color.backgroundColor,
+    border: color.border,
+    size: "sm",
   };
 };
 
@@ -51,9 +54,13 @@ const UserNumbers = (): JSX.Element => {
       title="My numbers"
       value="user-numbers"
     >
-      <NumberGrid cols={8}>
-        {themedNumbers.map((number, i) => toDiv(number, i))}
-      </NumberGrid>
+      <SimpleGrid
+        spacing="xs"
+        verticalSpacing="xs"
+        cols={8}
+      >
+        {themedNumbers.map((number, i) => toBadge(number, i))}
+      </SimpleGrid>
     </AccordionItemLayout>
   );
 };

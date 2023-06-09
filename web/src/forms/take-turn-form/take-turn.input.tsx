@@ -1,10 +1,13 @@
 import { useGamePayload } from "../../context/game-payload.context";
+import { useTurns } from "../../context/turns.context";
 import NumberSelectionType from "../../types/number-selection.enum";
 import { classifyUserNumbers } from "../../utils/number.utils";
+import { requiresChosenNumber } from "../../utils/turn.utils";
 
 import { Select } from "@mantine/core";
 
-import type NumberPayload from "../../types/number-payload.type";
+import type GamePayload from "../../types/game-payload.type";
+import type TurnPayload from "../../types/turn-payload.type";
 import type { TakeTurnFormReturnType } from "./take-turn.types";
 import type { SelectItem } from "@mantine/core";
 
@@ -19,9 +22,19 @@ export type TakeTurnInputProps = {
 };
 
 const createSelectData = (
-  userNumbers: NumberPayload[],
+  gamePayload: GamePayload,
+  turns: TurnPayload[],
 ): readonly SelectItem[] => {
-  const classifiedNumbers = classifyUserNumbers(userNumbers ?? []);
+  const classifiedNumbers = classifyUserNumbers(
+    gamePayload?.user.numbers ?? [],
+  );
+  const playerNumbers = turns.filter(
+    (turn) => turn.playerId === gamePayload.user.id,
+  );
+  const disableReachableNumbers = requiresChosenNumber(
+    gamePayload.user,
+    playerNumbers,
+  );
 
   return classifiedNumbers
     .filter((classifiedNumber) => SELECTABLE_NUMBERS.has(classifiedNumber.type))
@@ -30,13 +43,17 @@ const createSelectData = (
         value: classifiedNumber.value,
         label: classifiedNumber.value,
         group: classifiedNumber.type.toLowerCase(),
+        disabled:
+          classifiedNumber.type === NumberSelectionType.REACHABLE &&
+          disableReachableNumbers,
       };
     });
 };
 
 const TakeTurnInput = ({ form, disabled }: TakeTurnInputProps): JSX.Element => {
   const [gamePayload] = useGamePayload();
-  const data = createSelectData(gamePayload?.user.numbers ?? []);
+  const [turns] = useTurns();
+  const data = gamePayload ? createSelectData(gamePayload, turns) : [];
 
   return (
     <Select

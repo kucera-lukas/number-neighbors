@@ -5,6 +5,8 @@ import {
 import NumberSelectionType from "../types/number-selection.enum";
 import NumberType from "../types/number-type.enum";
 
+import { Badge } from "@mantine/core";
+
 import type {
   ClassifiedUserNumber,
   ClassifiedOpponentNumber,
@@ -72,20 +74,23 @@ export const classifyOpponentNumbers = (
 
     return {
       value: value.toString(),
-      type: type,
+      guessed: !!number,
     };
   });
 };
 
-export const toDiv = (number: ThemedNumber, key: number): JSX.Element => {
+export const toBadge = (number: ThemedNumber, key: number): JSX.Element => {
   return (
-    <div
-      style={{ backgroundColor: number.backgroundColor, borderRadius: "3px" }}
+    <Badge
       key={key}
+      color={number.color}
+      size={number.size}
+      variant="filled"
+      radius="xs"
+      fullWidth={false}
+      style={{ border: number.border }}
     >
-      <div style={{ color: number.color, textAlign: "center" }}>
-        {number.value}
-      </div>
-    </div>
+      {number.value}
+    </Badge>
   );
 };

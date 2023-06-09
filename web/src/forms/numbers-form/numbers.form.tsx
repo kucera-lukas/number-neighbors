@@ -5,6 +5,7 @@ import ErrorText from "../../components/errors/error.text";
 import { SERVER_URI } from "../../config/environment";
 import { useGamePayload } from "../../context/game-payload.context";
 import useLocalStorageItem from "../../hooks/localstorage.hook";
+import { handleError } from "../../utils/error.utils";
 
 import { Button, LoadingOverlay, Stack } from "@mantine/core";
 import { useCallback, useState } from "react";
@@ -40,7 +41,7 @@ const NumbersForm = (): JSX.Element => {
       })
         .then((res) => {
           if (!res.ok) {
-            throw new Error(res.status.toLocaleString());
+            return handleError(res);
           }
         })
         .catch((error: Error) => {

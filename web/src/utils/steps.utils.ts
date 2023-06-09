@@ -6,7 +6,7 @@ export const takeTurnStepProps = (
   turnOwner: boolean,
 ): StepProps => {
   return {
-    label: "Take turn",
+    label: currentTurn ? `Turn number is ${currentTurn.value}` : "Take turn",
     allowStepSelect: false,
     description: currentTurn
       ? turnOwner
@@ -24,7 +24,9 @@ export const respondStepProps = (
   turnOwner: boolean,
 ): StepProps => {
   return {
-    label: "Respond",
+    label: currentTurn?.response
+      ? `Response is "${currentTurn.response.type.toLowerCase()}"`
+      : "Respond",
     allowStepSelect: false,
     description: currentTurn
       ? currentTurn?.response
@@ -36,7 +38,7 @@ export const respondStepProps = (
         : "Respond to opponents turn"
       : "Waiting for previous step",
     // current turn must be waiting for a response
-    loading: currentTurn && !currentTurn?.response,
+    loading: turnOwner && currentTurn && !currentTurn?.response,
   };
 };
 
@@ -45,7 +47,9 @@ export const answerStepProps = (
   turnOwner: boolean,
 ): StepProps => {
   return {
-    label: "Answer",
+    label: currentTurn?.response?.answer
+      ? `Answer is "${currentTurn.response.answer.type.toLowerCase()}"`
+      : "Answer",
     allowStepSelect: false,
     description: currentTurn?.response
       ? currentTurn.response.answer
@@ -58,6 +62,7 @@ export const answerStepProps = (
       : "Waiting for previous step",
     // response to the current turn must be waiting for an answer
     loading:
+      !turnOwner &&
       !currentTurn?.complete &&
       currentTurn?.response &&
       !currentTurn.response.answer,

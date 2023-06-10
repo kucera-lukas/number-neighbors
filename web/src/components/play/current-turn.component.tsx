@@ -48,11 +48,19 @@ const isTurnOwner = (
 const CurrentTurn = (): JSX.Element => {
   const [gamePayload] = useGamePayload();
   const [turns] = useTurns();
-  const [turnIndex, setTurnIndex] = useState<number>(turns.length - 1);
+  const [turnIndex, setTurnIndex] = useState<number>(
+    Math.max(0, turns.length - 1),
+  );
   const currentTurn = turns.at(turnIndex);
   const previousTurn = turns.at(turnIndex - 1);
   const turnOwner = isTurnOwner(gamePayload, currentTurn, previousTurn);
   const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (turns.length > 0) {
+      setTurnIndex(turns.length - 1);
+    }
+  }, [turns, setTurnIndex]);
 
   useEffect(() => {
     if (!currentTurn) {
@@ -97,7 +105,7 @@ const CurrentTurn = (): JSX.Element => {
 
         <Stepper.Completed>
           <Button
-            onClick={() => setTurnIndex(turns.length)}
+            onClick={() => setTurnIndex((index) => index + 1)}
             disabled={!currentTurn?.complete}
             size="xs"
           >

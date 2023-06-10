@@ -78,7 +78,11 @@ const PageLayout = ({ children, title }: PageLayoutProps): JSX.Element => {
 
   return (
     <Center>
-      <Stack>
+      <Stack
+        spacing="xs"
+        align="center"
+        justify="center"
+      >
         <UnstyledButton onClick={() => navigate("/")}>
           <Title>number-neighbors</Title>
         </UnstyledButton>

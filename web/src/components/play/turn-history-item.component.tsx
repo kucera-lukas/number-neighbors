@@ -1,36 +1,47 @@
 import { useGamePayload } from "../../context/game-payload.context";
+import AnswerType from "../../types/answer-type.enum";
 
-import { List, Text } from "@mantine/core";
+import { Code, List, Text } from "@mantine/core";
 
 import type TurnPayload from "../../types/turn-payload.type";
-import type { MantineColor } from "@mantine/core";
 
 export type TurnHistoryItemProps = {
   entry: number;
   turn: TurnPayload;
 };
 
-const createValueText = (
-  name: string,
-  value: string | undefined,
-  color: MantineColor,
-  comma: boolean,
-): JSX.Element => {
+const VERB_COLOR_MAP = {
+  guessed: "green",
+  missed: "red",
+  passed: "blue",
+};
+
+const getColoredVerb = (turn: TurnPayload): JSX.Element => {
+  const verb =
+    turn.response && turn.response.answer
+      ? turn.response.answer.type === AnswerType.YES
+        ? "guessed"
+        : "missed"
+      : "passed";
+
   return (
-    <span key={name}>
-      {value !== undefined && (
-        <>
-          {comma && <Text span>, </Text>}
-          {name}:{" "}
-          <Text
-            span
-            c={color}
-          >
-            {value}
-          </Text>
-        </>
-      )}
-    </span>
+    <Text
+      span
+      c={VERB_COLOR_MAP[verb]}
+    >
+      {verb}
+    </Text>
+  );
+};
+
+const getValue = (turn: TurnPayload, turnOwner: boolean): JSX.Element => {
+  return (
+    <Code
+      block={false}
+      color={turnOwner ? "blue" : "red"}
+    >
+      {turn.value}
+    </Code>
   );
 };
 
@@ -41,25 +52,15 @@ const TurnHistoryItem = ({
   const [gamePayload] = useGamePayload();
   const turnOwner = gamePayload?.user.id === turn.playerId;
 
-  const args: [string, string | undefined, MantineColor, boolean][] = [
-    ["value", turn.value.toString(), turnOwner ? "blue" : "red", false],
-    [
-      "response",
-      turn.response?.type.toString(),
-      turnOwner ? "red" : "blue",
-      true,
-    ],
-    [
-      "answer",
-      turn.response?.answer?.type.toString(),
-      turnOwner ? "blue" : "red",
-      true,
-    ],
-  ];
+  const name = turnOwner ? "Opponent" : "I";
+  const coloredVerb = getColoredVerb(turn);
+  const value = getValue(turn, turnOwner);
 
   return (
     <List.Item key={entry}>
-      <Text size="xs">{args.map((arg) => createValueText(...arg))}</Text>
+      <Text size="xs">
+        {name} {coloredVerb} {value}
+      </Text>
     </List.Item>
   );
 };

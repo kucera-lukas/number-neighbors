@@ -1,36 +1,40 @@
-import TurnHistoryItem from "./turn-history-item.component";
+import TurnHistoryColumn from "./turn-history-column.component";
 
+import { useGamePayload } from "../../context/game-payload.context";
 import { useTurns } from "../../context/turns.context";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
-import { List, ScrollArea } from "@mantine/core";
+import { Group, ScrollArea } from "@mantine/core";
 
 const TurnHistory = (): JSX.Element => {
+  const [gamePayload] = useGamePayload();
   const [turns] = useTurns();
+
+  const entries = [...turns.filter((turn) => turn.complete).entries()];
 
   return (
     <AccordionItemLayout
       title="Turn History"
       value="turn-history"
     >
-      <List
-        type="ordered"
-        size="xs"
+      <ScrollArea.Autosize
+        h={100}
+        type="auto"
+        offsetScrollbars
       >
-        <ScrollArea.Autosize
-          h={100}
-          type="auto"
-          offsetScrollbars
+        <Group
+          position="center"
+          spacing="xl"
         >
-          {[...turns.entries()].map(([i, turn]) => (
-            <TurnHistoryItem
-              key={i}
-              entry={i}
-              turn={turn}
+          {[gamePayload?.opponent?.id, gamePayload?.user.id].map((playerId) => (
+            <TurnHistoryColumn
+              key={playerId?.toString()}
+              playerId={playerId}
+              entries={entries}
             />
           ))}
-        </ScrollArea.Autosize>
-      </List>
+        </Group>
+      </ScrollArea.Autosize>
     </AccordionItemLayout>
   );
 };

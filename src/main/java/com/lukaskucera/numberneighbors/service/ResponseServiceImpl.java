@@ -9,12 +9,12 @@ import com.lukaskucera.numberneighbors.enums.ResponseType;
 import com.lukaskucera.numberneighbors.exception.AnswerAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.ResponseAlreadyExistsException;
 import com.lukaskucera.numberneighbors.exception.ResponseNotFoundException;
+import com.lukaskucera.numberneighbors.exception.ResponsePassRequiredException;
 import com.lukaskucera.numberneighbors.exception.ResponsePassedException;
 import com.lukaskucera.numberneighbors.exception.TurnNotFoundException;
 import com.lukaskucera.numberneighbors.repository.ResponseRepository;
 import com.lukaskucera.numberneighbors.repository.TurnRepository;
 import java.util.List;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,6 +72,8 @@ public class ResponseServiceImpl implements ResponseService {
       throw new ResponseAlreadyExistsException(turn.getId());
     }
 
+    checkResponseType(type, player, turn);
+
     final ResponseEntity response = createResponse(type, turn);
 
     gameService.sendPayloadToPlayers(player.getGame());
@@ -99,6 +101,30 @@ public class ResponseServiceImpl implements ResponseService {
 
     if (response.getAnswer() != null) {
       throw new AnswerAlreadyExistsException(response.getId());
+    }
+  }
+
+  void checkResponseType(
+    ResponseType type,
+    PlayerEntity player,
+    TurnEntity turn
+  ) {
+    if (type == ResponseType.PASS) {
+      return;
+    }
+
+    final List<ResponseEntity> playerResponses = player.getResponses();
+
+    if (playerResponses.size() == 0) {
+      return;
+    }
+
+    final ResponseEntity lastResponse = playerResponses.get(
+      playerResponses.size() - 1
+    );
+
+    if (lastResponse.getType() == ResponseType.GUESS) {
+      throw new ResponsePassRequiredException(turn.getId());
     }
   }
 }

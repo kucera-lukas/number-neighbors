@@ -159,7 +159,6 @@ public class TurnServiceImpl implements TurnService {
     final List<Integer> chosenNumbers = player
       .getNumbers()
       .stream()
-      .filter(number -> !number.getIsGuessed())
       .map(NumberEntity::getValue)
       .toList();
     final boolean mustBeChosen = playerTurns

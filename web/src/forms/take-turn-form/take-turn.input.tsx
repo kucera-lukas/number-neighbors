@@ -28,12 +28,12 @@ const createSelectData = (
   const classifiedNumbers = classifyUserNumbers(
     gamePayload?.user.numbers ?? [],
   );
-  const playerNumbers = turns.filter(
+  const playerTurns = turns.filter(
     (turn) => turn.playerId === gamePayload.user.id,
   );
   const disableReachableNumbers = requiresChosenNumber(
     gamePayload.user,
-    playerNumbers,
+    playerTurns,
   );
 
   return classifiedNumbers

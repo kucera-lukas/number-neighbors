@@ -11,11 +11,7 @@ export const requiresChosenNumber = (
     return false;
   }
 
-  const chosenNumbers = new Set(
-    player.numbers
-      .filter((number) => !number.guessed)
-      .map((number) => number.value),
-  );
+  const chosenNumbers = new Set(player.numbers.map((number) => number.value));
 
   return !playerTurns
     .slice(playerTurnCount - 2)

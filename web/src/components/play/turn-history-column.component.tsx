@@ -15,7 +15,6 @@ const TurnHistoryColumn = ({
 }: TurnHistoryColumnProps): JSX.Element => {
   return (
     <List
-      center
       size="xs"
       type="ordered"
     >

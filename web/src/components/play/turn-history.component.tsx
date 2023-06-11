@@ -4,13 +4,22 @@ import { useGamePayload } from "../../context/game-payload.context";
 import { useTurns } from "../../context/turns.context";
 import AccordionItemLayout from "../../layouts/accordion-item.layout";
 
-import { Group, ScrollArea } from "@mantine/core";
+import { Divider, Group, ScrollArea } from "@mantine/core";
+import { useEffect, useRef } from "react";
 
 const TurnHistory = (): JSX.Element => {
   const [gamePayload] = useGamePayload();
   const [turns] = useTurns();
+  const viewport = useRef<HTMLDivElement>(null);
 
   const entries = [...turns.filter((turn) => turn.complete).entries()];
+
+  useEffect(() => {
+    viewport.current?.scrollTo({
+      top: viewport.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [turns]);
 
   return (
     <AccordionItemLayout
@@ -18,21 +27,27 @@ const TurnHistory = (): JSX.Element => {
       value="turn-history"
     >
       <ScrollArea.Autosize
-        h={100}
         type="auto"
+        viewportRef={viewport}
+        mah={300}
         offsetScrollbars
       >
         <Group
           position="center"
-          spacing="xl"
+          spacing="md"
         >
-          {[gamePayload?.opponent?.id, gamePayload?.user.id].map((playerId) => (
-            <TurnHistoryColumn
-              key={playerId?.toString()}
-              playerId={playerId}
-              entries={entries}
-            />
-          ))}
+          <TurnHistoryColumn
+            playerId={gamePayload?.opponent?.id}
+            entries={entries}
+          />
+          <Divider
+            orientation="vertical"
+            size="sm"
+          />
+          <TurnHistoryColumn
+            playerId={gamePayload?.user?.id}
+            entries={entries}
+          />
         </Group>
       </ScrollArea.Autosize>
     </AccordionItemLayout>

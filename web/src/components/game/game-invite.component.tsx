@@ -31,14 +31,12 @@ const GameInvite = (): JSX.Element => {
       <Stack spacing="xs">
         <Text size="sm">
           <>
-            Invite link:
-            <br />
             {
               <a
                 onClick={(e) => e.preventDefault()}
                 href={inviteHref}
               >
-                {inviteLink}
+                {inviteHref}
               </a>
             }
           </>

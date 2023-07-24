@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Deploy to Amazon EC2 via SSH action
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.0.0
         env:
           DOCKER_REGISTRY: ${{ env.REGISTRY }}
           DOCKER_USERNAME: ${{ github.actor }}

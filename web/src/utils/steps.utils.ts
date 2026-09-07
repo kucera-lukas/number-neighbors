@@ -13,8 +13,8 @@ export const takeTurnStepProps = (
         ? "Number selected"
         : "Opponent selected number"
       : turnOwner
-      ? "Select your number"
-      : "Opponent is selecting number",
+        ? "Select your number"
+        : "Opponent is selecting number",
     loading: !turnOwner && !currentTurn,
   };
 };
@@ -34,8 +34,8 @@ export const respondStepProps = (
           ? "Opponent has responded"
           : "Responded to opponents turn"
         : turnOwner
-        ? "Opponent is responding"
-        : "Respond to opponents turn"
+          ? "Opponent is responding"
+          : "Respond to opponents turn"
       : "Waiting for previous step",
     // current turn must be waiting for a response
     loading: turnOwner && currentTurn && !currentTurn?.response,
@@ -57,8 +57,8 @@ export const answerStepProps = (
           ? "Answered to the response"
           : "Opponent answered to the response"
         : turnOwner
-        ? "Answer to the response"
-        : "Opponent is answering to the response"
+          ? "Answer to the response"
+          : "Opponent is answering to the response"
       : "Waiting for previous step",
     // response to the current turn must be waiting for an answer
     loading:
